@@ -1,14 +1,25 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, Animated } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Product } from '../types';
-import { COLORS, SIZES } from '../theme';
+import { COLORS, SIZES, SHADOWS } from '../theme';
 
 interface ProductCardProps {
   product: Product;
   onPress: () => void;
 }
 
+const CATEGORY_CONFIG = {
+  'Şarküteri': { icon: 'restaurant' as const,  color: COLORS.deli,     light: COLORS.deliLight },
+  'Eczane':    { icon: 'medkit'    as const,  color: COLORS.pharmacy, light: COLORS.pharmacyLight },
+  'Diğer':     { icon: 'cube'      as const,  color: COLORS.other,    light: COLORS.otherLight },
+};
+
+const MAX_DAYS = 30; // progress bar maksimum referans (30 gün = tam dolu)
+
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
+  const pressAnim = useRef(new Animated.Value(1)).current;
+
   const calculateDaysLeft = (expirationDate: string) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -19,133 +30,150 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
 
   const daysLeft = calculateDaysLeft(product.expirationDate);
 
-  let statusColor = COLORS.safe;
-  let statusText = `${daysLeft} Gün Kaldı`;
+  // Status
+  const statusColor =
+    daysLeft < 0  ? COLORS.danger  :
+    daysLeft <= 3 ? COLORS.warning : COLORS.safe;
+  const statusLight =
+    daysLeft < 0  ? COLORS.dangerLight  :
+    daysLeft <= 3 ? COLORS.warningLight : COLORS.safeLight;
+  const statusText =
+    daysLeft < 0   ? `${Math.abs(daysLeft)} gün geçti` :
+    daysLeft === 0 ? 'Bugün son!' :
+    daysLeft === 1 ? 'Yarın son!' :
+                     `${daysLeft} gün kaldı`;
+  const statusIcon =
+    daysLeft < 0   ? 'alert-circle'   as const :
+    daysLeft <= 3  ? 'warning'        as const :
+                     'checkmark-circle' as const;
 
-  if (daysLeft < 0) {
-    statusColor = COLORS.danger;
-    statusText = `Süresi Geçti (${Math.abs(daysLeft)} gün)`;
-  } else if (daysLeft <= 3) {
-    statusColor = COLORS.warning;
-  } else if (daysLeft === 0) {
-    statusColor = COLORS.danger;
-    statusText = 'Bugün Son Gün!';
-  }
+  // Progress bar (0-1), negatif 0 olarak göster
+  const progress = daysLeft <= 0 ? 0 : Math.min(daysLeft / MAX_DAYS, 1);
 
-  const categoryColor = 
-    product.category === 'Şarküteri' ? COLORS.deli :
-    product.category === 'Eczane' ? COLORS.pharmacy : COLORS.other;
+  const catConfig = CATEGORY_CONFIG[product.category] ?? CATEGORY_CONFIG['Diğer'];
+
+  // Press scale animation
+  const handlePressIn  = () => Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 40 }).start();
+  const handlePressOut = () => Animated.spring(pressAnim, { toValue: 1,    useNativeDriver: true, speed: 20 }).start();
 
   return (
-    <View style={styles.cardContainer}>
-      <TouchableOpacity 
-        style={styles.cardInner} 
+    <Animated.View style={[styles.cardWrapper, { transform: [{ scale: pressAnim }] }]}>
+      <TouchableOpacity
+        style={styles.card}
         onPress={onPress}
-        activeOpacity={0.7}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
       >
-        <View style={[styles.categoryIndicator, { backgroundColor: categoryColor }]} />
-        
-        <View style={styles.content}>
-          <View style={styles.header}>
+        {/* Sol renk şeridi */}
+        <View style={[styles.strip, { backgroundColor: catConfig.color }]} />
+
+        <View style={styles.body}>
+          {/* Üst satır: isim + kategori ikonu */}
+          <View style={styles.topRow}>
+            <View style={[styles.categoryIconWrap, { backgroundColor: catConfig.light }]}>
+              <Ionicons name={catConfig.icon} size={18} color={catConfig.color} />
+            </View>
             <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
-            <View style={[styles.statusBadge, { backgroundColor: statusColor + '15' }]}>
-              <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
+            <Ionicons name="chevron-forward" size={18} color={COLORS.textMuted} />
+          </View>
+
+          {/* Progress bar */}
+          <View style={styles.progressTrack}>
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${Math.round(progress * 100)}%` as any, backgroundColor: statusColor },
+              ]}
+            />
+          </View>
+
+          {/* Alt satır: kategori adı + durum badge */}
+          <View style={styles.bottomRow}>
+            <Text style={styles.categoryText}>{product.category}</Text>
+            <View style={[styles.statusBadge, { backgroundColor: statusLight }]}>
+              <Ionicons name={statusIcon} size={13} color={statusColor} />
               <Text style={[styles.statusText, { color: statusColor }]}>{statusText}</Text>
             </View>
           </View>
-          
-          <View style={styles.footer}>
-            <Text style={styles.categoryText}>{product.category}</Text>
-            <Text style={styles.dateText}>SKT: {new Date(product.expirationDate).toLocaleDateString('tr-TR')}</Text>
-          </View>
         </View>
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    marginBottom: SIZES.md,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#1E293B',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.08,
-        shadowRadius: 16,
-      },
-      android: {
-        elevation: 4,
-      },
-      web: {
-        boxShadow: '0 10px 25px rgba(30, 41, 59, 0.08)',
-      }
-    }),
+  cardWrapper: {
+    marginBottom: SIZES.sm + 4,
+    borderRadius: SIZES.radius,
+    ...SHADOWS.md,
   },
-  cardInner: {
+  card: {
     backgroundColor: COLORS.surface,
     borderRadius: SIZES.radius,
     flexDirection: 'row',
     overflow: 'hidden',
   },
-  categoryIndicator: {
-    width: 8,
-    height: '100%',
+  strip: {
+    width: 5,
   },
-  content: {
+  body: {
     flex: 1,
-    padding: SIZES.lg,
+    paddingHorizontal: SIZES.md,
+    paddingVertical: SIZES.md - 2,
+    gap: 10,
   },
-  header: {
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    marginBottom: SIZES.md,
-    gap: 8,
-  },
-  productName: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: COLORS.text,
-    letterSpacing: -0.5,
-  },
-  statusBadge: {
+  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    gap: 10,
+  },
+  categoryIconWrap: {
+    width: 34,
+    height: 34,
     borderRadius: SIZES.radius_sm,
-    gap: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+  productName: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '800',
+    color: COLORS.text,
+    letterSpacing: -0.3,
   },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '700',
+  progressTrack: {
+    height: 4,
+    backgroundColor: COLORS.border,
+    borderRadius: 2,
+    overflow: 'hidden',
   },
-  footer: {
+  progressFill: {
+    height: '100%',
+    borderRadius: 2,
+  },
+  bottomRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-    paddingTop: SIZES.sm,
-    marginTop: 4,
   },
   categoryText: {
     fontSize: 13,
     color: COLORS.textLight,
     fontWeight: '600',
   },
-  dateText: {
-    fontSize: 13,
-    color: '#94A3B8',
-    fontWeight: '500',
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
 });
 
 export default ProductCard;
-

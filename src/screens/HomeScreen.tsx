@@ -1,23 +1,41 @@
-import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, FlatList, SafeAreaView, TouchableOpacity, Text, RefreshControl, Platform } from 'react-native';
+import React, { useState, useCallback, useRef } from 'react';
+import {
+  View, StyleSheet, FlatList, SafeAreaView, TouchableOpacity,
+  Text, RefreshControl, Platform, Animated,
+} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 
 import { Product, Category, RootStackParamList } from '../types';
 import { getProducts } from '../utils/storage';
-import { COLORS, SIZES } from '../theme';
+import { COLORS, SIZES, SHADOWS } from '../theme';
 import ProductCard from '../components/ProductCard';
 import CategoryFilter from '../components/CategoryFilter';
-import { Ionicons } from '@expo/vector-icons';
+import { usePremium } from '../context/PremiumContext';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import { AD_UNIT_IDS } from '../utils/adConfig';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts]               = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category | 'Tümü'>('Tümü');
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing]           = useState(false);
   const navigation = useNavigation<NavigationProp>();
+  const { isPremium } = usePremium();
+
+  // FAB pulse animation
+  const fabPulse = useRef(new Animated.Value(1)).current;
+  React.useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fabPulse, { toValue: 1.12, duration: 900, useNativeDriver: true }),
+        Animated.timing(fabPulse, { toValue: 1,    duration: 900, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
 
   const loadProducts = async () => {
     setRefreshing(true);
@@ -27,77 +45,67 @@ const HomeScreen: React.FC = () => {
     setRefreshing(false);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      loadProducts();
-    }, [])
-  );
+  useFocusEffect(useCallback(() => { loadProducts(); }, []));
 
   const applyFilter = (category: Category | 'Tümü', data: Product[] = products) => {
     setSelectedCategory(category);
-    if (category === 'Tümü') {
-      setFilteredProducts(data);
-    } else {
-      setFilteredProducts(data.filter(p => p.category === category));
-    }
+    setFilteredProducts(category === 'Tümü' ? data : data.filter(p => p.category === category));
   };
 
-  const calculateAppStatus = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    let expired = 0;
-    let warning = 0;
-
+  const calculateStats = () => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    let expired = 0, warning = 0, safe = 0;
     products.forEach(p => {
-      const expDate = new Date(p.expirationDate);
-      const diffTime = expDate.getTime() - today.getTime();
-      const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (daysLeft < 0) expired++;
-      else if (daysLeft <= 3) warning++;
+      const d = Math.ceil((new Date(p.expirationDate).getTime() - today.getTime()) / 86400000);
+      if (d < 0) expired++;
+      else if (d <= 3) warning++;
+      else safe++;
     });
-
-    return { expired, warning };
+    return { expired, warning, safe, total: products.length };
   };
 
-  const status = calculateAppStatus();
+  const stats = calculateStats();
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Günaydın 🌤';
+    if (h < 18) return 'İyi günler 👋';
+    return 'İyi akşamlar 🌙';
+  })();
 
   return (
     <SafeAreaView style={styles.safeArea}>
+
+      {/* ── Header ── */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>Raf Ömrüm</Text>
-          <Text style={styles.headerSubtitle}>
-            {products.length === 0 
-              ? 'Henüz ürün eklemediniz.' 
-              : `Toplam ${products.length} ürün takip ediliyor.`}
-          </Text>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.greeting}>{greeting}</Text>
+            <Text style={styles.headerTitle}>Raf Ömrüm</Text>
+          </View>
+          {!isPremium ? (
+            <TouchableOpacity style={styles.proButton} onPress={() => navigation.navigate('Paywall')}>
+              <Ionicons name="diamond" size={14} color="#FFD700" />
+              <Text style={styles.proButtonText}>PRO</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.proBadge}>
+              <Ionicons name="diamond" size={14} color={COLORS.primaryLight} />
+              <Text style={styles.proBadgeText}>PRO</Text>
+            </View>
+          )}
         </View>
+
+        {/* Stats Row */}
+        {stats.total > 0 && (
+          <View style={styles.statsRow}>
+            <StatChip icon="checkmark-circle" value={stats.safe}    label="Güvende"  color={COLORS.safe}    light={COLORS.safeLight} />
+            <StatChip icon="warning"          value={stats.warning} label="Yaklaşan" color={COLORS.warning} light={COLORS.warningLight} />
+            <StatChip icon="alert-circle"     value={stats.expired} label="Geçti"    color={COLORS.danger}  light={COLORS.dangerLight} />
+          </View>
+        )}
       </View>
 
-      {products.length > 0 && (status.expired > 0 || status.warning > 0) && (
-        <View style={styles.summaryContainer}>
-          {status.expired > 0 && (
-            <View style={[styles.summaryBadge, { backgroundColor: COLORS.danger + '15' }]}>
-              <Ionicons name="alert-circle" size={18} color={COLORS.danger} />
-              <Text style={[styles.summaryText, { color: COLORS.danger }]}>
-                {status.expired} Ürünün Süresi Geçti
-              </Text>
-            </View>
-          )}
-          {status.warning > 0 && (
-            <View style={[styles.summaryBadge, { backgroundColor: COLORS.warning + '15' }]}>
-              <Ionicons name="warning" size={18} color={COLORS.warning} />
-              <Text style={[styles.summaryText, { color: COLORS.warning }]}>
-                {status.warning} Ürünün Süresi Yaklaşıyor
-              </Text>
-            </View>
-          )}
-        </View>
-      )}
-
-      <CategoryFilter 
+      <CategoryFilter
         categories={['Tümü', 'Şarküteri', 'Eczane', 'Diğer']}
         selectedCategory={selectedCategory}
         onSelect={(cat) => applyFilter(cat)}
@@ -112,133 +120,157 @@ const HomeScreen: React.FC = () => {
           <RefreshControl refreshing={refreshing} onRefresh={loadProducts} tintColor={COLORS.primary} />
         }
         renderItem={({ item }) => (
-          <ProductCard 
-            product={item} 
-            onPress={() => navigation.navigate('ProductDetails', { product: item })} 
+          <ProductCard
+            product={item}
+            onPress={() => navigation.navigate('ProductDetails', { product: item })}
           />
         )}
         ListEmptyComponent={
           !refreshing ? (
             <View style={styles.emptyContainer}>
-              <View style={styles.emptyIconContainer}>
-                <Ionicons name="fast-food-outline" size={50} color={COLORS.primary} />
+              <View style={styles.emptyIconRing}>
+                <View style={styles.emptyIconInner}>
+                  <Ionicons name="basket-outline" size={44} color={COLORS.primary} />
+                </View>
               </View>
-              <Text style={styles.emptyText}>Bu kategoride ürün yok</Text>
-              <Text style={styles.emptySubText}>Sağ alttaki (+) butonuna dokunarak yeni ürün ekleyebilirsiniz.</Text>
+              <Text style={styles.emptyTitle}>
+                {selectedCategory === 'Tümü' ? 'Ürün eklemediniz' : `${selectedCategory} ürünü yok`}
+              </Text>
+              <Text style={styles.emptySubText}>
+                Sağ alttaki{' '}
+                <Text style={{ color: COLORS.primary, fontWeight: '700' }}>+</Text>
+                {' '}butonuna dokunarak ürün ekleyebilirsiniz.
+              </Text>
             </View>
           ) : null
         }
       />
 
-      <TouchableOpacity 
-        style={styles.fab} 
+      {/* Banner reklam */}
+      {!isPremium && (
+          <View style={styles.adContainer}>
+          <BannerAd
+            unitId={AD_UNIT_IDS.banner}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+            onAdFailedToLoad={(err) => console.warn('[AdMob] Banner failed:', err.message)}
+          />
+        </View>
+      )}
+
+      {/* FAB */}
+      <Animated.View style={[styles.fabRipple, { transform: [{ scale: fabPulse }] }]} />
+      <TouchableOpacity
+        style={styles.fab}
         onPress={() => navigation.navigate('AddProduct', {})}
-        activeOpacity={0.9}
+        activeOpacity={0.85}
       >
         <Ionicons name="add" size={32} color={COLORS.surface} />
       </TouchableOpacity>
+
     </SafeAreaView>
   );
 };
 
+// ── Mini istatistik chip ──────────────────────────────────────────────────────
+interface StatChipProps {
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  value: number; label: string; color: string; light: string;
+}
+const StatChip: React.FC<StatChipProps> = ({ icon, value, label, color, light }) => (
+  <View style={[chipStyles.wrap, { backgroundColor: light }]}>
+    <Ionicons name={icon} size={16} color={color} />
+    <Text style={[chipStyles.value, { color }]}>{value}</Text>
+    <Text style={[chipStyles.label, { color }]}>{label}</Text>
+  </View>
+);
+const chipStyles = StyleSheet.create({
+  wrap:  { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 8, borderRadius: SIZES.radius_sm + 2 },
+  value: { fontWeight: '900', fontSize: 15 },
+  label: { fontWeight: '600', fontSize: 12, opacity: 0.85 },
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
+  safeArea: { flex: 1, backgroundColor: COLORS.background },
+
   header: {
     paddingHorizontal: SIZES.md,
-    paddingTop: SIZES.lg,
-    paddingBottom: SIZES.md + 4,
+    paddingTop: SIZES.md,
+    paddingBottom: SIZES.md,
+    gap: SIZES.md,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  greeting: {
+    fontSize: 14,
+    color: COLORS.textLight,
+    fontWeight: '600',
+    marginBottom: 2,
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '900',
     color: COLORS.secondary,
     letterSpacing: -1,
   },
-  headerSubtitle: {
-    fontSize: 15,
-    color: COLORS.textLight,
-    marginTop: 6,
-    fontWeight: '500',
+  proButton: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: COLORS.secondary,
+    paddingHorizontal: 12, paddingVertical: 7,
+    borderRadius: 20, gap: 5,
   },
-  summaryContainer: {
-    paddingHorizontal: SIZES.md,
-    marginBottom: SIZES.md,
-    gap: 8,
+  proButtonText: { color: '#FFD700', fontWeight: '800', fontSize: 12 },
+  proBadge: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: COLORS.primary + '18',
+    paddingHorizontal: 12, paddingVertical: 7,
+    borderRadius: 20, gap: 5,
   },
-  summaryBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: SIZES.radius,
-    gap: 8,
-  },
-  summaryText: {
-    fontWeight: '700',
-    fontSize: 14,
-  },
-  listContainer: {
-    paddingHorizontal: SIZES.md,
-    paddingBottom: 110,
-    flexGrow: 1,
-  },
+  proBadgeText: { color: COLORS.primaryLight, fontWeight: '800', fontSize: 12 },
+  statsRow: { flexDirection: 'row', gap: 8 },
+
+  listContainer: { paddingHorizontal: SIZES.md, paddingBottom: 120, flexGrow: 1 },
+
+  // FAB
   fab: {
-    position: 'absolute',
-    bottom: SIZES.xl,
-    right: SIZES.lg,
+    position: 'absolute', bottom: SIZES.xl, right: SIZES.lg,
     backgroundColor: COLORS.primary,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: COLORS.primary,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.4,
-        shadowRadius: 16,
-      },
-      android: {
-        elevation: 8,
-      },
-      web: {
-        boxShadow: `0 8px 24px ${COLORS.primary}66`,
-      }
-    }),
+    width: 62, height: 62, borderRadius: 31,
+    justifyContent: 'center', alignItems: 'center',
+    ...SHADOWS.primary,
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 80,
+  fabRipple: {
+    position: 'absolute', bottom: SIZES.xl, right: SIZES.lg,
+    width: 62, height: 62, borderRadius: 31,
+    backgroundColor: COLORS.primary + '30',
   },
-  emptyIconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: COLORS.primary + '15',
-    justifyContent: 'center',
-    alignItems: 'center',
+
+  // Empty state
+  emptyContainer: { flex: 1, alignItems: 'center', marginTop: 80, paddingHorizontal: SIZES.xl },
+  emptyIconRing: {
+    width: 108, height: 108, borderRadius: 54,
+    backgroundColor: COLORS.primary + '12',
+    justifyContent: 'center', alignItems: 'center',
     marginBottom: SIZES.lg,
   },
-  emptyText: {
-    fontSize: 20,
-    color: COLORS.secondary,
-    fontWeight: '800',
-    marginBottom: SIZES.sm,
+  emptyIconInner: {
+    width: 80, height: 80, borderRadius: 40,
+    backgroundColor: COLORS.primary + '20',
+    justifyContent: 'center', alignItems: 'center',
   },
-  emptySubText: {
-    fontSize: 15,
-    color: COLORS.textLight,
-    textAlign: 'center',
-    fontWeight: '500',
-    lineHeight: 22,
-    paddingHorizontal: SIZES.xl,
+  emptyTitle: { fontSize: 20, color: COLORS.secondary, fontWeight: '800', marginBottom: SIZES.sm, textAlign: 'center' },
+  emptySubText: { fontSize: 15, color: COLORS.textLight, textAlign: 'center', fontWeight: '500', lineHeight: 22 },
+
+  adContainer: {
+    alignItems: 'center', width: '100%',
+    paddingBottom: Platform.OS === 'ios' ? 10 : 0,
+    backgroundColor: COLORS.surface,
   },
 });
 
 export default HomeScreen;
-

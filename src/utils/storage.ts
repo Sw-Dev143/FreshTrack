@@ -39,10 +39,44 @@ export const saveProduct = async (product: Product): Promise<void> => {
 
 export const deleteProduct = async (id: string): Promise<void> => {
   try {
+    // Bildirimleri iptal et
+    const { cancelNotificationsForProduct } = await import('../utils/notifications');
+    await cancelNotificationsForProduct(id);
+
     const products = await getProducts();
     const newProducts = products.filter(p => p.id !== id);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newProducts));
   } catch (e) {
     console.error('Error deleting product', e);
+  }
+};
+
+export interface BarcodeInfo {
+  name: string;
+  category: import('../types').Category;
+  brand?: string;
+  imageUrl?: string;
+}
+
+const BARCODE_STORAGE_KEY = '@raf_omrum_barcodes';
+
+export const getBarcodeInfo = async (barcode: string): Promise<BarcodeInfo | null> => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(BARCODE_STORAGE_KEY);
+    const memory = jsonValue != null ? JSON.parse(jsonValue) : {};
+    return memory[barcode] || null;
+  } catch (e) {
+    return null;
+  }
+};
+
+export const saveBarcodeInfo = async (barcode: string, info: BarcodeInfo): Promise<void> => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(BARCODE_STORAGE_KEY);
+    const memory = jsonValue != null ? JSON.parse(jsonValue) : {};
+    memory[barcode] = info;
+    await AsyncStorage.setItem(BARCODE_STORAGE_KEY, JSON.stringify(memory));
+  } catch (e) {
+    console.error('Error saving barcode info', e);
   }
 };
