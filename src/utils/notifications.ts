@@ -44,6 +44,15 @@ export const setupNotifications = async (): Promise<boolean> => {
       importance: Notifications.AndroidImportance.DEFAULT,
       lightColor: '#4F46E5',
     });
+    await Notifications.setNotificationChannelAsync('medication-reminder', {
+      name: '💊 İlaç Hatırlatıcı',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 400, 200, 400],
+      lightColor: '#10B981',
+      sound: 'default',
+      enableVibrate: true,
+      showBadge: true,
+    });
   }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -189,15 +198,20 @@ export const scheduleDailySummary = async (
   expiredCount: number,
   warningCount: number,
 ): Promise<void> => {
-  if (Platform.OS === 'web' || (expiredCount === 0 && warningCount === 0)) return;
+  if (Platform.OS === 'web') return;
 
-  // Önceki günlük özet varsa iptal et
+  // Önceki günlük özet varsa her koşulda iptal et
   const map = await readMap();
   if (map['__daily__']) {
     await Promise.allSettled(
       map['__daily__'].map(id => Notifications.cancelScheduledNotificationAsync(id))
     );
+    delete map['__daily__'];
+    await writeMap(map);
   }
+
+  // Bildirilecek bir şey yoksa çık
+  if (expiredCount === 0 && warningCount === 0) return;
 
   const trigger = new Date();
   trigger.setDate(trigger.getDate() + 1);
@@ -224,5 +238,91 @@ export const scheduleDailySummary = async (
     await writeMap(map);
   } catch (e) {
     console.warn('[Notifications] Daily summary error:', e);
+  }
+};
+
+// ── İlaç Hatırlatıcıları ─────────────────────────────────────────────────────
+
+import { Medication, DayOfWeek } from '../types';
+
+const MED_NOTIF_PREFIX = '__med__';
+
+/**
+ * Bir ilaç için her gün × her doz saatine tekrar eden bildirim kurar.
+ * days boşsa = her gün (0-6), dolu ise sadece belirtilen günler.
+ * Sınırsız ilaç ve doz saati desteklenir.
+ */
+export const scheduleMedicationReminders = async (med: Medication): Promise<void> => {
+  if (Platform.OS === 'web' || !med.active) return;
+
+  await cancelMedicationReminders(med.id);
+
+  const map = await readMap();
+  const scheduledIds: string[] = [];
+
+  // Hangi günler bildirim gelecek: boşsa 0-6 (her gün)
+  const targetDays: DayOfWeek[] = med.days.length > 0
+    ? med.days
+    : [0, 1, 2, 3, 4, 5, 6];
+
+  for (const time of med.times) {
+    for (const dow of targetDays) {
+      try {
+        const id = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: `💊 ${med.name}`,
+            body: med.dosage
+              ? `${med.dosage} — ilaç alma zamanı!`
+              : 'İlaç alma zamanı!',
+            sound: true,
+            data: { medicationId: med.id, hour: time.hour, minute: time.minute },
+            ...(Platform.OS === 'android' ? { channelId: 'medication-reminder' } : {}),
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
+            repeats: true,
+            weekday: dow + 1, // expo: 1=Pazar … 7=Cumartesi
+            hour: time.hour,
+            minute: time.minute,
+            second: 0,
+          },
+        });
+        scheduledIds.push(id);
+      } catch (e) {
+        console.warn('[Notifications] Med schedule error:', e);
+      }
+    }
+  }
+
+  if (scheduledIds.length > 0) {
+    map[`${MED_NOTIF_PREFIX}${med.id}`] = scheduledIds;
+    await writeMap(map);
+  }
+};
+
+/**
+ * Bir ilacın tüm bildirimlerini iptal eder.
+ */
+export const cancelMedicationReminders = async (medicationId: string): Promise<void> => {
+  if (Platform.OS === 'web') return;
+  const map = await readMap();
+  const key = `${MED_NOTIF_PREFIX}${medicationId}`;
+  const ids = map[key];
+  if (!ids || ids.length === 0) return;
+  await Promise.allSettled(ids.map(id => Notifications.cancelScheduledNotificationAsync(id)));
+  delete map[key];
+  await writeMap(map);
+};
+
+/**
+ * Tüm aktif ilaçların bildirimlerini yeniden kurar. App açılışında çağrılabilir.
+ */
+export const rescheduleAllMedicationReminders = async (
+  medications: Medication[]
+): Promise<void> => {
+  if (Platform.OS === 'web') return;
+  for (const med of medications) {
+    if (med.active) await scheduleMedicationReminders(med);
+    else await cancelMedicationReminders(med.id);
   }
 };

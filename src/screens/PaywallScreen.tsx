@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS, SIZES, SHADOWS } from '../theme';
 import { usePremium } from '../context/PremiumContext';
+import { useTheme } from '../context/ThemeContext';
 
 // ── Feature listesi ──────────────────────────────────────────────────────────
 const FEATURES = [
@@ -16,17 +17,16 @@ const FEATURES = [
   { icon: 'flash'          as const, color: COLORS.warning,  text: 'Öncelikli Destek' },
 ];
 
-// ── Zaten PRO ekranı ─────────────────────────────────────────────────────────
-const AlreadyPro: React.FC<{ onBack: () => void }> = ({ onBack }) => (
-  <SafeAreaView style={styles.safeArea}>
+const AlreadyPro: React.FC<{ onBack: () => void; colors: any }> = ({ onBack, colors }) => (
+  <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
     <View style={styles.proContainer}>
       <View style={[styles.proIconRing, { borderColor: COLORS.primary + '30' }]}>
         <View style={[styles.proIconInner, { backgroundColor: COLORS.primary + '18' }]}>
           <Ionicons name="diamond" size={48} color={COLORS.primary} />
         </View>
       </View>
-      <Text style={styles.proTitle}>Zaten PRO Kullanıcısısınız 🎉</Text>
-      <Text style={styles.proSubtitle}>Tüm premium özelliklerin tadını çıkarıyorsunuz.</Text>
+      <Text style={[styles.proTitle, { color: colors.secondary }]}>Zaten PRO Kullanıcısısınız 🎉</Text>
+      <Text style={[styles.proSubtitle, { color: colors.textLight }]}>Tüm premium özelliklerin tadını çıkarıyorsunuz.</Text>
       <TouchableOpacity style={styles.ctaButton} onPress={onBack} activeOpacity={0.9}>
         <Text style={styles.ctaText}>Harika!</Text>
       </TouchableOpacity>
@@ -34,10 +34,10 @@ const AlreadyPro: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   </SafeAreaView>
 );
 
-// ── Ana bileşen ──────────────────────────────────────────────────────────────
 const PaywallScreen: React.FC = () => {
   const navigation = useNavigation();
   const { isPremium, unlockPremium } = usePremium();
+  const { colors } = useTheme();
 
   // Ikon pulse animasyonu
   const pulse = useRef(new Animated.Value(1)).current;
@@ -83,37 +83,37 @@ const PaywallScreen: React.FC = () => {
     ]);
   };
 
-  if (isPremium) return <AlreadyPro onBack={() => navigation.goBack()} />;
+  if (isPremium) return <AlreadyPro onBack={() => navigation.goBack()} colors={colors} />;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
         {/* Kapat butonu */}
-        <TouchableOpacity style={styles.closeBtn} onPress={() => navigation.goBack()} activeOpacity={0.7}>
-          <Ionicons name="close" size={22} color={COLORS.textLight} />
+        <TouchableOpacity style={[styles.closeBtn, { backgroundColor: colors.border }]} onPress={() => navigation.goBack()} activeOpacity={0.7}>
+          <Ionicons name="close" size={22} color={colors.textLight} />
         </TouchableOpacity>
 
         {/* Hero ikonu */}
         <View style={styles.heroArea}>
           <Animated.View style={[styles.iconRipple, { transform: [{ scale: pulse }] }]} />
-          <View style={styles.iconContainer}>
+          <View style={[styles.iconContainer, { backgroundColor: colors.surface }]}>
             <Ionicons name="diamond" size={56} color="#FFD700" />
           </View>
-          <Text style={styles.title}>Raf Ömrüm PRO</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { color: colors.secondary }]}>Raf Ömrüm PRO</Text>
+          <Text style={[styles.subtitle, { color: colors.textLight }]}>
             Tüm kısıtları kaldırın, sınırsız kullanın.{'\n'}Tek seferlik ödeme — ömür boyu erişim.
           </Text>
         </View>
 
         {/* Feature listesi */}
-        <View style={styles.featuresCard}>
+        <View style={[styles.featuresCard, { backgroundColor: colors.surface }]}>
           {FEATURES.map((f, i) => (
-            <View key={i} style={[styles.featureRow, i < FEATURES.length - 1 && styles.featureDivider]}>
+            <View key={i} style={[styles.featureRow, i < FEATURES.length - 1 && [styles.featureDivider, { borderBottomColor: colors.border }]]}>
               <View style={[styles.featureIconWrap, { backgroundColor: f.color + '18' }]}>
                 <Ionicons name={f.icon} size={22} color={f.color} />
               </View>
-              <Text style={styles.featureText}>{f.text}</Text>
+              <Text style={[styles.featureText, { color: colors.secondary }]}>{f.text}</Text>
               <Ionicons name="checkmark" size={18} color={COLORS.safe} />
             </View>
           ))}
@@ -136,10 +136,10 @@ const PaywallScreen: React.FC = () => {
 
         {/* Geri yükle */}
         <TouchableOpacity style={styles.restoreBtn} onPress={handleRestore} activeOpacity={0.7}>
-          <Text style={styles.restoreText}>Satın Alımı Geri Yükle</Text>
+          <Text style={[styles.restoreText, { color: colors.textLight }]}>Satın Alımı Geri Yükle</Text>
         </TouchableOpacity>
 
-        <Text style={styles.legalText}>
+        <Text style={[styles.legalText, { color: colors.textMuted }]}>
           Satın alma Google Play üzerinden gerçekleşir.{'\n'}
           Koşullar için gizlilik politikamızı inceleyin.
         </Text>
@@ -150,13 +150,12 @@ const PaywallScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: COLORS.background },
+  safeArea: { flex: 1 },
   scrollContent: { padding: SIZES.lg, paddingBottom: 40, alignItems: 'center' },
 
   closeBtn: {
     alignSelf: 'flex-end',
     padding: SIZES.sm,
-    backgroundColor: COLORS.border,
     borderRadius: 20,
     marginBottom: SIZES.sm,
   },
@@ -171,23 +170,22 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     width: 110, height: 110, borderRadius: 55,
-    backgroundColor: COLORS.surface,
     justifyContent: 'center', alignItems: 'center',
     marginBottom: SIZES.lg,
     ...SHADOWS.lg,
   },
   title: {
-    fontSize: 30, fontWeight: '900', color: COLORS.secondary,
+    fontSize: 30, fontWeight: '900',
     letterSpacing: -1, marginBottom: SIZES.sm, textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16, color: COLORS.textLight,
+    fontSize: 16,
     textAlign: 'center', lineHeight: 24,
   },
 
   // Feature listesi
   featuresCard: {
-    width: '100%', backgroundColor: COLORS.surface,
+    width: '100%',
     borderRadius: SIZES.radius_lg, padding: SIZES.md,
     marginBottom: SIZES.xl,
     ...SHADOWS.sm,
@@ -196,12 +194,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: SIZES.md,
     paddingVertical: SIZES.md,
   },
-  featureDivider: { borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  featureDivider: { borderBottomWidth: 1 },
   featureIconWrap: {
     width: 42, height: 42, borderRadius: SIZES.radius_sm,
     justifyContent: 'center', alignItems: 'center',
   },
-  featureText: { flex: 1, fontSize: 15, color: COLORS.secondary, fontWeight: '700' },
+  featureText: { flex: 1, fontSize: 15, fontWeight: '700' },
 
   // Fiyat
   priceRow: {
@@ -223,13 +221,13 @@ const styles = StyleSheet.create({
     marginBottom: SIZES.md,
     ...SHADOWS.primary,
   },
-  ctaText: { color: COLORS.surface, fontSize: 18, fontWeight: '900' },
+  ctaText: { color: '#FFFFFF', fontSize: 18, fontWeight: '900' },
 
   // Geri yükle & yasal
   restoreBtn: { padding: SIZES.sm, marginBottom: SIZES.md },
-  restoreText: { color: COLORS.textLight, fontSize: 14, fontWeight: '600' },
+  restoreText: { fontSize: 14, fontWeight: '600' },
   legalText: {
-    fontSize: 11, color: COLORS.textMuted,
+    fontSize: 11,
     textAlign: 'center', lineHeight: 18,
   },
 
@@ -244,8 +242,8 @@ const styles = StyleSheet.create({
     width: 100, height: 100, borderRadius: 50,
     justifyContent: 'center', alignItems: 'center',
   },
-  proTitle: { fontSize: 24, fontWeight: '900', color: COLORS.secondary, textAlign: 'center', marginBottom: SIZES.sm },
-  proSubtitle: { fontSize: 16, color: COLORS.textLight, textAlign: 'center', marginBottom: SIZES.xl, lineHeight: 24 },
+  proTitle: { fontSize: 24, fontWeight: '900', textAlign: 'center', marginBottom: SIZES.sm },
+  proSubtitle: { fontSize: 16, textAlign: 'center', marginBottom: SIZES.xl, lineHeight: 24 },
 });
 
 export default PaywallScreen;

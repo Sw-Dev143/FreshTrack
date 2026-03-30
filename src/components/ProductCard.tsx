@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Product } from '../types';
 import { COLORS, SIZES, SHADOWS } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 
 interface ProductCardProps {
   product: Product;
@@ -10,91 +11,110 @@ interface ProductCardProps {
 }
 
 const CATEGORY_CONFIG = {
-  'Şarküteri': { icon: 'restaurant' as const,  color: COLORS.deli,     light: COLORS.deliLight },
-  'Eczane':    { icon: 'medkit'    as const,  color: COLORS.pharmacy, light: COLORS.pharmacyLight },
-  'Diğer':     { icon: 'cube'      as const,  color: COLORS.other,    light: COLORS.otherLight },
+  'Şarküteri': { icon: 'restaurant'  as const, emoji: '🥩', color: COLORS.deli,     light: COLORS.deliLight },
+  'Eczane':    { icon: 'medkit'      as const, emoji: '💊', color: COLORS.pharmacy, light: COLORS.pharmacyLight },
+  'Diğer':     { icon: 'cube'        as const, emoji: '📦', color: COLORS.other,    light: COLORS.otherLight },
 };
 
-const MAX_DAYS = 30; // progress bar maksimum referans (30 gün = tam dolu)
+const MAX_DAYS = 30;
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
+  const { colors } = useTheme();
   const pressAnim = useRef(new Animated.Value(1)).current;
 
-  const calculateDaysLeft = (expirationDate: string) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const expDate = new Date(expirationDate);
-    const diffTime = expDate.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  };
+  const today    = new Date(); today.setHours(0, 0, 0, 0);
+  const daysLeft = Math.ceil((new Date(product.expirationDate).getTime() - today.getTime()) / 86400000);
 
-  const daysLeft = calculateDaysLeft(product.expirationDate);
+  const isExpired  = daysLeft < 0;
+  const isCritical = daysLeft >= 0 && daysLeft <= 1;
+  const isWarning  = daysLeft >= 2 && daysLeft <= 7;
 
-  // Status
   const statusColor =
-    daysLeft < 0  ? COLORS.danger  :
-    daysLeft <= 3 ? COLORS.warning : COLORS.safe;
+    isExpired  ? COLORS.danger  :
+    isCritical ? COLORS.danger  :
+    isWarning  ? COLORS.warning : COLORS.safe;
+
   const statusLight =
-    daysLeft < 0  ? COLORS.dangerLight  :
-    daysLeft <= 3 ? COLORS.warningLight : COLORS.safeLight;
+    isExpired  ? COLORS.dangerLight  :
+    isCritical ? COLORS.dangerLight  :
+    isWarning  ? COLORS.warningLight : COLORS.safeLight;
+
   const statusText =
-    daysLeft < 0   ? `${Math.abs(daysLeft)} gün geçti` :
-    daysLeft === 0 ? 'Bugün son!' :
-    daysLeft === 1 ? 'Yarın son!' :
-                     `${daysLeft} gün kaldı`;
+    isExpired          ? `${Math.abs(daysLeft)} gün geçti` :
+    daysLeft === 0     ? 'Bugün son!' :
+    daysLeft === 1     ? 'Yarın son!' :
+    daysLeft <= 7      ? `${daysLeft} gün kaldı` :
+                         `${daysLeft} gün kaldı`;
+
   const statusIcon =
-    daysLeft < 0   ? 'alert-circle'   as const :
-    daysLeft <= 3  ? 'warning'        as const :
-                     'checkmark-circle' as const;
+    isExpired  ? 'alert-circle'   as const :
+    isCritical ? 'warning'        as const :
+    isWarning  ? 'time-outline'   as const :
+                 'checkmark-circle' as const;
 
-  // Progress bar (0-1), negatif 0 olarak göster
-  const progress = daysLeft <= 0 ? 0 : Math.min(daysLeft / MAX_DAYS, 1);
-
+  const progress = isExpired ? 0 : Math.min(daysLeft / MAX_DAYS, 1);
   const catConfig = CATEGORY_CONFIG[product.category] ?? CATEGORY_CONFIG['Diğer'];
 
-  // Press scale animation
   const handlePressIn  = () => Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 40 }).start();
   const handlePressOut = () => Animated.spring(pressAnim, { toValue: 1,    useNativeDriver: true, speed: 20 }).start();
 
   return (
     <Animated.View style={[styles.cardWrapper, { transform: [{ scale: pressAnim }] }]}>
       <TouchableOpacity
-        style={styles.card}
+        style={[
+          styles.card, 
+          { backgroundColor: colors.surface },
+          isExpired && { backgroundColor: COLORS.danger + '08' }
+        ]}
         onPress={onPress}
-        onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={1}
       >
-        {/* Sol renk şeridi */}
-        <View style={[styles.strip, { backgroundColor: catConfig.color }]} />
-
         <View style={styles.body}>
-          {/* Üst satır: isim + kategori ikonu */}
+          {/* ── Üst satır ── */}
           <View style={styles.topRow}>
             <View style={[styles.categoryIconWrap, { backgroundColor: catConfig.light }]}>
-              <Ionicons name={catConfig.icon} size={18} color={catConfig.color} />
+              <Text style={styles.categoryEmoji}>{catConfig.emoji}</Text>
             </View>
-            <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
-            <Ionicons name="chevron-forward" size={18} color={COLORS.textMuted} />
+
+            <Text style={[styles.productName, { color: colors.text }]} numberOfLines={1}>
+              {product.name}
+            </Text>
+
+            <View style={[styles.statusBadge, { backgroundColor: statusLight }]}>
+              <Ionicons name={statusIcon} size={12} color={statusColor} />
+              <Text style={[styles.statusText, { color: statusColor }]}>{statusText}</Text>
+            </View>
           </View>
 
-          {/* Progress bar */}
-          <View style={styles.progressTrack}>
+          {/* ── Progress bar ── */}
+          <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
             <View
               style={[
                 styles.progressFill,
-                { width: `${Math.round(progress * 100)}%` as any, backgroundColor: statusColor },
+                {
+                  width: `${Math.round(progress * 100)}%` as any,
+                  backgroundColor: statusColor,
+                  opacity: isExpired ? 0.4 : 0.85,
+                },
               ]}
             />
           </View>
 
-          {/* Alt satır: kategori adı + durum badge */}
+          {/* ── Alt satır ── */}
           <View style={styles.bottomRow}>
-            <Text style={styles.categoryText}>{product.category}</Text>
-            <View style={[styles.statusBadge, { backgroundColor: statusLight }]}>
-              <Ionicons name={statusIcon} size={13} color={statusColor} />
-              <Text style={[styles.statusText, { color: statusColor }]}>{statusText}</Text>
+            <View style={[styles.categoryPill, { backgroundColor: colors.border + '60' }]}>
+              <Ionicons name={catConfig.icon} size={11} color={catConfig.color} />
+              <Text style={[styles.categoryText, { color: catConfig.color }]}>{product.category}</Text>
             </View>
+
+            <Text style={[styles.dateText, { color: colors.textMuted }]}>
+              {new Date(product.expirationDate).toLocaleDateString('tr-TR', {
+                day: 'numeric', month: 'short', year: 'numeric',
+              })}
+            </Text>
+
+            <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
           </View>
         </View>
       </TouchableOpacity>
@@ -105,74 +125,48 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
 const styles = StyleSheet.create({
   cardWrapper: {
     marginBottom: SIZES.sm + 4,
-    borderRadius: SIZES.radius,
+    borderRadius: SIZES.radius + 2,
     ...SHADOWS.md,
   },
   card: {
-    backgroundColor: COLORS.surface,
-    borderRadius: SIZES.radius,
+    borderRadius: SIZES.radius + 2,
     flexDirection: 'row',
     overflow: 'hidden',
-  },
-  strip: {
-    width: 5,
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   body: {
     flex: 1,
     paddingHorizontal: SIZES.md,
-    paddingVertical: SIZES.md - 2,
+    paddingVertical: 14,
     gap: 10,
   },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
+  topRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   categoryIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: SIZES.radius_sm,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 38, height: 38, borderRadius: SIZES.radius_sm + 2,
+    justifyContent: 'center', alignItems: 'center',
+    flexShrink: 0,
   },
+  categoryEmoji: { fontSize: 20 },
   productName: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '800',
-    color: COLORS.text,
-    letterSpacing: -0.3,
-  },
-  progressTrack: {
-    height: 4,
-    backgroundColor: COLORS.border,
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 2,
-  },
-  bottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  categoryText: {
-    fontSize: 13,
-    color: COLORS.textLight,
-    fontWeight: '600',
+    flex: 1, fontSize: 15, fontWeight: '800', letterSpacing: -0.3,
   },
   statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    paddingHorizontal: 8, paddingVertical: 4,
+    borderRadius: 20, flexShrink: 0,
   },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '700',
+  statusText: { fontSize: 11, fontWeight: '700' },
+  progressTrack: { height: 3, borderRadius: 2, overflow: 'hidden' },
+  progressFill:  { height: '100%', borderRadius: 2 },
+  bottomRow:     { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  categoryPill:  {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20,
+  },
+  categoryText: { fontSize: 11, fontWeight: '700' },
+  dateText: {
+    flex: 1, fontSize: 12, fontWeight: '600', textAlign: 'right',
   },
 });
 

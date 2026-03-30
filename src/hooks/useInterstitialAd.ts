@@ -1,49 +1,56 @@
 import { useEffect, useRef, useCallback } from 'react';
-import {
-  InterstitialAd,
-  AdEventType,
-} from 'react-native-google-mobile-ads';
+import { Platform } from 'react-native';
+import { InterstitialAd, AdEventType } from '../utils/ads';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AD_UNIT_IDS, INTERSTITIAL_EVERY_N } from '../utils/adConfig';
 
 const COUNTER_KEY = '@raf_omrum_add_count';
 
-const interstitial = InterstitialAd.createForAdRequest(AD_UNIT_IDS.interstitial, {
-  requestNonPersonalizedAdsOnly: true,
-});
-
 /**
  * Her N ürün eklemede bir interstitial reklam gösterir.
- * Kullanım: AddProductScreen'de kaydetme sonrası `onProductAdded()` çağır.
+ * Bug fix: InterstitialAd artık useRef ile lazy init edilir —
+ * hot reload / dev modunda birden fazla listener birikmez.
  */
 export function useInterstitialAd(isPremium: boolean) {
-  const isLoaded = useRef(false);
+  const adRef     = useRef<any>(null);
+  const isLoaded  = useRef(false);
   const isShowing = useRef(false);
 
-  // Reklam yükle
+  const getAd = useCallback((): any => {
+    if (Platform.OS === 'web') return null;
+    if (!adRef.current) {
+      adRef.current = InterstitialAd.createForAdRequest(AD_UNIT_IDS.interstitial, {
+        requestNonPersonalizedAdsOnly: true,
+      });
+    }
+    return adRef.current;
+  }, []);
+
   const loadAd = useCallback(() => {
-    if (isPremium || isShowing.current) return;
+    if (isPremium || isShowing.current || Platform.OS === 'web') return;
     try {
-      interstitial.load();
-    } catch (e) {
+      getAd().load();
+    } catch {
       // Sessizce geç
     }
-  }, [isPremium]);
+  }, [isPremium, getAd]);
 
   useEffect(() => {
-    if (isPremium) return;
+    if (isPremium || Platform.OS === 'web') return;
 
-    const unsubLoaded = interstitial.addAdEventListener(AdEventType.LOADED, () => {
+    const ad = getAd();
+
+    const unsubLoaded = ad.addAdEventListener(AdEventType.LOADED, () => {
       isLoaded.current = true;
     });
-    const unsubClosed = interstitial.addAdEventListener(AdEventType.CLOSED, () => {
-      isLoaded.current = false;
+    const unsubClosed = ad.addAdEventListener(AdEventType.CLOSED, () => {
+      isLoaded.current  = false;
       isShowing.current = false;
       loadAd(); // bir sonraki için hazırla
     });
-    const unsubError = interstitial.addAdEventListener(AdEventType.ERROR, () => {
+    const unsubError = ad.addAdEventListener(AdEventType.ERROR, () => {
       isLoaded.current = false;
-      // 10 sn sonra tekrar dene
       setTimeout(loadAd, 10_000);
     });
 
@@ -54,7 +61,7 @@ export function useInterstitialAd(isPremium: boolean) {
       unsubClosed();
       unsubError();
     };
-  }, [isPremium, loadAd]);
+  }, [isPremium, loadAd, getAd]);
 
   /**
    * Ürün eklendiğinde çağır.
@@ -64,18 +71,18 @@ export function useInterstitialAd(isPremium: boolean) {
     if (isPremium) return;
 
     try {
-      const raw = await AsyncStorage.getItem(COUNTER_KEY);
+      const raw   = await AsyncStorage.getItem(COUNTER_KEY);
       const count = (raw ? parseInt(raw, 10) : 0) + 1;
       await AsyncStorage.setItem(COUNTER_KEY, String(count));
 
       if (count % INTERSTITIAL_EVERY_N === 0 && isLoaded.current && !isShowing.current) {
         isShowing.current = true;
-        interstitial.show();
+        getAd().show();
       }
     } catch {
       // AsyncStorage hatası — devam et
     }
-  }, [isPremium]);
+  }, [isPremium, getAd]);
 
   return { onProductAdded, loadAd };
 }

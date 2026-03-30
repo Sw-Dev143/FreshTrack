@@ -4,7 +4,7 @@ import {
   ScrollView, SafeAreaView, Platform, Alert, Modal,
   ActivityIndicator, Animated,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -15,11 +15,19 @@ import { scheduleExpirationNotification } from '../utils/notifications';
 import { usePremium } from '../context/PremiumContext';
 import { useInterstitialAd } from '../hooks/useInterstitialAd';
 import { COLORS, SIZES } from '../theme';
+import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddProduct'>;
+type RoutePropType  = RouteProp<RootStackParamList, 'AddProduct'>;
 
 const CATEGORIES: Category[] = ['Şarküteri', 'Eczane', 'Diğer'];
+
+const CATEGORY_CONFIG = {
+  'Şarküteri': { icon: 'restaurant-outline' , color: COLORS.deli },
+  'Eczane':    { icon: 'medkit-outline', color: COLORS.pharmacy },
+  'Diğer':     { icon: 'cube-outline', color: COLORS.other },
+};
 
 // ── Open Food Facts API ──────────────────────────────────────────────────────
 async function lookupBarcode(barcode: string): Promise<{ name: string; brand?: string } | null> {
@@ -32,7 +40,6 @@ async function lookupBarcode(barcode: string): Promise<{ name: string; brand?: s
     const json = await res.json();
     if (json.status !== 1) return null;
     const p = json.product;
-    // Önce Türkçe isim, yoksa genel isim
     const name: string =
       p.product_name_tr || p.product_name || p.abbreviated_product_name || '';
     const brand: string = p.brands || '';
@@ -80,15 +87,25 @@ const toastStyles = StyleSheet.create({
 // ── Ana bileşen ──────────────────────────────────────────────────────────────
 const AddProductScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const route      = useRoute<RoutePropType>();
   const { isPremium } = usePremium();
   const { onProductAdded } = useInterstitialAd(isPremium);
+  const { colors } = useTheme();
 
-  const [name, setName]         = useState('');
-  const [category, setCategory] = useState<Category>('Şarküteri');
-  const [date, setDate]         = useState(new Date(Date.now() + 86400000 * 3));
+  // Bug 1 Fix: productToEdit param'ı oku
+  const productToEdit = route.params?.productToEdit;
+  const isEditing     = !!productToEdit;
+
+  const [name, setName]         = useState(productToEdit?.name ?? '');
+  const [category, setCategory] = useState<Category>(productToEdit?.category ?? 'Şarküteri');
+  const [date, setDate]         = useState(
+    productToEdit
+      ? new Date(productToEdit.expirationDate)
+      : new Date(Date.now() + 86400000 * 3)
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const [scannedBarcode, setScannedBarcode] = useState('');
+  const [scannedBarcode, setScannedBarcode] = useState(productToEdit?.barcode ?? '');
   const [isScanning, setIsScanning]         = useState(false);
   const [isLookingUp, setIsLookingUp]       = useState(false);
   const [permission, requestPermission]     = useCameraPermissions();
@@ -105,6 +122,15 @@ const AddProductScreen: React.FC = () => {
     setToast({ message, type, visible: true });
     toastTimer.current = setTimeout(() => setToast(t => ({ ...t, visible: false })), 3000);
   }, []);
+
+  const addDuration = (amount: number, unit: 'week' | 'month' | 'year') => {
+    const newDate = new Date();
+    if (unit === 'week') newDate.setDate(newDate.getDate() + amount * 7);
+    else if (unit === 'month') newDate.setMonth(newDate.getMonth() + amount);
+    else if (unit === 'year') newDate.setFullYear(newDate.getFullYear() + amount);
+    setDate(newDate);
+    showToast(`Tarih güncellendi: ${newDate.toLocaleDateString('tr-TR')}`, 'info');
+  };
 
   // Tarayıcı köşe animasyonu
   const scanAnim = useRef(new Animated.Value(0)).current;
@@ -126,7 +152,7 @@ const AddProductScreen: React.FC = () => {
 
   // ── Barkod tarandı ──────────────────────────────────────────────────────
   const handleBarcodeScanned = useCallback(async ({ data }: { type: string; data: string }) => {
-    if (isProcessingRef.current) return;      // çift tarama engeli
+    if (isProcessingRef.current) return;
     isProcessingRef.current = true;
     setIsScanning(false);
 
@@ -134,19 +160,16 @@ const AddProductScreen: React.FC = () => {
     setIsLookingUp(true);
 
     try {
-      // 1) Önce local cache'e bak
       const cached = await getBarcodeInfo(data);
       if (cached) {
         setName(cached.name);
         setCategory(cached.category);
         showToast(`✅ Ürün bulundu: ${cached.name}`, 'success');
         setIsLookingUp(false);
-        // kısa geciktirme sonrası bayrağı serbest bırak
         setTimeout(() => { isProcessingRef.current = false; }, 1500);
         return;
       }
 
-      // 2) Open Food Facts API
       const result = await lookupBarcode(data);
       if (result) {
         const productName = result.brand ? `${result.brand} ${result.name}` : result.name;
@@ -183,22 +206,31 @@ const AddProductScreen: React.FC = () => {
       Alert.alert('Eksik Bilgi', 'Lütfen ürün adı giriniz.');
       return;
     }
-    const newProduct = {
-      id: Date.now().toString(),
-      name: name.trim(),
+
+    const product = {
+      // Bug 1 Fix: düzenleme modunda orijinal id ve createdAt korunur
+      id:             isEditing ? productToEdit!.id        : Date.now().toString(),
+      createdAt:      isEditing ? productToEdit!.createdAt : new Date().toISOString(),
+      name:           name.trim(),
       category,
       expirationDate: date.toISOString().split('T')[0],
-      createdAt: new Date().toISOString(),
-      barcode: scannedBarcode || undefined,
+      barcode:        scannedBarcode || undefined,
     };
+
     if (scannedBarcode) {
-      await saveBarcodeInfo(scannedBarcode, { name: newProduct.name, category: newProduct.category });
+      await saveBarcodeInfo(scannedBarcode, { name: product.name, category: product.category });
     }
-    await saveProduct(newProduct);
-    await scheduleExpirationNotification(newProduct.id, newProduct.name, newProduct.expirationDate);
-    await onProductAdded(); // interstitial sayacını artır
+    await saveProduct(product);
+    await scheduleExpirationNotification(product.id, product.name, product.expirationDate);
+
+    if (!isEditing) {
+      await onProductAdded(); // interstitial sadece yeni ürün eklemede
+    }
     navigation.goBack();
   };
+
+  // Bug 2 Fix: minimum tarih string (web için)
+  const todayString = new Date().toISOString().split('T')[0];
 
   const onDateChange = (_: any, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
@@ -208,19 +240,19 @@ const AddProductScreen: React.FC = () => {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.container}>
 
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
           {/* Ürün Adı */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Ürün Adı</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="pricetag-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+            <Text style={[styles.label, { color: colors.secondary }]}>Ürün Adı</Text>
+            <View style={[styles.inputContainer, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+              <Ionicons name="pricetag-outline" size={20} color={colors.textLight} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text }]}
                 placeholder="Örn: Aspirin, Kaşar Peyniri"
-                placeholderTextColor="#94A3B8"
+                placeholderTextColor={colors.textMuted}
                 value={name}
                 onChangeText={setName}
                 maxLength={60}
@@ -235,39 +267,56 @@ const AddProductScreen: React.FC = () => {
             {scannedBarcode ? (
               <View style={styles.barcodeTag}>
                 <Ionicons name="checkmark-circle" size={14} color={COLORS.primary} />
-                <Text style={styles.barcodeHintText}>Barkod: {scannedBarcode}</Text>
+                <Text style={[styles.barcodeHintText, { color: COLORS.primary }]}>Barkod: {scannedBarcode}</Text>
               </View>
             ) : null}
           </View>
 
           {/* Kategori */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Kategori</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>Kategori</Text>
             <View style={styles.categoryContainer}>
-              {CATEGORIES.map((cat) => (
-                <TouchableOpacity
-                  key={cat}
-                  style={[styles.categoryBtn, category === cat && styles.categoryBtnActive]}
-                  onPress={() => setCategory(cat)}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.categoryBtnText, category === cat && styles.categoryBtnTextActive]}>
-                    {cat}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {CATEGORIES.map((cat) => {
+                const config = CATEGORY_CONFIG[cat];
+                const isActive = category === cat;
+                return (
+                  <TouchableOpacity
+                    key={cat}
+                    style={[
+                      styles.categoryBtn, 
+                      { backgroundColor: colors.surfaceAlt, borderColor: colors.border }, 
+                      isActive && { backgroundColor: config.color + '15', borderColor: config.color }
+                    ]}
+                    onPress={() => setCategory(cat)}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons 
+                      name={config.icon as any} 
+                      size={20} 
+                      color={isActive ? config.color : colors.textLight} 
+                    />
+                    <Text style={[
+                      styles.categoryBtnText, 
+                      { color: colors.textLight }, 
+                      isActive && { color: config.color, fontWeight: '800' }
+                    ]}>
+                      {cat}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </View>
 
           {/* Tarih */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Son Kullanma Tarihi</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>Son Kullanma Tarihi</Text>
             {Platform.OS === 'web' ? (
-              <View style={styles.inputContainer}>
-                <Ionicons name="calendar-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+              <View style={[styles.inputContainer, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
+                <Ionicons name="calendar-outline" size={20} color={colors.textLight} style={styles.inputIcon} />
                 <TextInput
-                  {...({ type: 'date' } as any)}
-                  style={styles.datePickerBtnWeb}
+                  {...({ type: 'date', min: todayString } as any)}
+                  style={[styles.datePickerBtnWeb, { color: colors.text }]}
                   value={date.toISOString().split('T')[0]}
                   onChangeText={(text) => {
                     if (text) { const d = new Date(text); if (!isNaN(d.getTime())) setDate(d); }
@@ -275,13 +324,13 @@ const AddProductScreen: React.FC = () => {
                 />
               </View>
             ) : Platform.OS === 'android' ? (
-              <TouchableOpacity style={styles.inputContainer} onPress={() => setShowDatePicker(true)} activeOpacity={0.8}>
+              <TouchableOpacity style={[styles.inputContainer, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]} onPress={() => setShowDatePicker(true)} activeOpacity={0.8}>
                 <Ionicons name="calendar-outline" size={20} color={COLORS.primary} style={styles.inputIcon} />
-                <Text style={styles.dateText}>{date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</Text>
+                <Text style={[styles.dateText, { color: colors.text }]}>{date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</Text>
               </TouchableOpacity>
             ) : null}
             {Platform.OS !== 'web' && (showDatePicker || Platform.OS === 'ios') && (
-              <View style={Platform.OS === 'ios' ? styles.iosDatePickerContainer : undefined}>
+              <View style={Platform.OS === 'ios' ? [styles.iosDatePickerContainer, { backgroundColor: colors.surfaceAlt }] : undefined}>
                 <DateTimePicker
                   testID="dateTimePicker"
                   value={date}
@@ -293,12 +342,20 @@ const AddProductScreen: React.FC = () => {
                 />
               </View>
             )}
+
+            {/* Hızlı Seçim Butonları */}
+            <View style={styles.quickDateContainer}>
+              <QuickDateBtn label="+1 Hafta" onPress={() => addDuration(1, 'week')} />
+              <QuickDateBtn label="+1 Ay"    onPress={() => addDuration(1, 'month')} />
+              <QuickDateBtn label="+6 Ay"    onPress={() => addDuration(6, 'month')} />
+              <QuickDateBtn label="+1 Yıl"   onPress={() => addDuration(1, 'year')} />
+            </View>
           </View>
         </View>
 
         {/* Kaydet butonu */}
         <TouchableOpacity style={styles.saveBtn} onPress={handleSave} activeOpacity={0.9}>
-          <Text style={styles.saveBtnText}>Kaydet</Text>
+          <Text style={styles.saveBtnText}>{isEditing ? 'Güncelle' : 'Kaydet'}</Text>
           <Ionicons name="checkmark-circle" size={20} color={COLORS.surface} />
         </TouchableOpacity>
       </ScrollView>
@@ -353,16 +410,29 @@ const AddProductScreen: React.FC = () => {
   );
 };
 
-const CORNER_SIZE = 24;
+// ── Yardımcı Bileşenler ──────────────────────────────────────────────────────
+const QuickDateBtn: React.FC<{ label: string; onPress: () => void }> = ({ label, onPress }) => {
+  const { colors } = useTheme();
+  return (
+    <TouchableOpacity 
+      style={[styles.quickDateBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]} 
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Text style={[styles.quickDateText, { color: colors.secondary }]}>{label}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const CORNER_SIZE      = 24;
 const CORNER_THICKNESS = 3;
-const FRAME_WIDTH = 260;
-const FRAME_HEIGHT = 160;
+const FRAME_WIDTH      = 260;
+const FRAME_HEIGHT     = 160;
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: COLORS.background },
+  safeArea:  { flex: 1 },
   container: { padding: SIZES.md },
   card: {
-    backgroundColor: COLORS.surface,
     borderRadius: SIZES.radius + 4,
     padding: SIZES.lg,
     ...Platform.select({
@@ -371,42 +441,51 @@ const styles = StyleSheet.create({
       web:     { boxShadow: '0 8px 24px rgba(30, 41, 59, 0.06)' },
     }),
   },
-  inputGroup: { marginBottom: SIZES.xl },
-  label: { fontSize: 15, fontWeight: '700', color: COLORS.secondary, marginBottom: SIZES.sm, marginLeft: 4 },
+  inputGroup:     { marginBottom: SIZES.xl },
+  label:          { fontSize: 15, fontWeight: '700', marginBottom: SIZES.sm, marginLeft: 4 },
   inputContainer: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#F8FAFC', borderRadius: SIZES.radius,
-    borderWidth: 1, borderColor: '#E2E8F0', overflow: 'hidden',
+    borderRadius: SIZES.radius,
+    borderWidth: 1, overflow: 'hidden',
   },
-  inputIcon: { marginLeft: SIZES.md, marginRight: 8 },
-  input: { flex: 1, paddingVertical: 16, paddingRight: SIZES.md, fontSize: 16, color: '#0F172A', fontWeight: '500' },
-  scanButton: { padding: 12, borderLeftWidth: 1, borderLeftColor: '#E2E8F0', backgroundColor: '#F1F5F9', minWidth: 48, alignItems: 'center' },
-  barcodeTag: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6, marginLeft: 4 },
-  barcodeHintText: { fontSize: 12, color: COLORS.primary, fontWeight: '600' },
+  inputIcon:   { marginLeft: SIZES.md, marginRight: 8 },
+  input:       { flex: 1, paddingVertical: 16, paddingRight: SIZES.md, fontSize: 16, fontWeight: '500' },
+  scanButton:  { padding: 12, borderLeftWidth: 1, borderLeftColor: COLORS.border, backgroundColor: COLORS.surfaceAlt, minWidth: 48, alignItems: 'center' },
+  barcodeTag:  { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6, marginLeft: 4 },
+  barcodeHintText: { fontSize: 12, fontWeight: '600' },
+
   categoryContainer: { flexDirection: 'row', gap: 12 },
   categoryBtn: {
-    flex: 1, backgroundColor: '#F8FAFC', paddingVertical: 14,
-    borderRadius: 20, alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0',
+    flex: 1, paddingVertical: 12,
+    borderRadius: 16, alignItems: 'center', borderWidth: 1.5,
+    gap: 6,
   },
-  categoryBtnActive: {
-    backgroundColor: COLORS.primary, borderColor: COLORS.primary,
-    ...Platform.select({
-      ios:     { shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
-      android: { elevation: 4 },
-      web:     { boxShadow: `0 4px 12px ${COLORS.primary}40` },
-    }),
-  },
-  categoryBtnText: { color: COLORS.textLight, fontWeight: '600', fontSize: 14 },
-  categoryBtnTextActive: { color: COLORS.surface, fontWeight: '800' },
+  categoryBtnText: { color: COLORS.textLight, fontWeight: '600', fontSize: 13 },
+
   datePickerBtnWeb: {
     flex: 1, paddingVertical: 14, paddingRight: SIZES.md,
-    fontSize: 16, borderWidth: 0, backgroundColor: 'transparent', color: '#0F172A', fontWeight: '500',
+    fontSize: 16, borderWidth: 0, backgroundColor: 'transparent', fontWeight: '500',
   },
-  dateText: { flex: 1, paddingVertical: 16, fontSize: 16, color: '#0F172A', fontWeight: '600' },
+  dateText: { flex: 1, paddingVertical: 16, fontSize: 16, fontWeight: '600' },
   iosDatePickerContainer: {
     marginTop: SIZES.sm, backgroundColor: '#F8FAFC',
     borderRadius: SIZES.radius, overflow: 'hidden', padding: 10,
   },
+  quickDateContainer: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    gap: 8, 
+    marginTop: SIZES.md 
+  },
+  quickDateBtn: { 
+    paddingHorizontal: 12, 
+    paddingVertical: 8, 
+    borderRadius: 12, 
+    borderWidth: 1 
+  },
+  quickDateText: { fontSize: 13, fontWeight: '700' },
+
+
   saveBtn: {
     flexDirection: 'row', backgroundColor: COLORS.primary,
     paddingVertical: 16, borderRadius: SIZES.radius,
@@ -417,7 +496,7 @@ const styles = StyleSheet.create({
       web:     { boxShadow: `0 8px 20px ${COLORS.primary}50` },
     }),
   },
-  saveBtnText: { color: COLORS.surface, fontSize: 18, fontWeight: '800' },
+  saveBtnText: { color: '#FFFFFF', fontSize: 18, fontWeight: '800' },
 
   // ── Kamera modal ────────────────────────────────────────────────────────
   cameraModalContainer: { flex: 1, backgroundColor: '#000' },
@@ -428,34 +507,29 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 0, width: '100%', zIndex: 10,
   },
   cameraTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
-  closeBtn: { padding: 4 },
-  cameraArea: { flex: 1 },
+  closeBtn:    { padding: 4 },
+  cameraArea:  { flex: 1 },
 
-  // overlay parçaları
   overlayTop:    { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' },
   overlayRow:    { flexDirection: 'row' },
   overlaySide:   { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' },
   overlayBottom: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', paddingTop: 20 },
   scanHint:      { color: 'rgba(255,255,255,0.85)', fontSize: 14, fontWeight: '600' },
 
-  // tarama çerçevesi
   scanFrame: {
     width: FRAME_WIDTH, height: FRAME_HEIGHT,
     justifyContent: 'center', alignItems: 'center',
     overflow: 'hidden',
   },
-
-  // köşe imleri
   corner: {
     position: 'absolute', width: CORNER_SIZE, height: CORNER_SIZE,
     borderColor: '#4ade80',
   },
-  cornerTL: { top: 0, left: 0, borderTopWidth: CORNER_THICKNESS, borderLeftWidth: CORNER_THICKNESS, borderTopLeftRadius: 4 },
-  cornerTR: { top: 0, right: 0, borderTopWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderTopRightRadius: 4 },
-  cornerBL: { bottom: 0, left: 0, borderBottomWidth: CORNER_THICKNESS, borderLeftWidth: CORNER_THICKNESS, borderBottomLeftRadius: 4 },
-  cornerBR: { bottom: 0, right: 0, borderBottomWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderBottomRightRadius: 4 },
+  cornerTL: { top: 0,    left: 0,   borderTopWidth:    CORNER_THICKNESS, borderLeftWidth:  CORNER_THICKNESS, borderTopLeftRadius:     4 },
+  cornerTR: { top: 0,    right: 0,  borderTopWidth:    CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderTopRightRadius:    4 },
+  cornerBL: { bottom: 0, left: 0,   borderBottomWidth: CORNER_THICKNESS, borderLeftWidth:  CORNER_THICKNESS, borderBottomLeftRadius:  4 },
+  cornerBR: { bottom: 0, right: 0,  borderBottomWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderBottomRightRadius: 4 },
 
-  // tarama çizgisi
   scanLine: {
     position: 'absolute', left: 8, right: 8, height: 2,
     backgroundColor: '#4ade80',

@@ -3,26 +3,30 @@ import { Product } from '../types';
 
 const STORAGE_KEY = '@raf_omrum_products';
 
-export const getProducts = async (): Promise<Product[]> => {
+/** Raw (unsorted) read — internal use only */
+const getRawProducts = async (): Promise<Product[]> => {
   try {
     const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-    const products: Product[] = jsonValue != null ? JSON.parse(jsonValue) : [];
-    
-    // Sort products by closest expiration date
-    return products.sort((a, b) => {
-      const dateA = new Date(a.expirationDate).getTime();
-      const dateB = new Date(b.expirationDate).getTime();
-      return dateA - dateB;
-    });
+    return jsonValue != null ? JSON.parse(jsonValue) : [];
   } catch (e) {
     console.error('Error reading products', e);
     return [];
   }
 };
 
+export const getProducts = async (): Promise<Product[]> => {
+  const products = await getRawProducts();
+  // Sort products by closest expiration date
+  return products.sort((a, b) => {
+    const dateA = new Date(a.expirationDate).getTime();
+    const dateB = new Date(b.expirationDate).getTime();
+    return dateA - dateB;
+  });
+};
+
 export const saveProduct = async (product: Product): Promise<void> => {
   try {
-    const products = await getProducts();
+    const products = await getRawProducts(); // Bug fix: use raw read, no unnecessary sort
     // Check if updating or adding new
     const existingIndex = products.findIndex(p => p.id === product.id);
     if (existingIndex >= 0) {
@@ -30,7 +34,6 @@ export const saveProduct = async (product: Product): Promise<void> => {
     } else {
       products.push(product);
     }
-    
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(products));
   } catch (e) {
     console.error('Error saving product', e);

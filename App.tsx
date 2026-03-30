@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 
@@ -8,26 +8,35 @@ import HomeScreen from './src/screens/HomeScreen';
 import AddProductScreen from './src/screens/AddProductScreen';
 import ProductDetailsScreen from './src/screens/ProductDetailsScreen';
 import PaywallScreen from './src/screens/PaywallScreen';
-import { setupNotifications, rescheduleAllNotifications, scheduleDailySummary } from './src/utils/notifications';
+import MedicationsScreen from './src/screens/MedicationsScreen';
+import AddMedicationScreen from './src/screens/AddMedicationScreen';
+import MedicationStatsScreen from './src/screens/MedicationStatsScreen';
+import {
+  setupNotifications,
+  rescheduleAllNotifications,
+  scheduleDailySummary,
+  rescheduleAllMedicationReminders,
+} from './src/utils/notifications';
 import { getProducts } from './src/utils/storage';
-import { COLORS } from './src/theme';
+import { getMedications } from './src/utils/medicationStorage';
 import { PremiumProvider } from './src/context/PremiumContext';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export default function App() {
+// ── Navigation (useTheme için Provider içinde olmalı) ─────────────────────────
+function AppNavigator() {
+  const { colors, isDark } = useTheme();
+
   useEffect(() => {
     const init = async () => {
       const granted = await setupNotifications();
       if (!granted) return;
 
-      // Ürünleri yükle ve bildirimleri güncelle
+      // Ürün bildirimleri
       const products = await getProducts();
-
-      // Tüm bildirimleri yeniden schedule et (uygulama güncellendi vs.)
       await rescheduleAllNotifications(products);
 
-      // Günlük özet bildirimi kur
       const today = new Date(); today.setHours(0, 0, 0, 0);
       let expired = 0; let warning = 0;
       for (const p of products) {
@@ -36,20 +45,45 @@ export default function App() {
         else if (d <= 3) warning++;
       }
       await scheduleDailySummary(expired, warning);
-    };
 
+      // İlaç bildirimleri
+      const medications = await getMedications();
+      await rescheduleAllMedicationReminders(medications);
+    };
     init();
   }, []);
 
+  const navTheme = isDark
+    ? {
+        ...DarkTheme,
+        colors: {
+          ...DarkTheme.colors,
+          background: colors.background,
+          card: colors.surface,
+          text: colors.text,
+          border: colors.border,
+        },
+      }
+    : {
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          background: colors.background,
+          card: colors.surface,
+          text: colors.text,
+          border: colors.border,
+        },
+      };
+
   return (
-    <PremiumProvider>
-      <NavigationContainer>
-        <StatusBar style="dark" />
+    <>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <NavigationContainer theme={navTheme}>
         <Stack.Navigator
           initialRouteName="Home"
           screenOptions={{
-            headerStyle: { backgroundColor: COLORS.surface },
-            headerTintColor: COLORS.secondary,
+            headerStyle: { backgroundColor: colors.surface },
+            headerTintColor: colors.secondary,
             headerShadowVisible: false,
           }}
         >
@@ -73,8 +107,36 @@ export default function App() {
             component={PaywallScreen}
             options={{ presentation: 'modal', headerShown: false }}
           />
+          <Stack.Screen
+            name="Medications"
+            component={MedicationsScreen}
+            options={{ title: '💊 İlaç Hatırlatıcı' }}
+          />
+          <Stack.Screen
+            name="AddMedication"
+            component={AddMedicationScreen}
+            options={({ route }) => ({
+              title: route.params?.medicationToEdit ? 'İlacı Düzenle' : 'Yeni İlaç Ekle',
+            })}
+          />
+          <Stack.Screen
+            name="MedicationStats"
+            component={MedicationStatsScreen}
+            options={{ title: '📊 İlaç İstatistikleri' }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
+    </>
+  );
+}
+
+// ── Root ──────────────────────────────────────────────────────────────────────
+export default function App() {
+  return (
+    <PremiumProvider>
+      <ThemeProvider>
+        <AppNavigator />
+      </ThemeProvider>
     </PremiumProvider>
   );
 }
