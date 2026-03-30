@@ -11,6 +11,8 @@ import PaywallScreen from './src/screens/PaywallScreen';
 import MedicationsScreen from './src/screens/MedicationsScreen';
 import AddMedicationScreen from './src/screens/AddMedicationScreen';
 import MedicationStatsScreen from './src/screens/MedicationStatsScreen';
+import OnboardingScreen from './src/screens/OnboardingScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   setupNotifications,
   rescheduleAllNotifications,
@@ -27,6 +29,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 // ── Navigation (useTheme için Provider içinde olmalı) ─────────────────────────
 function AppNavigator() {
   const { colors, isDark } = useTheme();
+  const [isReady, setIsReady] = React.useState(false);
+  const [initialRoute, setInitialRoute] = React.useState<'Home' | 'Onboarding'>('Home');
 
   useEffect(() => {
     const init = async () => {
@@ -49,9 +53,17 @@ function AppNavigator() {
       // İlaç bildirimleri
       const medications = await getMedications();
       await rescheduleAllMedicationReminders(medications);
+
+      const hasSeenOnboarding = await AsyncStorage.getItem('@raf_omrum_has_seen_onboarding');
+      if (hasSeenOnboarding !== 'true') {
+        setInitialRoute('Onboarding');
+      }
+      setIsReady(true);
     };
     init();
   }, []);
+
+  if (!isReady) return null;
 
   const navTheme = isDark
     ? {
@@ -80,13 +92,18 @@ function AppNavigator() {
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <NavigationContainer theme={navTheme}>
         <Stack.Navigator
-          initialRouteName="Home"
+          initialRouteName={initialRoute}
           screenOptions={{
             headerStyle: { backgroundColor: colors.surface },
             headerTintColor: colors.secondary,
             headerShadowVisible: false,
           }}
         >
+          <Stack.Screen
+            name="Onboarding"
+            component={OnboardingScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen
             name="Home"
             component={HomeScreen}

@@ -12,6 +12,8 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Category, RootStackParamList } from '../types';
 import { saveProduct, getBarcodeInfo, saveBarcodeInfo } from '../utils/storage';
 import { scheduleExpirationNotification } from '../utils/notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as StoreReview from 'expo-store-review';
 import { usePremium } from '../context/PremiumContext';
 import { useInterstitialAd } from '../hooks/useInterstitialAd';
 import { COLORS, SIZES } from '../theme';
@@ -225,6 +227,19 @@ const AddProductScreen: React.FC = () => {
 
     if (!isEditing) {
       await onProductAdded(); // interstitial sadece yeni ürün eklemede
+      
+      // In-App Review Trigger
+      try {
+        const countStr = await AsyncStorage.getItem('@raf_omrum_add_count');
+        const count = countStr ? parseInt(countStr, 10) + 1 : 1;
+        await AsyncStorage.setItem('@raf_omrum_add_count', count.toString());
+        
+        if ((count === 3 || count === 10) && await StoreReview.hasAction()) {
+          setTimeout(() => StoreReview.requestReview(), 1000);
+        }
+      } catch (e) {
+        console.error('In-app review err:', e);
+      }
     }
     navigation.goBack();
   };

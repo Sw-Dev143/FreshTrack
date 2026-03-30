@@ -17,6 +17,8 @@ import CategoryFilter from '../components/CategoryFilter';
 import { usePremium } from '../context/PremiumContext';
 import { BannerAd, BannerAdSize } from '../utils/ads';
 import { AD_UNIT_IDS } from '../utils/adConfig';
+import { exportData, importData } from '../utils/backup';
+import { Alert } from 'react-native';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -118,6 +120,18 @@ const HomeScreen: React.FC = () => {
     return 'İyi akşamlar 🌙';
   })();
 
+  const handleSettings = () => {
+    Alert.alert(
+      'Veri Yönetimi',
+      'Uygulama verilerinizi (İlaç, Ürün vb.) JSON olarak cihazınıza kaydedebilir veya yükleyebilirsiniz.',
+      [
+        { text: 'Dışa Aktar (Yedekle)', onPress: () => exportData() },
+        { text: 'İçe Aktar (Ger Yükle)', onPress: () => importData(loadProducts) },
+        { text: 'İptal', style: 'cancel' }
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
 
@@ -129,6 +143,19 @@ const HomeScreen: React.FC = () => {
             <Text style={[styles.headerTitle, { color: colors.secondary }]}>Raf Ömrüm</Text>
           </View>
           <View style={styles.headerButtons}>
+            {/* Settings / Backup */}
+            <TouchableOpacity
+              style={[styles.iconButton, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+              onPress={handleSettings}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons
+                name="settings-outline"
+                size={18}
+                color={colors.textLight}
+              />
+            </TouchableOpacity>
+
             {/* Dark Mode Toggle */}
             <TouchableOpacity
               style={[styles.iconButton, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}

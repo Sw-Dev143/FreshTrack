@@ -39,6 +39,7 @@ export interface Product {
 }
 
 export type RootStackParamList = {
+  Onboarding: undefined;
   Home: undefined;
   AddProduct: { productToEdit?: import('./types').Product | undefined } | undefined;
   ProductDetails: { product: import('./types').Product };
