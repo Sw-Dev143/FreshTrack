@@ -1,8 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useCallback, useRef } from 'react';
-import {
-  View, StyleSheet, FlatList, SafeAreaView, TouchableOpacity,
-  Text, RefreshControl, Platform, Animated, TextInput,
-} from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Text, RefreshControl, Platform, Animated, TextInput,  } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,7 +15,7 @@ import CategoryFilter from '../components/CategoryFilter';
 import { usePremium } from '../context/PremiumContext';
 import { BannerAd, BannerAdSize } from '../utils/ads';
 import { AD_UNIT_IDS } from '../utils/adConfig';
-import { exportData, importData } from '../utils/backup';
+import { exportBackup, importBackup } from '../utils/backup';
 import { Alert } from 'react-native';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -125,8 +123,8 @@ const HomeScreen: React.FC = () => {
       'Veri Yönetimi',
       'Uygulama verilerinizi (İlaç, Ürün vb.) JSON olarak cihazınıza kaydedebilir veya yükleyebilirsiniz.',
       [
-        { text: 'Dışa Aktar (Yedekle)', onPress: () => exportData() },
-        { text: 'İçe Aktar (Ger Yükle)', onPress: () => importData(loadProducts) },
+        { text: 'Dışa Aktar (Yedekle)', onPress: () => exportBackup() },
+        { text: 'İçe Aktar (Ger Yükle)', onPress: () => importBackup(loadProducts) },
         { text: 'İptal', style: 'cancel' }
       ]
     );

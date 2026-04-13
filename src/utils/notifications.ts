@@ -13,8 +13,6 @@ export const setupNotifications = async (): Promise<boolean> => {
       shouldShowAlert: true,
       shouldPlaySound: true,
       shouldSetBadge: true,
-      shouldShowBanner: true,
-      shouldShowList: true,
     }),
   });
 

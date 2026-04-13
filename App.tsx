@@ -2,6 +2,10 @@ import React, { useEffect } from 'react';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 import { RootStackParamList } from './src/types';
 import HomeScreen from './src/screens/HomeScreen';
@@ -23,6 +27,7 @@ import { getProducts } from './src/utils/storage';
 import { getMedications } from './src/utils/medicationStorage';
 import { PremiumProvider } from './src/context/PremiumContext';
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import { incrementLaunchCount, requestReviewIfAppropriate } from './src/utils/rating';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -33,36 +38,80 @@ function AppNavigator() {
   const [initialRoute, setInitialRoute] = React.useState<'Home' | 'Onboarding'>('Home');
 
   useEffect(() => {
+    let cancelled = false;
+
+    // 10 saniye güvenlik zamanlayıcısı — bildirim kurulumu takılsa bile uygulama açılır
+    const safetyTimer = setTimeout(() => {
+      if (!cancelled) {
+        console.warn('[App] Safety timeout: forcing app ready');
+        setIsReady(true);
+      }
+    }, 10000);
+
     const init = async () => {
-      const granted = await setupNotifications();
-      if (!granted) return;
+      // ── 1. Bildirimler (hata olsa bile devam et) ──────────────────────────
+      try {
+        const granted = await setupNotifications();
+        if (granted) {
+          const products = await getProducts();
+          await rescheduleAllNotifications(products);
 
-      // Ürün bildirimleri
-      const products = await getProducts();
-      await rescheduleAllNotifications(products);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          let expired = 0;
+          let warning = 0;
+          for (const p of products) {
+            const d = Math.ceil(
+              (new Date(p.expirationDate).getTime() - today.getTime()) / 86400000
+            );
+            if (d < 0) expired++;
+            else if (d <= 3) warning++;
+          }
+          await scheduleDailySummary(expired, warning);
 
-      const today = new Date(); today.setHours(0, 0, 0, 0);
-      let expired = 0; let warning = 0;
-      for (const p of products) {
-        const d = Math.ceil((new Date(p.expirationDate).getTime() - today.getTime()) / 86400000);
-        if (d < 0) expired++;
-        else if (d <= 3) warning++;
+          const medications = await getMedications();
+          await rescheduleAllMedicationReminders(medications);
+        }
+      } catch (error) {
+        console.warn('[App] Notification init error:', error);
       }
-      await scheduleDailySummary(expired, warning);
 
-      // İlaç bildirimleri
-      const medications = await getMedications();
-      await rescheduleAllMedicationReminders(medications);
-
-      const hasSeenOnboarding = await AsyncStorage.getItem('@raf_omrum_has_seen_onboarding');
-      if (hasSeenOnboarding !== 'true') {
-        setInitialRoute('Onboarding');
+      // ── 2. Onboarding kontrolü (her durumda çalışır) ──────────────────────
+      try {
+        const hasSeenOnboarding = await AsyncStorage.getItem('@raf_omrum_has_seen_onboarding');
+        if (hasSeenOnboarding !== 'true') {
+          setInitialRoute('Onboarding');
+        } else {
+          await incrementLaunchCount();
+          setTimeout(() => requestReviewIfAppropriate(false), 2000);
+        }
+      } catch (storageErr) {
+        console.warn('[App] AsyncStorage GET error:', storageErr);
       }
-      setIsReady(true);
+
+      // ── 3. Hazır ──────────────────────────────────────────────────────────
+      if (!cancelled) {
+        clearTimeout(safetyTimer);
+        setIsReady(true);
+      }
     };
+
     init();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(safetyTimer);
+    };
   }, []);
 
+  // Splash Screen'i gizle
+  useEffect(() => {
+    if (isReady) {
+      SplashScreen.hideAsync().catch(console.warn);
+    }
+  }, [isReady]);
+
+  // Hazır değilken SplashScreen görünür — beyaz ekran yok
   if (!isReady) return null;
 
   const navTheme = isDark
@@ -150,10 +199,12 @@ function AppNavigator() {
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function App() {
   return (
-    <PremiumProvider>
-      <ThemeProvider>
-        <AppNavigator />
-      </ThemeProvider>
-    </PremiumProvider>
+    <SafeAreaProvider>
+      <PremiumProvider>
+        <ThemeProvider>
+          <AppNavigator />
+        </ThemeProvider>
+      </PremiumProvider>
+    </SafeAreaProvider>
   );
 }

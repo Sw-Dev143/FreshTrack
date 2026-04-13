@@ -1,8 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, TouchableOpacity, Alert,
-  SafeAreaView, Platform, ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Platform, ScrollView,  } from 'react-native';
 import { useRoute, useNavigation, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,7 +15,7 @@ import { addToShoppingList, removeFromShoppingList, getShoppingList } from '../u
 type DetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 type NavigationProp   = NativeStackNavigationProp<RootStackParamList, 'ProductDetails'>;
 
-const CATEGORY_CONFIG = {
+const CATEGORY_CONFIG: Record<string, { icon: 'restaurant' | 'medkit' | 'cube'; color: string; light: string }> = {
   'Şarküteri': { icon: 'restaurant' as const, color: COLORS.deli,     light: COLORS.deliLight },
   'Eczane':    { icon: 'medkit'    as const,  color: COLORS.pharmacy, light: COLORS.pharmacyLight },
   'Diğer':     { icon: 'cube'      as const,  color: COLORS.other,    light: COLORS.otherLight },

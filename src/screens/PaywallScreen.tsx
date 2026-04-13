@@ -1,8 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useRef, useEffect } from 'react';
-import {
-  View, Text, StyleSheet, TouchableOpacity, SafeAreaView,
-  Alert, Animated, ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, ScrollView,  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS, SIZES, SHADOWS } from '../theme';

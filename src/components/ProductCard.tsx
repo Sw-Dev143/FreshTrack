@@ -10,7 +10,7 @@ interface ProductCardProps {
   onPress: () => void;
 }
 
-const CATEGORY_CONFIG = {
+const CATEGORY_CONFIG: Record<string, { icon: 'restaurant' | 'medkit' | 'cube'; emoji: string; color: string; light: string }> = {
   'Şarküteri': { icon: 'restaurant'  as const, emoji: '🥩', color: COLORS.deli,     light: COLORS.deliLight },
   'Eczane':    { icon: 'medkit'      as const, emoji: '💊', color: COLORS.pharmacy, light: COLORS.pharmacyLight },
   'Diğer':     { icon: 'cube'        as const, emoji: '📦', color: COLORS.other,    light: COLORS.otherLight },

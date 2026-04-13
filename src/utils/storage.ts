@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Product } from '../types';
+import { cancelNotificationsForProduct } from './notifications';
 
 const STORAGE_KEY = '@raf_omrum_products';
 
@@ -43,7 +44,6 @@ export const saveProduct = async (product: Product): Promise<void> => {
 export const deleteProduct = async (id: string): Promise<void> => {
   try {
     // Bildirimleri iptal et
-    const { cancelNotificationsForProduct } = await import('../utils/notifications');
     await cancelNotificationsForProduct(id);
 
     const products = await getProducts();

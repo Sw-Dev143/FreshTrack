@@ -1,9 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useRef, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, TextInput, TouchableOpacity,
-  ScrollView, SafeAreaView, Platform, Alert, Modal,
-  ActivityIndicator, Animated,
-} from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, Alert, Modal, ActivityIndicator, Animated,  } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -14,6 +11,7 @@ import { saveProduct, getBarcodeInfo, saveBarcodeInfo } from '../utils/storage';
 import { scheduleExpirationNotification } from '../utils/notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as StoreReview from 'expo-store-review';
+import { incrementActionCount, requestReviewIfAppropriate } from '../utils/rating';
 import { usePremium } from '../context/PremiumContext';
 import { useInterstitialAd } from '../hooks/useInterstitialAd';
 import { COLORS, SIZES } from '../theme';
@@ -25,7 +23,7 @@ type RoutePropType  = RouteProp<RootStackParamList, 'AddProduct'>;
 
 const CATEGORIES: Category[] = ['Şarküteri', 'Eczane', 'Diğer'];
 
-const CATEGORY_CONFIG = {
+const CATEGORY_CONFIG: Record<string, { icon: string; color: string }> = {
   'Şarküteri': { icon: 'restaurant-outline' , color: COLORS.deli },
   'Eczane':    { icon: 'medkit-outline', color: COLORS.pharmacy },
   'Diğer':     { icon: 'cube-outline', color: COLORS.other },
@@ -230,13 +228,8 @@ const AddProductScreen: React.FC = () => {
       
       // In-App Review Trigger
       try {
-        const countStr = await AsyncStorage.getItem('@raf_omrum_add_count');
-        const count = countStr ? parseInt(countStr, 10) + 1 : 1;
-        await AsyncStorage.setItem('@raf_omrum_add_count', count.toString());
-        
-        if ((count === 3 || count === 10) && await StoreReview.hasAction()) {
-          setTimeout(() => StoreReview.requestReview(), 1000);
-        }
+        await incrementActionCount();
+        setTimeout(() => requestReviewIfAppropriate(true), 1500);
       } catch (e) {
         console.error('In-app review err:', e);
       }
