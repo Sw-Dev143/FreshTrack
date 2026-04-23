@@ -1,0 +1,10 @@
+{
+  "navigation": {
+    "addProduct": "Ajouter un produit",
+    "productDetails": "Détails du produit",
+    "medications": "💊 Rappel de Médicament",
+    "addMedication": "Ajouter un Médicament",
+    "editMedication": "Modifier le Médicament",
+    "medicationStats": "📊 Statistiques"
+  }
+}

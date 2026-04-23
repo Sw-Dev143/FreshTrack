@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { Category } from '../types';
 import { COLORS, SIZES } from '../theme';
-import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 interface CategoryFilterProps {
   categories: (Category | 'Tümü')[];
@@ -12,6 +12,15 @@ interface CategoryFilterProps {
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({ categories, selectedCategory, onSelect }) => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
+
+  const getLabel = (cat: string) => {
+    if (cat === 'Tümü') return t('home.filter.all');
+    if (cat === 'Şarküteri') return t('home.filter.deli');
+    if (cat === 'Eczane') return t('home.filter.pharmacy');
+    if (cat === 'Diğer') return t('home.filter.other');
+    return cat;
+  };
 
   return (
     <View style={styles.container}>
@@ -40,7 +49,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ categories, selectedCat
                   isSelected && styles.filterTextSelected,
                 ]}
               >
-                {category}
+                {getLabel(category)}
               </Text>
             </TouchableOpacity>
           );

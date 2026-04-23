@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "addProduct": "Yeni Ürün Ekle",
+    "productDetails": "Ürün Detayı",
+    "medications": "💊 İlaç Hatırlatıcı",
+    "addMedication": "Yeni İlaç Ekle",
+    "editMedication": "İlacı Düzenle",
+    "medicationStats": "📊 İlaç İstatistikleri",
+    "settings": "Ayarlar",
+    "manageCategories": "Kategorileri Yönet",
+    "shoppingList": "Alışveriş Listesi"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "language": "Dil Seçimi",
+    "dataManagement": "Veri Yönetimi",
+    "exportBackup": "Verileri Dışa Aktar (Yedekle)",
+    "importBackup": "Verileri İçe Aktar (Geri Yükle)",
+    "backupSuccess": "Yedek başarıyla yüklendi",
+    "importWarning": "Veriler içeri aktarıldı, değişiklikler için uygulamayı yeniden başlatmanızı öneririz."
+  },
+  "home": {
+    "greeting": {
+      "morning": "Günaydın 🌤",
+      "afternoon": "İyi günler 👋",
+      "evening": "İyi akşamlar 🌙"
+    },
+    "stats": {
+      "safe": "Güvende",
+      "warning": "Yaklaşan",
+      "expired": "Geçti"
+    },
+    "searchPlaceholder": "Ürün ara...",
+    "filter": {
+      "all": "Tümü",
+      "deli": "Şarküteri",
+      "pharmacy": "Eczane",
+      "other": "Diğer",
+      "resultsCount": "{{count}} ürün listeleniyor",
+      "clearFilters": "Filtreleri Temizle"
+    },
+    "empty": {
+      "noResults": "\"{{query}}\" bulunamadı",
+      "noProducts": "Ürün eklemediniz",
+      "noCategoryProducts": "{{category}} ürünü yok",
+      "suggestion": "Farklı bir arama deneyin veya aramayı temizleyin.",
+      "addFirst": "Sağ alttaki + butonuna dokunarak ürün ekleyebilirsiniz."
+    }
+  },
+  "product": {
+    "status": {
+      "expired": "{{count}} gün geçti",
+      "today": "Bugün son!",
+      "tomorrow": "Yarın son!",
+      "daysLeft": "{{count}} gün kaldı"
+    }
+  }
+}

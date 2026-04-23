@@ -11,6 +11,8 @@ import { deleteProduct, getProducts } from '../utils/storage';
 import { COLORS, SIZES, SHADOWS } from '../theme';
 import { useTheme } from '../context/ThemeContext';
 import { addToShoppingList, removeFromShoppingList, getShoppingList } from '../utils/shoppingList';
+import { formatDate } from '../utils/date';
+import { useLanguage } from '../context/LanguageContext';
 
 type DetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 type NavigationProp   = NativeStackNavigationProp<RootStackParamList, 'ProductDetails'>;
@@ -28,6 +30,7 @@ const ProductDetailsScreen: React.FC = () => {
 
   const [product, setProduct] = useState<Product>(route.params.product);
   const [inShoppingList, setInShoppingList] = useState(false);
+  const { currentLanguage } = useLanguage();
 
   const checkShoppingList = async (p: Product) => {
     const list = await getShoppingList();
@@ -123,9 +126,9 @@ const ProductDetailsScreen: React.FC = () => {
           <InfoCard
             icon="calendar"
             label="Son Kullanma"
-            value={new Date(product.expirationDate).toLocaleDateString('tr-TR', {
+            value={formatDate(product.expirationDate, {
               day: 'numeric', month: 'long', year: 'numeric',
-            })}
+            }, currentLanguage)}
             color={COLORS.primary}
             colors={colors}
           />
@@ -139,9 +142,9 @@ const ProductDetailsScreen: React.FC = () => {
           <InfoCard
             icon="calendar-outline"
             label="Eklenme Tarihi"
-            value={new Date(product.createdAt).toLocaleDateString('tr-TR', {
+            value={formatDate(product.createdAt, {
               day: 'numeric', month: 'long', year: 'numeric',
-            })}
+            }, currentLanguage)}
             color={colors.textLight}
             colors={colors}
           />

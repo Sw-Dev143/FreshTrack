@@ -1,0 +1,10 @@
+{
+  "navigation": {
+    "addProduct": "添加新产品",
+    "productDetails": "产品详情",
+    "medications": "💊 用药提醒",
+    "addMedication": "添加新药物",
+    "editMedication": "编辑药物",
+    "medicationStats": "📊 用药统计"
+  }
+}

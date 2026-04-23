@@ -4,22 +4,28 @@ import { Ionicons } from '@expo/vector-icons';
 import { Product } from '../types';
 import { COLORS, SIZES, SHADOWS } from '../theme';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import { formatDate } from '../utils/date';
+
+import { useTranslation } from 'react-i18next';
 
 interface ProductCardProps {
   product: Product;
   onPress: () => void;
 }
 
-const CATEGORY_CONFIG: Record<string, { icon: 'restaurant' | 'medkit' | 'cube'; emoji: string; color: string; light: string }> = {
-  'Şarküteri': { icon: 'restaurant'  as const, emoji: '🥩', color: COLORS.deli,     light: COLORS.deliLight },
-  'Eczane':    { icon: 'medkit'      as const, emoji: '💊', color: COLORS.pharmacy, light: COLORS.pharmacyLight },
-  'Diğer':     { icon: 'cube'        as const, emoji: '📦', color: COLORS.other,    light: COLORS.otherLight },
-};
-
 const MAX_DAYS = 30;
+
+const CATEGORY_CONFIG: Record<string, { icon: 'restaurant' | 'medkit' | 'cube'; emoji: string; color: string; light: string }> = {
+  'Şarküteri': { icon: 'restaurant' as const, emoji: '🥩', color: COLORS.deli,     light: COLORS.deliLight },
+  'Eczane':    { icon: 'medkit'     as const, emoji: '💊', color: COLORS.pharmacy, light: COLORS.pharmacyLight },
+  'Diğer':     { icon: 'cube'       as const, emoji: '📦', color: COLORS.other,    light: COLORS.otherLight },
+};
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
   const { colors } = useTheme();
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation();
   const pressAnim = useRef(new Animated.Value(1)).current;
 
   const today    = new Date(); today.setHours(0, 0, 0, 0);
@@ -40,11 +46,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
     isWarning  ? COLORS.warningLight : COLORS.safeLight;
 
   const statusText =
-    isExpired          ? `${Math.abs(daysLeft)} gün geçti` :
-    daysLeft === 0     ? 'Bugün son!' :
-    daysLeft === 1     ? 'Yarın son!' :
-    daysLeft <= 7      ? `${daysLeft} gün kaldı` :
-                         `${daysLeft} gün kaldı`;
+    isExpired          ? t('product.status.expired', { count: Math.abs(daysLeft) }) :
+    daysLeft === 0     ? t('product.status.today') :
+    daysLeft === 1     ? t('product.status.tomorrow') :
+                         t('product.status.daysLeft', { count: daysLeft });
 
   const statusIcon =
     isExpired  ? 'alert-circle'   as const :
@@ -53,7 +58,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
                  'checkmark-circle' as const;
 
   const progress = isExpired ? 0 : Math.min(daysLeft / MAX_DAYS, 1);
+  
+  // Categorize based on default names or keep custom
   const catConfig = CATEGORY_CONFIG[product.category] ?? CATEGORY_CONFIG['Diğer'];
+  const categoryLabel = (() => {
+    if (product.category === 'Şarküteri') return t('home.filter.deli');
+    if (product.category === 'Eczane') return t('home.filter.pharmacy');
+    if (product.category === 'Diğer') return t('home.filter.other');
+    return product.category;
+  })();
 
   const handlePressIn  = () => Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 40 }).start();
   const handlePressOut = () => Animated.spring(pressAnim, { toValue: 1,    useNativeDriver: true, speed: 20 }).start();
@@ -105,13 +118,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
           <View style={styles.bottomRow}>
             <View style={[styles.categoryPill, { backgroundColor: colors.border + '60' }]}>
               <Ionicons name={catConfig.icon} size={11} color={catConfig.color} />
-              <Text style={[styles.categoryText, { color: catConfig.color }]}>{product.category}</Text>
+              <Text style={[styles.categoryText, { color: catConfig.color }]}>{categoryLabel}</Text>
             </View>
 
             <Text style={[styles.dateText, { color: colors.textMuted }]}>
-              {new Date(product.expirationDate).toLocaleDateString('tr-TR', {
+              {formatDate(product.expirationDate, {
                 day: 'numeric', month: 'short', year: 'numeric',
-              })}
+              }, currentLanguage)}
             </Text>
 
             <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />

@@ -7,6 +7,8 @@ import { useTheme } from '../context/ThemeContext';
 import { COLORS, SIZES } from '../theme';
 import { getProducts } from '../utils/storage';
 import { Product } from '../types';
+import { formatDate } from '../utils/date';
+import { useLanguage } from '../context/LanguageContext';
 
 // Her gün için renk kategorisi
 type DayStatus = 'expired' | 'warning' | 'safe';
@@ -40,6 +42,7 @@ function buildCalendarDays(year: number, month: number): (string | null)[] {
 
 const CalendarScreen: React.FC = () => {
   const { colors } = useTheme();
+  const { currentLanguage } = useLanguage();
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const today = new Date();
@@ -164,9 +167,9 @@ const CalendarScreen: React.FC = () => {
         {selectedDate && (
           <View style={[styles.detailCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Text style={[styles.detailTitle, { color: colors.secondary }]}>
-              {new Date(selectedDate + 'T00:00:00').toLocaleDateString('tr-TR', {
+              {formatDate(selectedDate + 'T00:00:00', {
                 day: 'numeric', month: 'long', year: 'numeric',
-              })}
+              }, currentLanguage)}
             </Text>
             {selectedProducts.length === 0 ? (
               <Text style={[styles.noProductText, { color: colors.textLight }]}>Bu tarihe ait ürün yok.</Text>

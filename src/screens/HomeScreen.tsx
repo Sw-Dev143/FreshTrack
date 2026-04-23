@@ -18,10 +18,13 @@ import { AD_UNIT_IDS } from '../utils/adConfig';
 import { exportBackup, importBackup } from '../utils/backup';
 import { Alert } from 'react-native';
 
+import { useTranslation } from 'react-i18next';
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC = () => {
   const { colors, isDark, toggleTheme } = useTheme();
+  const { t } = useTranslation();
   const [products, setProducts]               = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category | 'Tümü'>('Tümü');
@@ -113,21 +116,13 @@ const HomeScreen: React.FC = () => {
   const stats    = calculateStats();
   const greeting = (() => {
     const h = new Date().getHours();
-    if (h < 12) return 'Günaydın 🌤';
-    if (h < 18) return 'İyi günler 👋';
-    return 'İyi akşamlar 🌙';
+    if (h < 12) return t('home.greeting.morning');
+    if (h < 18) return t('home.greeting.afternoon');
+    return t('home.greeting.evening');
   })();
 
   const handleSettings = () => {
-    Alert.alert(
-      'Veri Yönetimi',
-      'Uygulama verilerinizi (İlaç, Ürün vb.) JSON olarak cihazınıza kaydedebilir veya yükleyebilirsiniz.',
-      [
-        { text: 'Dışa Aktar (Yedekle)', onPress: () => exportBackup() },
-        { text: 'İçe Aktar (Ger Yükle)', onPress: () => importBackup(loadProducts) },
-        { text: 'İptal', style: 'cancel' }
-      ]
-    );
+    navigation.navigate('Settings');
   };
 
   return (
@@ -205,7 +200,7 @@ const HomeScreen: React.FC = () => {
             <StatChip 
               icon="checkmark-circle" 
               value={stats.safe}    
-              label="Güvende"  
+              label={t('home.stats.safe')}  
               color={COLORS.safe}    
               light={COLORS.safeLight}
               active={statusFilter === 'Safe'}
@@ -214,7 +209,7 @@ const HomeScreen: React.FC = () => {
             <StatChip 
               icon="warning"          
               value={stats.warning} 
-              label="Yaklaşan" 
+              label={t('home.stats.warning')} 
               color={COLORS.warning} 
               light={COLORS.warningLight}
               active={statusFilter === 'Warning'}
@@ -223,7 +218,7 @@ const HomeScreen: React.FC = () => {
             <StatChip 
               icon="alert-circle"     
               value={stats.expired} 
-              label="Geçti"    
+              label={t('home.stats.expired')}    
               color={COLORS.danger}  
               light={COLORS.dangerLight}
               active={statusFilter === 'Expired'}
@@ -241,7 +236,7 @@ const HomeScreen: React.FC = () => {
           <Ionicons name="search" size={18} color={searchFocused ? COLORS.primary : colors.textLight} style={styles.searchIcon} />
           <TextInput
             style={[styles.searchInput, { color: colors.text }]}
-            placeholder="Ürün ara..."
+            placeholder={t('home.searchPlaceholder')}
             placeholderTextColor={colors.textMuted}
             value={searchQuery}
             onChangeText={handleSearch}
@@ -267,8 +262,8 @@ const HomeScreen: React.FC = () => {
         {(searchQuery.length > 0 || statusFilter !== 'All') && (
           <View style={styles.resultsHeader}>
             <Text style={[styles.resultsText, { color: colors.textLight }]}>
-              {filteredProducts.length} ürün listeleniyor
-              {statusFilter !== 'All' && <Text style={{ fontWeight: '700' }}> ({statusFilter === 'Expired' ? 'Geçmiş' : statusFilter === 'Warning' ? 'Yaklaşan' : 'Güvende'})</Text>}
+              {t('home.filter.resultsCount', { count: filteredProducts.length })}
+              {statusFilter !== 'All' && <Text style={{ fontWeight: '700' }}> ({statusFilter === 'Expired' ? t('home.stats.expired') : statusFilter === 'Warning' ? t('home.stats.warning') : t('home.stats.safe')})</Text>}
             </Text>
             <TouchableOpacity 
               onPress={() => {
@@ -278,7 +273,7 @@ const HomeScreen: React.FC = () => {
                 applyFilter('Tümü', 'All', products, '');
               }}
             >
-              <Text style={[styles.clearAllText, { color: COLORS.primary }]}>Filtreleri Temizle</Text>
+              <Text style={[styles.clearAllText, { color: COLORS.primary }]}>{t('home.filter.clearFilters')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -312,16 +307,15 @@ const HomeScreen: React.FC = () => {
               </View>
               <Text style={[styles.emptyTitle, { color: colors.secondary }]}>
                 {searchQuery
-                  ? `"${searchQuery}" bulunamadı`
+                  ? t('home.empty.noResults', { query: searchQuery })
                   : selectedCategory === 'Tümü'
-                  ? 'Ürün eklemediniz'
-                  : `${selectedCategory} ürünü yok`}
+                  ? t('home.empty.noProducts')
+                  : t('home.empty.noCategoryProducts', { category: selectedCategory })}
               </Text>
               <Text style={[styles.emptySubText, { color: colors.textLight }]}>
                 {searchQuery
-                  ? 'Farklı bir arama deneyin veya aramayı temizleyin.'
-                  : 'Sağ alttaki '}{!searchQuery && <Text style={{ color: COLORS.primary, fontWeight: '700' }}>+</Text>}
-                {!searchQuery && ' butonuna dokunarak ürün ekleyebilirsiniz.'}
+                  ? t('home.empty.suggestion')
+                  : t('home.empty.addFirst')}
               </Text>
             </View>
           ) : null

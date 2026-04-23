@@ -17,6 +17,8 @@ import { useInterstitialAd } from '../hooks/useInterstitialAd';
 import { COLORS, SIZES } from '../theme';
 import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
+import { formatDate } from '../utils/date';
+import { useLanguage } from '../context/LanguageContext';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddProduct'>;
 type RoutePropType  = RouteProp<RootStackParamList, 'AddProduct'>;
@@ -91,6 +93,7 @@ const AddProductScreen: React.FC = () => {
   const { isPremium } = usePremium();
   const { onProductAdded } = useInterstitialAd(isPremium);
   const { colors } = useTheme();
+  const { currentLanguage } = useLanguage();
 
   // Bug 1 Fix: productToEdit param'ı oku
   const productToEdit = route.params?.productToEdit;
@@ -129,7 +132,7 @@ const AddProductScreen: React.FC = () => {
     else if (unit === 'month') newDate.setMonth(newDate.getMonth() + amount);
     else if (unit === 'year') newDate.setFullYear(newDate.getFullYear() + amount);
     setDate(newDate);
-    showToast(`Tarih güncellendi: ${newDate.toLocaleDateString('tr-TR')}`, 'info');
+    showToast(`Tarih güncellendi: ${formatDate(newDate, undefined, currentLanguage)}`, 'info');
   };
 
   // Tarayıcı köşe animasyonu
@@ -334,7 +337,7 @@ const AddProductScreen: React.FC = () => {
             ) : Platform.OS === 'android' ? (
               <TouchableOpacity style={[styles.inputContainer, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]} onPress={() => setShowDatePicker(true)} activeOpacity={0.8}>
                 <Ionicons name="calendar-outline" size={20} color={COLORS.primary} style={styles.inputIcon} />
-                <Text style={[styles.dateText, { color: colors.text }]}>{date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</Text>
+                <Text style={[styles.dateText, { color: colors.text }]}>{formatDate(date, { day: 'numeric', month: 'long', year: 'numeric' }, currentLanguage)}</Text>
               </TouchableOpacity>
             ) : null}
             {Platform.OS !== 'web' && (showDatePicker || Platform.OS === 'ios') && (

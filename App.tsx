@@ -16,6 +16,7 @@ import MedicationsScreen from './src/screens/MedicationsScreen';
 import AddMedicationScreen from './src/screens/AddMedicationScreen';
 import MedicationStatsScreen from './src/screens/MedicationStatsScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   setupNotifications,
@@ -27,13 +28,17 @@ import { getProducts } from './src/utils/storage';
 import { getMedications } from './src/utils/medicationStorage';
 import { PremiumProvider } from './src/context/PremiumContext';
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import { LanguageProvider } from './src/context/LanguageContext';
 import { incrementLaunchCount, requestReviewIfAppropriate } from './src/utils/rating';
+import './src/i18n';
+import { useTranslation } from 'react-i18next';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // ── Navigation (useTheme için Provider içinde olmalı) ─────────────────────────
 function AppNavigator() {
   const { colors, isDark } = useTheme();
+  const { t } = useTranslation();
   const [isReady, setIsReady] = React.useState(false);
   const [initialRoute, setInitialRoute] = React.useState<'Home' | 'Onboarding'>('Home');
 
@@ -161,12 +166,12 @@ function AppNavigator() {
           <Stack.Screen
             name="AddProduct"
             component={AddProductScreen}
-            options={{ title: 'Yeni Ürün Ekle' }}
+            options={{ title: t('navigation.addProduct') }}
           />
           <Stack.Screen
             name="ProductDetails"
             component={ProductDetailsScreen}
-            options={{ title: 'Ürün Detayı' }}
+            options={{ title: t('navigation.productDetails') }}
           />
           <Stack.Screen
             name="Paywall"
@@ -176,19 +181,24 @@ function AppNavigator() {
           <Stack.Screen
             name="Medications"
             component={MedicationsScreen}
-            options={{ title: '💊 İlaç Hatırlatıcı' }}
+            options={{ title: t('navigation.medications') }}
           />
           <Stack.Screen
             name="AddMedication"
             component={AddMedicationScreen}
             options={({ route }) => ({
-              title: route.params?.medicationToEdit ? 'İlacı Düzenle' : 'Yeni İlaç Ekle',
+              title: route.params?.medicationToEdit ? t('navigation.editMedication') : t('navigation.addMedication'),
             })}
           />
           <Stack.Screen
             name="MedicationStats"
             component={MedicationStatsScreen}
-            options={{ title: '📊 İlaç İstatistikleri' }}
+            options={{ title: t('navigation.medicationStats') }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{ title: t('navigation.settings') || 'Ayarlar' }}
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -200,11 +210,13 @@ function AppNavigator() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <PremiumProvider>
-        <ThemeProvider>
-          <AppNavigator />
-        </ThemeProvider>
-      </PremiumProvider>
+      <LanguageProvider>
+        <PremiumProvider>
+          <ThemeProvider>
+            <AppNavigator />
+          </ThemeProvider>
+        </PremiumProvider>
+      </LanguageProvider>
     </SafeAreaProvider>
   );
 }

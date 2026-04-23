@@ -1,0 +1,58 @@
+{
+  "navigation": {
+    "addProduct": "Add New Product",
+    "productDetails": "Product Details",
+    "medications": "💊 Medication Reminder",
+    "addMedication": "Add New Medication",
+    "editMedication": "Edit Medication",
+    "medicationStats": "📊 Medication Stats",
+    "settings": "Settings",
+    "manageCategories": "Manage Categories",
+    "shoppingList": "Shopping List"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language Select",
+    "dataManagement": "Data Management",
+    "exportBackup": "Export Data (Backup)",
+    "importBackup": "Import Data (Restore)",
+    "backupSuccess": "Backup loaded successfully",
+    "importWarning": "Data imported. We recommend restarting the app for changes to take effect."
+  },
+  "home": {
+    "greeting": {
+      "morning": "Good morning 🌤",
+      "afternoon": "Good day 👋",
+      "evening": "Good evening 🌙"
+    },
+    "stats": {
+      "safe": "Safe",
+      "warning": "Upcoming",
+      "expired": "Expired"
+    },
+    "searchPlaceholder": "Search product...",
+    "filter": {
+      "all": "All",
+      "deli": "Deli",
+      "pharmacy": "Pharmacy",
+      "other": "Other",
+      "resultsCount": "{{count}} products listed",
+      "clearFilters": "Clear Filters"
+    },
+    "empty": {
+      "noResults": "\"{{query}}\" not found",
+      "noProducts": "No products added",
+      "noCategoryProducts": "No products in {{category}}",
+      "suggestion": "Try a different search or clear filters.",
+      "addFirst": "Tap the + button at the bottom right to add a product."
+    }
+  },
+  "product": {
+    "status": {
+      "expired": "{{count}} days passed",
+      "today": "Last day!",
+      "tomorrow": "Tomorrow!",
+      "daysLeft": "{{count}} days left"
+    }
+  }
+}
