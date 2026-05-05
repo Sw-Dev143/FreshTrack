@@ -1,4 +1,4 @@
-# FreshTrack (Raf Ömrüm)
+# FreshTrack 
 
 **FreshTrack** is a smart assistant designed to help you track expiration dates of your products and manage your medication reminders, ensuring zero waste and a healthier lifestyle.
 
