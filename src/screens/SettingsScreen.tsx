@@ -112,7 +112,7 @@ const SettingsScreen: React.FC = () => {
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <TouchableOpacity
             style={styles.rowEntry}
-            onPress={() => Linking.openURL('https://github.com/Sw-Dev143/RafOmrum/security/policy')}
+            onPress={() => Linking.openURL('https://github.com/Sw-Dev143/FreshTrack/security/policy')}
             activeOpacity={0.7}
           >
             <View style={styles.rowLeft}>

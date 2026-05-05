@@ -25,7 +25,7 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Sw-Dev143/RafOmrum.git
+   git clone https://github.com/Sw-Dev143/FreshTrack.git
    ```
 2. Install dependencies:
    ```bash
@@ -38,4 +38,4 @@
 
 ## 📄 License
 
-This project is licensed under the terms provided in the Privacy Policy. See [Privacy Policy](https://github.com/Sw-Dev143/RafOmrum/security/policy) for more details.
+This project is licensed under the terms provided in the Privacy Policy. See [Privacy Policy](https://github.com/Sw-Dev143/FreshTrack/security/policy) for more details.
