@@ -18,9 +18,9 @@ type DetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 type NavigationProp   = NativeStackNavigationProp<RootStackParamList, 'ProductDetails'>;
 
 const CATEGORY_CONFIG: Record<string, { icon: 'restaurant' | 'medkit' | 'cube'; color: string; light: string }> = {
-  'Şarküteri': { icon: 'restaurant' as const, color: COLORS.deli,     light: COLORS.deliLight },
-  'Eczane':    { icon: 'medkit'    as const,  color: COLORS.pharmacy, light: COLORS.pharmacyLight },
-  'Diğer':     { icon: 'cube'      as const,  color: COLORS.other,    light: COLORS.otherLight },
+  'deli':     { icon: 'restaurant' as const, color: COLORS.deli,     light: COLORS.deliLight },
+  'pharmacy': { icon: 'medkit'    as const,  color: COLORS.pharmacy, light: COLORS.pharmacyLight },
+  'other':    { icon: 'cube'      as const,  color: COLORS.other,    light: COLORS.otherLight },
 };
 
 const ProductDetailsScreen: React.FC = () => {
@@ -31,6 +31,7 @@ const ProductDetailsScreen: React.FC = () => {
   const [product, setProduct] = useState<Product>(route.params.product);
   const [inShoppingList, setInShoppingList] = useState(false);
   const { currentLanguage } = useLanguage();
+  const { t } = useLanguage();
 
   const checkShoppingList = async (p: Product) => {
     const list = await getShoppingList();
@@ -52,11 +53,11 @@ const ProductDetailsScreen: React.FC = () => {
 
   const handleDelete = () => {
     Alert.alert(
-      'Ürünü Sil',
-      'Bu ürünü takip listenizden silmek istediğinize emin misiniz?',
+      t('details.deleteTitle'),
+      t('details.deleteMessage'),
       [
-        { text: 'İptal', style: 'cancel' },
-        { text: 'Sil', style: 'destructive', onPress: async () => {
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.delete'), style: 'destructive', onPress: async () => {
           await deleteProduct(product.id);
           navigation.goBack();
         }},
@@ -78,16 +79,16 @@ const ProductDetailsScreen: React.FC = () => {
     daysLeft < 0  ? COLORS.dangerLight  :
     daysLeft <= 3 ? COLORS.warningLight : COLORS.safeLight;
   const statusText =
-    daysLeft < 0   ? `Süresi ${Math.abs(daysLeft)} gün önce geçti` :
-    daysLeft === 0 ? 'Bugün son kullanma tarihi!' :
-    daysLeft === 1 ? 'Yarın son kullanma tarihi!' :
-                     `${daysLeft} gün kaldı`;
+    daysLeft < 0   ? t('details.status.expired', { count: Math.abs(daysLeft) }) :
+    daysLeft === 0 ? t('details.status.today') :
+    daysLeft === 1 ? t('details.status.tomorrow') :
+                     t('details.status.daysLeft', { count: daysLeft });
   const statusIcon =
     daysLeft < 0   ? 'alert-circle'    as const :
     daysLeft <= 3  ? 'warning'         as const :
                      'checkmark-circle' as const;
 
-  const catConfig = CATEGORY_CONFIG[product.category] ?? CATEGORY_CONFIG['Diğer'];
+  const catConfig = CATEGORY_CONFIG[product.category] ?? CATEGORY_CONFIG['other'];
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
@@ -106,7 +107,7 @@ const ProductDetailsScreen: React.FC = () => {
 
           <View style={[styles.categoryBadge, { backgroundColor: catConfig.light }]}>
             <Text style={[styles.categoryBadgeText, { color: catConfig.color }]}>
-              {product.category}
+              {t(`categories.${product.category}`)}
             </Text>
           </View>
 
@@ -125,7 +126,7 @@ const ProductDetailsScreen: React.FC = () => {
         <View style={styles.infoGrid}>
           <InfoCard
             icon="calendar"
-            label="Son Kullanma"
+            label={t('details.labels.expiration')}
             value={formatDate(product.expirationDate, {
               day: 'numeric', month: 'long', year: 'numeric',
             }, currentLanguage)}
@@ -134,14 +135,14 @@ const ProductDetailsScreen: React.FC = () => {
           />
           <InfoCard
             icon="time"
-            label="Kalan Gün"
+            label={t('details.labels.daysLeft')}
             value={daysLeft < 0 ? `−${Math.abs(daysLeft)}` : `${daysLeft}`}
             color={statusColor}
             colors={colors}
           />
           <InfoCard
             icon="calendar-outline"
-            label="Eklenme Tarihi"
+            label={t('details.labels.createdAt')}
             value={formatDate(product.createdAt, {
               day: 'numeric', month: 'long', year: 'numeric',
             }, currentLanguage)}
@@ -151,7 +152,7 @@ const ProductDetailsScreen: React.FC = () => {
           {product.barcode && (
             <InfoCard
               icon="barcode"
-              label="Barkod"
+              label={t('details.labels.barcode')}
               value={product.barcode}
               color={colors.textLight}
               colors={colors}
@@ -164,13 +165,13 @@ const ProductDetailsScreen: React.FC = () => {
           {/* Düzenle */}
           <TouchableOpacity style={styles.editBtn} onPress={handleEdit} activeOpacity={0.8}>
             <Ionicons name="create-outline" size={20} color={COLORS.primary} />
-            <Text style={styles.editBtnText}>Düzenle</Text>
+            <Text style={styles.editBtnText}>{t('details.edit')}</Text>
           </TouchableOpacity>
 
           {/* Sil */}
           <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete} activeOpacity={0.8}>
             <Ionicons name="trash-outline" size={20} color={COLORS.danger} />
-            <Text style={styles.deleteBtnText}>Sil</Text>
+            <Text style={styles.deleteBtnText}>{t('details.delete')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -200,7 +201,7 @@ const ProductDetailsScreen: React.FC = () => {
             color={inShoppingList ? COLORS.safe : colors.textLight}
           />
           <Text style={[styles.shoppingBtnText, { color: inShoppingList ? COLORS.safe : colors.textLight }]}>
-            {inShoppingList ? 'Alışveriş Listesinde ✓' : 'Alışveriş Listesine Ekle'}
+            {inShoppingList ? t('details.shoppingListAdded') : t('details.shoppingListAdd')}
           </Text>
         </TouchableOpacity>
 

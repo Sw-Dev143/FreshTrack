@@ -1,10 +1,11 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '../i18n';
 
 const NOTIF_MAP_KEY = '@raf_omrum_notif_ids'; // barcode_id → [notifId, ...]
 
-// ── Bildirim işleyici ────────────────────────────────────────────────────────
+// ── Notification Handler ───────────────────────────────────────────────────
 export const setupNotifications = async (): Promise<boolean> => {
   if (Platform.OS === 'web') return false;
 
@@ -16,34 +17,34 @@ export const setupNotifications = async (): Promise<boolean> => {
     }),
   });
 
-  // Android kanalları
+  // Android channels
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('expiry-danger', {
-      name: '🔴 Kritik - Bugün / Yarın Doluyor',
+      name: i18n.t('notifications.expiry.danger'),
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 500, 200, 500],
       lightColor: '#EF4444',
       sound: 'default',
     });
     await Notifications.setNotificationChannelAsync('expiry-warning', {
-      name: '⚠️ Uyarı - 3 Gün İçinde',
+      name: i18n.t('notifications.expiry.warning'),
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#F59E0B',
       sound: 'default',
     });
     await Notifications.setNotificationChannelAsync('expiry-info', {
-      name: 'ℹ️ Bilgi - 7 Gün İçinde',
+      name: i18n.t('notifications.expiry.info'),
       importance: Notifications.AndroidImportance.DEFAULT,
       lightColor: '#4F46E5',
     });
     await Notifications.setNotificationChannelAsync('daily-summary', {
-      name: '📋 Günlük Özet',
+      name: i18n.t('notifications.dailySummary.title'),
       importance: Notifications.AndroidImportance.DEFAULT,
       lightColor: '#4F46E5',
     });
     await Notifications.setNotificationChannelAsync('medication-reminder', {
-      name: '💊 İlaç Hatırlatıcı',
+      name: i18n.t('navigation.medications'),
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 400, 200, 400],
       lightColor: '#10B981',
@@ -62,9 +63,9 @@ export const setupNotifications = async (): Promise<boolean> => {
   return finalStatus === 'granted';
 };
 
-// ── Yardımcılar ──────────────────────────────────────────────────────────────
+// ── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Bildirim ID haritasını oku */
+/** Read notification ID map */
 async function readMap(): Promise<Record<string, string[]>> {
   try {
     const raw = await AsyncStorage.getItem(NOTIF_MAP_KEY);
@@ -72,37 +73,37 @@ async function readMap(): Promise<Record<string, string[]>> {
   } catch { return {}; }
 }
 
-/** Bildirim ID haritasını kaydet */
+/** Save notification ID map */
 async function writeMap(map: Record<string, string[]>): Promise<void> {
   try { await AsyncStorage.setItem(NOTIF_MAP_KEY, JSON.stringify(map)); } catch {}
 }
 
-/** Tarihe göre bildirim başlık/mesaj/kanal seç */
+/** Build notification content based on days offset */
 function buildNotifContent(productName: string, daysOffset: number): {
   title: string; body: string; channelId: string;
 } {
   if (daysOffset <= 1) return {
-    title: '🔴 Bugün Son Gün!',
-    body: `${productName} bugün son kullanma tarihine ulaşıyor. Kontrol etmeyi unutmayın!`,
+    title: i18n.t('notifications.expiry.danger'),
+    body: i18n.t('notifications.expiry.dangerBody', { productName }),
     channelId: 'expiry-danger',
   };
   if (daysOffset <= 3) return {
-    title: '⚠️ Son Kullanma Tarihi Yaklaşıyor',
-    body: `${productName} ürününüzün son kullanma tarihine ${daysOffset} gün kaldı.`,
+    title: i18n.t('notifications.expiry.warning'),
+    body: i18n.t('notifications.expiry.warningBody', { productName, days: daysOffset }),
     channelId: 'expiry-warning',
   };
   return {
-    title: 'ℹ️ Son Kullanma Tarihi Hatırlatıcı',
-    body: `${productName} ürününüzün son kullanma tarihine ${daysOffset} gün kaldı.`,
+    title: i18n.t('notifications.expiry.info'),
+    body: i18n.t('notifications.expiry.infoBody', { productName, days: daysOffset }),
     channelId: 'expiry-info',
   };
 }
 
-// ── Ana API ──────────────────────────────────────────────────────────────────
+// ── Main API ─────────────────────────────────────────────────────────────────
 
 /**
- * Bir ürün için 3 katmanlı bildirim schedule eder:
- * → 7 gün önce (bilgi), 3 gün önce (uyarı), 1 gün önce (kritik)
+ * Schedules 3-tier notifications for a product:
+ * → 7 days before (info), 3 days before (warning), 1 day before (critical)
  */
 export const scheduleExpirationNotification = async (
   productId: string,
@@ -111,20 +112,20 @@ export const scheduleExpirationNotification = async (
 ): Promise<void> => {
   if (Platform.OS === 'web') return;
 
-  // Önce bu ürünün eski bildirimlerini iptal et
+  // Cancel old notifications for this product
   await cancelNotificationsForProduct(productId);
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const expDate = new Date(expirationDateString); expDate.setHours(0, 0, 0, 0);
   const totalDays = Math.ceil((expDate.getTime() - today.getTime()) / 86400000);
 
-  const offsets = [7, 3, 1].filter(d => d < totalDays); // geçmişteyse atla
+  const offsets = [7, 3, 1].filter(d => d < totalDays); // Skip if in the past
   const scheduledIds: string[] = [];
 
   for (const offset of offsets) {
     const triggerDate = new Date(expirationDateString);
     triggerDate.setDate(triggerDate.getDate() - offset);
-    triggerDate.setHours(9, 0, 0, 0); // Sabah 09:00
+    triggerDate.setHours(9, 0, 0, 0); // 09:00 AM
 
     if (triggerDate.getTime() <= Date.now()) continue;
 
@@ -149,7 +150,7 @@ export const scheduleExpirationNotification = async (
     }
   }
 
-  // ID'leri kaydet
+  // Save IDs
   if (scheduledIds.length > 0) {
     const map = await readMap();
     map[productId] = scheduledIds;
@@ -158,7 +159,7 @@ export const scheduleExpirationNotification = async (
 };
 
 /**
- * Bir ürün silindiğinde tüm bildirimlerini iptal eder.
+ * Cancels all notifications for a product when deleted.
  */
 export const cancelNotificationsForProduct = async (productId: string): Promise<void> => {
   if (Platform.OS === 'web') return;
@@ -172,25 +173,23 @@ export const cancelNotificationsForProduct = async (productId: string): Promise<
 };
 
 /**
- * Tüm ürünler için bildirimleri yeniden schedule eder.
- * App açılışında çağrıla­bilir (güncel ürün listesi gerekir).
+ * Reschedules all product notifications.
  */
 export const rescheduleAllNotifications = async (
   products: Array<{ id: string; name: string; expirationDate: string }>,
 ): Promise<void> => {
   if (Platform.OS === 'web') return;
-  // Önce hepsini temizle
+  // Clear all first
   await Notifications.cancelAllScheduledNotificationsAsync();
   await writeMap({});
-  // Yeniden kur
+  // Setup again
   for (const p of products) {
     await scheduleExpirationNotification(p.id, p.name, p.expirationDate);
   }
 };
 
 /**
- * Günlük özet bildirimi - her gün sabah 08:30 çalışır.
- * expiredCount ve warningCount ile kullanıcıyı bilgilendirir.
+ * Daily summary notification - runs every morning at 08:30 AM.
  */
 export const scheduleDailySummary = async (
   expiredCount: number,
@@ -198,7 +197,7 @@ export const scheduleDailySummary = async (
 ): Promise<void> => {
   if (Platform.OS === 'web') return;
 
-  // Önceki günlük özet varsa her koşulda iptal et
+  // Cancel previous daily summary if exists
   const map = await readMap();
   if (map['__daily__']) {
     await Promise.allSettled(
@@ -208,22 +207,18 @@ export const scheduleDailySummary = async (
     await writeMap(map);
   }
 
-  // Bildirilecek bir şey yoksa çık
+  // Exit if nothing to notify
   if (expiredCount === 0 && warningCount === 0) return;
 
   const trigger = new Date();
   trigger.setDate(trigger.getDate() + 1);
   trigger.setHours(8, 30, 0, 0);
 
-  const parts: string[] = [];
-  if (expiredCount > 0) parts.push(`${expiredCount} ürünün süresi geçti`);
-  if (warningCount > 0) parts.push(`${warningCount} ürün yakında doluyor`);
-
   try {
     const id = await Notifications.scheduleNotificationAsync({
       content: {
-        title: '📋 Raf Ömrüm Günlük Özet',
-        body: parts.join(', ') + '. Raflarınızı kontrol etmeyi unutmayın!',
+        title: i18n.t('notifications.dailySummary.title'),
+        body: i18n.t('notifications.dailySummary.body', { expired: expiredCount, warning: warningCount }),
         sound: true,
         ...(Platform.OS === 'android' ? { channelId: 'daily-summary' } : {}),
       },
@@ -239,16 +234,14 @@ export const scheduleDailySummary = async (
   }
 };
 
-// ── İlaç Hatırlatıcıları ─────────────────────────────────────────────────────
+// ── Medication Reminders ─────────────────────────────────────────────────────
 
 import { Medication, DayOfWeek } from '../types';
 
 const MED_NOTIF_PREFIX = '__med__';
 
 /**
- * Bir ilaç için her gün × her doz saatine tekrar eden bildirim kurar.
- * days boşsa = her gün (0-6), dolu ise sadece belirtilen günler.
- * Sınırsız ilaç ve doz saati desteklenir.
+ * Sets up repeating notifications for a medication.
  */
 export const scheduleMedicationReminders = async (med: Medication): Promise<void> => {
   if (Platform.OS === 'web' || !med.active) return;
@@ -258,7 +251,7 @@ export const scheduleMedicationReminders = async (med: Medication): Promise<void
   const map = await readMap();
   const scheduledIds: string[] = [];
 
-  // Hangi günler bildirim gelecek: boşsa 0-6 (her gün)
+  // Which days to notify: empty = 0-6 (every day)
   const targetDays: DayOfWeek[] = med.days.length > 0
     ? med.days
     : [0, 1, 2, 3, 4, 5, 6];
@@ -270,8 +263,8 @@ export const scheduleMedicationReminders = async (med: Medication): Promise<void
           content: {
             title: `💊 ${med.name}`,
             body: med.dosage
-              ? `${med.dosage} — ilaç alma zamanı!`
-              : 'İlaç alma zamanı!',
+              ? i18n.t('notifications.medication.body', { dosage: med.dosage })
+              : i18n.t('notifications.medication.bodyNoDosage'),
             sound: true,
             data: { medicationId: med.id, hour: time.hour, minute: time.minute },
             ...(Platform.OS === 'android' ? { channelId: 'medication-reminder' } : {}),
@@ -279,7 +272,7 @@ export const scheduleMedicationReminders = async (med: Medication): Promise<void
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
             repeats: true,
-            weekday: dow + 1, // expo: 1=Pazar … 7=Cumartesi
+            weekday: dow + 1, // expo: 1=Sunday … 7=Saturday
             hour: time.hour,
             minute: time.minute,
             second: 0,
@@ -299,7 +292,7 @@ export const scheduleMedicationReminders = async (med: Medication): Promise<void
 };
 
 /**
- * Bir ilacın tüm bildirimlerini iptal eder.
+ * Cancels all medication reminders.
  */
 export const cancelMedicationReminders = async (medicationId: string): Promise<void> => {
   if (Platform.OS === 'web') return;
@@ -313,7 +306,7 @@ export const cancelMedicationReminders = async (medicationId: string): Promise<v
 };
 
 /**
- * Tüm aktif ilaçların bildirimlerini yeniden kurar. App açılışında çağrılabilir.
+ * Reschedules all active medication reminders.
  */
 export const rescheduleAllMedicationReminders = async (
   medications: Medication[]

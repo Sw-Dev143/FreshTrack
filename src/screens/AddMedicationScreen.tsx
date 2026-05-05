@@ -11,13 +11,11 @@ import { saveMedication, getMedications } from '../utils/medicationStorage';
 import { scheduleMedicationReminders, cancelMedicationReminders } from '../utils/notifications';
 import { COLORS, SIZES, SHADOWS } from '../theme';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 type NavigationProp  = NativeStackNavigationProp<RootStackParamList, 'AddMedication'>;
 type RoutePropType   = RouteProp<RootStackParamList, 'AddMedication'>;
 
-const DAY_LABELS: Record<DayOfWeek, string> = {
-  0: 'Paz', 1: 'Pzt', 2: 'Sal', 3: 'Çar', 4: 'Per', 5: 'Cum', 6: 'Cmt',
-};
 const ALL_DAYS: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 0]; // Pzt'den başla
 
 const PRESET_COLORS = [
@@ -33,6 +31,7 @@ const AddMedicationScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const route      = useRoute<RoutePropType>();
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const existing   = route.params?.medicationToEdit;
   const isEditing  = !!existing;
 
@@ -41,7 +40,7 @@ const AddMedicationScreen: React.FC = () => {
   const [notes, setNotes]   = useState(existing?.notes ?? '');
   const [color, setColor]   = useState(existing?.color ?? PRESET_COLORS[0]);
 
-  // Günler: boş = her gün
+  // Days: empty = every day
   const [everyDay, setEveryDay] = useState(
     !existing || existing.days.length === 0
   );
@@ -49,14 +48,14 @@ const AddMedicationScreen: React.FC = () => {
     existing?.days ?? []
   );
 
-  // Doz saatleri
+  // Dose times
   const [times, setTimes]               = useState<DoseTime[]>(
     existing?.times.length
       ? existing.times
       : [{ hour: 8, minute: 0 }]
   );
   const [pickerVisible, setPickerVisible] = useState(false);
-  const [pickerIndex, setPickerIndex]     = useState<number | null>(null); // hangi doz düzenleniyor
+  const [pickerIndex, setPickerIndex]     = useState<number | null>(null); // which dose is being edited
   const [pickerDate, setPickerDate]       = useState(new Date());
 
   const toggleDay = (d: DayOfWeek) => {
@@ -70,7 +69,7 @@ const AddMedicationScreen: React.FC = () => {
   };
 
   const removeTime = (idx: number) => {
-    if (times.length === 1) return; // en az 1 saat olmalı
+    if (times.length === 1) return; // at least 1 hour must remain
     setTimes(prev => prev.filter((_, i) => i !== idx));
   };
 
@@ -92,11 +91,11 @@ const AddMedicationScreen: React.FC = () => {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert('Eksik Bilgi', 'Lütfen ilaç adını girin.');
+      Alert.alert(t('medication.validation.noName'), t('medication.validation.noNameSubtitle'));
       return;
     }
     if (times.length === 0) {
-      Alert.alert('Eksik Bilgi', 'En az bir doz saati ekleyin.');
+      Alert.alert(t('medication.validation.noTimes'), t('medication.validation.noTimesSubtitle'));
       return;
     }
 
@@ -113,7 +112,7 @@ const AddMedicationScreen: React.FC = () => {
     };
 
     await saveMedication(med);
-    // Bildirimleri güncelle
+    // Update notifications
     await cancelMedicationReminders(med.id);
     if (med.active) await scheduleMedicationReminders(med);
 
@@ -128,12 +127,12 @@ const AddMedicationScreen: React.FC = () => {
 
           {/* İlaç Adı */}
           <View style={styles.group}>
-            <Text style={[styles.label, { color: colors.secondary }]}>İlaç Adı *</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>{t('medication.nameLabel')}</Text>
             <View style={[styles.inputRow, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
               <Ionicons name="medkit-outline" size={18} color={colors.textLight} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
-                placeholder="Örn: Aspirin, Omega-3"
+                placeholder={t('medication.namePlaceholder')}
                 placeholderTextColor={colors.textMuted}
                 value={name}
                 onChangeText={setName}
@@ -144,12 +143,12 @@ const AddMedicationScreen: React.FC = () => {
 
           {/* Doz Bilgisi */}
           <View style={styles.group}>
-            <Text style={[styles.label, { color: colors.secondary }]}>Doz Bilgisi</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>{t('medication.dosageLabel')}</Text>
             <View style={[styles.inputRow, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
               <Ionicons name="flask-outline" size={18} color={colors.textLight} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
-                placeholder="Örn: 500 mg, 1 tablet"
+                placeholder={t('medication.dosagePlaceholder')}
                 placeholderTextColor={colors.textMuted}
                 value={dosage}
                 onChangeText={setDosage}
@@ -160,7 +159,7 @@ const AddMedicationScreen: React.FC = () => {
 
           {/* Renk Seçici */}
           <View style={styles.group}>
-            <Text style={[styles.label, { color: colors.secondary }]}>Renk</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>{t('medication.colorLabel')}</Text>
             <View style={styles.colorRow}>
               {PRESET_COLORS.map(c => (
                 <TouchableOpacity
@@ -177,7 +176,7 @@ const AddMedicationScreen: React.FC = () => {
 
           {/* Gün Seçimi */}
           <View style={styles.group}>
-            <Text style={[styles.label, { color: colors.secondary }]}>Günler</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>{t('medication.daysLabel')}</Text>
             <TouchableOpacity
               style={[styles.everyDayBtn, { borderColor: colors.border, backgroundColor: colors.surfaceAlt }, everyDay && styles.everyDayBtnActive]}
               onPress={() => setEveryDay(e => !e)}
@@ -186,7 +185,7 @@ const AddMedicationScreen: React.FC = () => {
                 name={everyDay ? 'checkmark-circle' : 'ellipse-outline'}
                 size={18} color={everyDay ? '#FFFFFF' : colors.textLight}
               />
-              <Text style={[styles.everyDayText, { color: colors.textLight }, everyDay && styles.everyDayTextActive]}>Her gün</Text>
+              <Text style={[styles.everyDayText, { color: colors.textLight }, everyDay && styles.everyDayTextActive]}>{t('medication.everyDay')}</Text>
             </TouchableOpacity>
 
             {!everyDay && (
@@ -200,7 +199,7 @@ const AddMedicationScreen: React.FC = () => {
                       onPress={() => toggleDay(d)}
                     >
                       <Text style={[styles.dayBtnText, { color: colors.textLight }, active && styles.dayBtnTextActive]}>
-                        {DAY_LABELS[d]}
+                        {t(`days.${d}`)}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -212,29 +211,29 @@ const AddMedicationScreen: React.FC = () => {
           {/* Doz Saatleri */}
           <View style={styles.group}>
             <View style={styles.rowBetween}>
-              <Text style={[styles.label, { color: colors.secondary }]}>Doz Saatleri</Text>
+              <Text style={[styles.label, { color: colors.secondary }]}>{t('medication.timesLabel')}</Text>
               <TouchableOpacity style={styles.addTimeBtn} onPress={addTime}>
                 <Ionicons name="add-circle" size={22} color={color} />
-                <Text style={[styles.addTimeText, { color }]}>Saat Ekle</Text>
+                <Text style={[styles.addTimeText, { color }]}>{t('medication.addTime')}</Text>
               </TouchableOpacity>
             </View>
 
-            {/* Hızlı Saat Seçenekleri */}
+            {/* Quick Time Options */}
             <View style={styles.quickTimeRow}>
               <QuickTimeButton 
-                label="Sabah" 
+                label={t('medication.quickTime.morning')} 
                 time="08:00" 
                 icon="sunny-outline"
                 onPress={() => setTimes([{ hour: 8, minute: 0 }])} 
               />
               <QuickTimeButton 
-                label="Öğle" 
+                label={t('medication.quickTime.afternoon')} 
                 time="13:00" 
                 icon="partly-sunny-outline"
                 onPress={() => setTimes(prev => [...prev.filter(t => t.hour !== 13), { hour: 13, minute: 0 }])} 
               />
               <QuickTimeButton 
-                label="Akşam" 
+                label={t('medication.quickTime.evening')} 
                 time="20:00" 
                 icon="moon-outline"
                 onPress={() => setTimes(prev => [...prev.filter(t => t.hour !== 20), { hour: 20, minute: 0 }])} 
@@ -259,12 +258,12 @@ const AddMedicationScreen: React.FC = () => {
             ))}
           </View>
 
-          {/* Notlar */}
+          {/* Notes */}
           <View style={styles.group}>
-            <Text style={[styles.label, { color: colors.secondary }]}>Notlar</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>{t('medication.notesLabel')}</Text>
             <TextInput
               style={[styles.inputRow, styles.notesInput, { backgroundColor: colors.surfaceAlt, borderColor: colors.border, color: colors.text }]}
-              placeholder="Örn: Yemekten sonra al, bol su iç"
+              placeholder={t('medication.notesPlaceholder')}
               placeholderTextColor={colors.textMuted}
               value={notes}
               onChangeText={setNotes}
@@ -282,11 +281,11 @@ const AddMedicationScreen: React.FC = () => {
           activeOpacity={0.9}
         >
           <Ionicons name="checkmark-circle" size={20} color="#fff" />
-          <Text style={styles.saveBtnText}>{isEditing ? 'Güncelle' : 'Kaydet'}</Text>
+          <Text style={styles.saveBtnText}>{isEditing ? t('medication.updateBtn') : t('medication.saveBtn')}</Text>
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Saat Picker (Android native, iOS inline) */}
+      {/* Time Picker (Android native, iOS inline) */}
       {pickerVisible && pickerIndex !== null && (
         <DateTimePicker
           value={pickerDate}
@@ -300,7 +299,7 @@ const AddMedicationScreen: React.FC = () => {
   );
 };
 
-// ── Yardımcı Bileşenler ──────────────────────────────────────────────────────
+// ── Helper Components ───────────────────────────────────────────────────────
 const QuickTimeButton: React.FC<{ label: string; time: string; icon: any; onPress: () => void }> = ({ label, time, icon, onPress }) => {
   const { colors } = useTheme();
   return (

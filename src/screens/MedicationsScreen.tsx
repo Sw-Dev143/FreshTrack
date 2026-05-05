@@ -9,10 +9,9 @@ import { Medication, DoseLog, RootStackParamList } from '../types';
 import { getMedications, deleteMedication, toggleMedicationActive, getDoseLogsForDate, logDose, removeDoseLog } from '../utils/medicationStorage';
 import { COLORS, SIZES, SHADOWS } from '../theme';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Medications'>;
-
-const DAY_LABELS = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
 
 const todayStr = () => new Date().toISOString().split('T')[0];
 const padZ = (n: number) => String(n).padStart(2, '0');
@@ -22,6 +21,7 @@ const padZ = (n: number) => String(n).padStart(2, '0');
 const MedicationsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const [medications, setMedications] = useState<Medication[]>([]);
   const [doseLogs, setDoseLogs]       = useState<DoseLog[]>([]);
 
@@ -60,12 +60,12 @@ const MedicationsScreen: React.FC = () => {
 
   const handleDelete = (med: Medication) => {
     Alert.alert(
-      'İlacı Sil',
-      `"${med.name}" ilacını ve tüm bildirimlerini silmek istediğinize emin misiniz?`,
+      t('medication.list.deleteTitle'),
+      t('medication.list.deleteConfirm', { name: med.name }),
       [
-        { text: 'İptal', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Sil', style: 'destructive',
+          text: t('common.delete'), style: 'destructive',
           onPress: async () => { await deleteMedication(med.id); load(); },
         },
       ]
@@ -101,9 +101,9 @@ const MedicationsScreen: React.FC = () => {
             {todayDoses.length > 0 && (
               <View style={styles.section}>
                 <View style={styles.progressHeader}>
-                  <Text style={[styles.sectionTitle, { color: colors.secondary, marginBottom: 0 }]}>Bugünkü Dozlar</Text>
+                  <Text style={[styles.sectionTitle, { color: colors.secondary, marginBottom: 0 }]}>{t('medication.list.todayDoses')}</Text>
                   <Text style={[styles.progressText, { color: colors.textLight }]}>
-                    {todayDoses.filter(d => d.taken).length}/{todayDoses.length} Tamamlandı
+                    {todayDoses.filter(d => d.taken).length}/{todayDoses.length} {t('medication.list.completed')}
                   </Text>
                 </View>
                 <View style={[styles.mainProgressTrack, { backgroundColor: colors.border }]}>
@@ -124,7 +124,7 @@ const MedicationsScreen: React.FC = () => {
             )}
 
             {medications.length > 0 && (
-              <Text style={[styles.sectionTitle, { color: colors.secondary }]}>Tüm İlaçlar</Text>
+              <Text style={[styles.sectionTitle, { color: colors.secondary }]}>{t('medication.list.allMeds')}</Text>
             )}
           </>
         }
@@ -135,8 +135,8 @@ const MedicationsScreen: React.FC = () => {
                 <Ionicons name="medkit-outline" size={44} color={COLORS.primary} />
               </View>
             </View>
-            <Text style={[styles.emptyTitle, { color: colors.secondary }]}>Henüz ilaç eklemediniz</Text>
-            <Text style={[styles.emptySubText, { color: colors.textLight }]}>Sağ alttaki + butonuna dokunarak ilaç ekleyebilirsiniz.</Text>
+            <Text style={[styles.emptyTitle, { color: colors.secondary }]}>{t('medication.list.emptyTitle')}</Text>
+            <Text style={[styles.emptySubText, { color: colors.textLight }]}>{t('medication.list.emptySub')}</Text>
           </View>
         }
         renderItem={({ item }) => (
@@ -250,9 +250,10 @@ interface MedCardProps {
   onToggle: () => void;
 }
 const MedicationCard: React.FC<MedCardProps> = ({ med, colors, onEdit, onDelete, onToggle }) => {
+  const { t } = useLanguage();
   const activeDayLabels = med.days.length === 0
-    ? 'Her gün'
-    : med.days.map(d => DAY_LABELS[d]).join(', ');
+    ? t('medication.everyDay')
+    : med.days.map(d => t(`days.${d}`)).join(', ');
 
   return (
     <View style={[styles.medCard, { backgroundColor: colors.surface }, !med.active && styles.medCardInactive]}>
@@ -299,11 +300,11 @@ const MedicationCard: React.FC<MedCardProps> = ({ med, colors, onEdit, onDelete,
         <View style={styles.medActions}>
           <TouchableOpacity style={styles.actionBtn} onPress={onEdit}>
             <Ionicons name="create-outline" size={16} color={COLORS.primary} />
-            <Text style={[styles.actionText, { color: COLORS.primary }]}>Düzenle</Text>
+            <Text style={[styles.actionText, { color: COLORS.primary }]}>{t('medication.list.edit')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={onDelete}>
             <Ionicons name="trash-outline" size={16} color={COLORS.danger} />
-            <Text style={[styles.actionText, { color: COLORS.danger }]}>Sil</Text>
+            <Text style={[styles.actionText, { color: COLORS.danger }]}>{t('medication.list.delete')}</Text>
           </TouchableOpacity>
         </View>
       </View>

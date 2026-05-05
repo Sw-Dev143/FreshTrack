@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Share,  } fr
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { COLORS, SIZES } from '../theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -15,6 +16,7 @@ import {
 
 const ShoppingListScreen: React.FC = () => {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const [items, setItems] = useState<ShoppingItem[]>([]);
 
   const load = async () => setItems(await getShoppingList());
@@ -39,25 +41,25 @@ const ShoppingListScreen: React.FC = () => {
 
   const handleShare = async () => {
     if (items.length === 0) {
-      Alert.alert('Liste boş', 'Paylaşmak için alışveriş listesi dolu olmalı.');
+      Alert.alert(t('shopping.alert.emptyList'), t('shopping.alert.shareEmpty'));
       return;
     }
     const lines = items.map(i => `${i.checked ? '✅' : '⬜'} ${i.productName} (${i.category})`);
     await Share.share({
-      title: 'Alışveriş Listesi — Raf Ömrüm',
-      message: `🛒 Alışveriş Listesi\n\n${lines.join('\n')}`,
+      title: `Shopping List — FreshTrack`,
+      message: `${t('shopping.shareTitle')}\n\n${lines.join('\n')}`,
     });
   };
 
   const handleClearAll = () => {
     if (items.length === 0) return;
     Alert.alert(
-      'Listeyi Temizle',
-      'Tüm alışveriş listesini silmek istiyor musunuz?',
+      t('shopping.alert.clearTitle'),
+      t('shopping.alert.clearMessage'),
       [
-        { text: 'İptal', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Temizle', style: 'destructive',
+          text: t('common.delete'), style: 'destructive',
           onPress: async () => { await clearShoppingList(); load(); },
         },
       ]
@@ -71,18 +73,18 @@ const ShoppingListScreen: React.FC = () => {
       {/* Action Bar */}
       <View style={[styles.actionBar, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <Text style={[styles.countText, { color: colors.textLight }]}>
-          {checkedCount}/{items.length} tamamlandı
+          {checkedCount}/{items.length} {t('shopping.action.completed')}
         </Text>
         <View style={styles.barBtns}>
           {checkedCount > 0 && (
             <TouchableOpacity style={styles.barBtn} onPress={handleClearChecked}>
               <Ionicons name="checkmark-done-outline" size={18} color={COLORS.safe} />
-              <Text style={[styles.barBtnText, { color: COLORS.safe }]}>Tamamlananları Sil</Text>
+              <Text style={[styles.barBtnText, { color: COLORS.safe }]}>{t('shopping.action.clearChecked')}</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity style={styles.barBtn} onPress={handleShare}>
             <Ionicons name="share-outline" size={18} color={COLORS.primary} />
-            <Text style={[styles.barBtnText, { color: COLORS.primary }]}>Paylaş</Text>
+            <Text style={[styles.barBtnText, { color: COLORS.primary }]}>{t('shopping.action.share')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.barBtn} onPress={handleClearAll}>
             <Ionicons name="trash-outline" size={18} color={COLORS.danger} />
@@ -115,7 +117,11 @@ const ShoppingListScreen: React.FC = () => {
               ]}>
                 {item.productName}
               </Text>
-              <Text style={[styles.itemCat, { color: colors.textLight }]}>{item.category}</Text>
+              <Text style={[styles.itemCat, { color: colors.textLight }]}>
+                {['deli', 'pharmacy', 'other'].includes(item.category.toLowerCase())
+                  ? t(`categories.${item.category.toLowerCase()}`)
+                  : item.category}
+              </Text>
             </View>
             <TouchableOpacity onPress={() => handleRemove(item.id)} style={styles.removeBtn}>
               <Ionicons name="close" size={18} color={colors.textLight} />
@@ -125,9 +131,9 @@ const ShoppingListScreen: React.FC = () => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="cart-outline" size={64} color={colors.textLight} />
-            <Text style={[styles.emptyTitle, { color: colors.secondary }]}>Liste Boş</Text>
+            <Text style={[styles.emptyTitle, { color: colors.secondary }]}>{t('shopping.empty.title')}</Text>
             <Text style={[styles.emptyText, { color: colors.textLight }]}>
-              Ürün detay ekranından ürünleri alışveriş listesine ekleyebilirsiniz.
+              {t('shopping.empty.subtitle')}
             </Text>
           </View>
         }

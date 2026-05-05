@@ -17,9 +17,9 @@ interface ProductCardProps {
 const MAX_DAYS = 30;
 
 const CATEGORY_CONFIG: Record<string, { icon: 'restaurant' | 'medkit' | 'cube'; emoji: string; color: string; light: string }> = {
-  'Şarküteri': { icon: 'restaurant' as const, emoji: '🥩', color: COLORS.deli,     light: COLORS.deliLight },
-  'Eczane':    { icon: 'medkit'     as const, emoji: '💊', color: COLORS.pharmacy, light: COLORS.pharmacyLight },
-  'Diğer':     { icon: 'cube'       as const, emoji: '📦', color: COLORS.other,    light: COLORS.otherLight },
+  'deli':     { icon: 'restaurant' as const, emoji: '🥩', color: COLORS.deli,     light: COLORS.deliLight },
+  'pharmacy': { icon: 'medkit'     as const, emoji: '💊', color: COLORS.pharmacy, light: COLORS.pharmacyLight },
+  'other':    { icon: 'cube'       as const, emoji: '📦', color: COLORS.other,    light: COLORS.otherLight },
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
@@ -60,11 +60,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
   const progress = isExpired ? 0 : Math.min(daysLeft / MAX_DAYS, 1);
   
   // Categorize based on default names or keep custom
-  const catConfig = CATEGORY_CONFIG[product.category] ?? CATEGORY_CONFIG['Diğer'];
+  const catConfig = CATEGORY_CONFIG[product.category] ?? CATEGORY_CONFIG['other'];
   const categoryLabel = (() => {
-    if (product.category === 'Şarküteri') return t('home.filter.deli');
-    if (product.category === 'Eczane') return t('home.filter.pharmacy');
-    if (product.category === 'Diğer') return t('home.filter.other');
+    if (['deli', 'pharmacy', 'other'].includes(product.category.toLowerCase())) {
+      return t(`categories.${product.category.toLowerCase()}`);
+    }
     return product.category;
   })();
 

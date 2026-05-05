@@ -15,9 +15,9 @@ const IS_TEST = __DEV__;
 // ── Gerçek Android ID'leriniz (production) ───────────────────────────────────
 // TODO: Aşağıdaki değerleri AdMob Console'dan alınan gerçek ID'lerle değiştirin.
 const ANDROID_PROD = {
-  banner:       'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX', // ← DEĞİŞTİRİN
-  interstitial: 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX', // ← DEĞİŞTİRİN
-  rewarded:     'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX', // ← DEĞİŞTİRİN
+  banner:       'ca-app-pub-9730088447835930/5766874757',
+  interstitial: 'ca-app-pub-9730088447835930/6094177816',
+  rewarded:     'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX', // Gerektiğinde eklenebilir
 };
 
 // ── Google resmi test ID'leri (DEV modunda otomatik kullanılır) ───────────────

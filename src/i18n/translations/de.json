@@ -1,10 +1,245 @@
 {
   "navigation": {
-    "addProduct": "Produkt hinzufügen",
+    "addProduct": "Neues Produkt hinzufügen",
     "productDetails": "Produktdetails",
     "medications": "💊 Medikamenten-Erinnerung",
-    "addMedication": "Medikament hinzufügen",
+    "addMedication": "Neues Medikament hinzufügen",
     "editMedication": "Medikament bearbeiten",
-    "medicationStats": "📊 Medizin-Statistiken"
+    "medicationStats": "📊 Medikamenten-Statistik",
+    "settings": "Einstellungen",
+    "manageCategories": "Kategorien verwalten",
+    "shoppingList": "Einkaufsliste"
+  },
+  "common": {
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "save": "Speichern",
+    "update": "Aktualisieren",
+    "success": "Erfolg",
+    "error": "Fehler",
+    "legal": "Rechtliches"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprachauswahl",
+    "dataManagement": "Datenmanagement",
+    "exportBackup": "Daten exportieren (Backup)",
+    "importBackup": "Daten importieren (Wiederherstellen)",
+    "backupSuccess": "Backup erfolgreich geladen",
+    "importWarning": "Daten importiert. Wir empfehlen, die App neu zu starten, um die Änderungen zu übernehmen.",
+    "privacyPolicy": "Datenschutzerklärung"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Guten Morgen 🌤",
+      "afternoon": "Guten Tag 👋",
+      "evening": "Guten Abend 🌙"
+    },
+    "stats": {
+      "safe": "Sicher",
+      "warning": "Anstehend",
+      "expired": "Abgelaufen"
+    },
+    "searchPlaceholder": "Produkt suchen...",
+    "filter": {
+      "all": "Alle",
+      "deli": "Feinkost",
+      "pharmacy": "Apotheke",
+      "other": "Sonstiges",
+      "resultsCount": "{{count}} Produkte gelistet",
+      "clearFilters": "Filter löschen"
+    },
+    "empty": {
+      "noResults": "\"{{query}}\" nicht gefunden",
+      "noProducts": "Noch keine Produkte hinzugefügt",
+      "noCategoryProducts": "Keine Produkte in {{category}}",
+      "suggestion": "Versuchen Sie eine andere Suche oder löschen Sie die Filter.",
+      "addFirst": "Tippen Sie auf das + unten rechts, um Ihr erstes Produkt hinzuzufügen! 🚀"
+    },
+    "tip": {
+      "title": "Kurztipp",
+      "body": "Verwenden Sie das Barcode-Symbol beim Hinzufügen von Produkten, um Informationen automatisch abzurufen!"
+    }
+  },
+  "add": {
+    "nameLabel": "Produktname",
+    "namePlaceholder": "z.B. Milch, Eier...",
+    "categoryLabel": "Kategorie",
+    "dateLabel": "Ablaufdatum",
+    "saveBtn": "Produkt speichern",
+    "updateBtn": "Änderungen speichern",
+    "barcode": "Barcode",
+    "date": {
+      "week": "Woche",
+      "month": "Monat",
+      "year": "Jahr"
+    },
+    "camera": {
+      "title": "Barcode scannen",
+      "hint": "Zentrieren Sie den Barcode im Rahmen",
+      "permissionDenied": "Kamerazugriff erforderlich",
+      "permissionSubtitle": "Sie müssen den Kamerazugriff erlauben, um Barcodes zu scannen."
+    },
+    "toast": {
+      "dateUpdated": "Datum aktualisiert",
+      "productFound": "Produkt gefunden",
+      "productRecognized": "Produkt erkannt",
+      "newBarcode": "Neuer Barcode erkannt",
+      "lookupError": "Barcode-Informationen konnten nicht abgerufen werden",
+      "error": "Vorgang fehlgeschlagen",
+      "saveError": "Fehler beim Speichern des Produkts"
+    },
+    "validation": {
+      "noName": "Produktname fehlt",
+      "noNameSubtitle": "Bitte geben Sie einen Namen für das Produkt ein."
+    }
+  },
+  "medication": {
+    "nameLabel": "Name des Medikaments *",
+    "namePlaceholder": "z.B. Aspirin, Omega-3...",
+    "dosageLabel": "Dosierungsinformationen",
+    "dosagePlaceholder": "z.B. 500 mg, 1 Tablette...",
+    "colorLabel": "Farbe",
+    "daysLabel": "Tage",
+    "everyDay": "Jeden Tag",
+    "timesLabel": "Einnahmezeiten",
+    "addTime": "Zeit hinzufügen",
+    "quickTime": {
+      "morning": "Morgens",
+      "afternoon": "Mittags",
+      "evening": "Abends"
+    },
+    "notesLabel": "Notizen",
+    "notesPlaceholder": "z.B. Nach dem Essen einnehmen, viel Wasser trinken...",
+    "saveBtn": "Medikament speichern",
+    "updateBtn": "Medikament aktualisieren",
+    "validation": {
+      "noName": "Fehlende Info",
+      "noNameSubtitle": "Bitte geben Sie den Namen des Medikaments ein.",
+      "noTimes": "Fehlende Info",
+      "noTimesSubtitle": "Fügen Sie mindestens eine Dosierungszeit hinzu."
+    },
+    "list": {
+      "todayDoses": "Heutige Dosierungen",
+      "completed": "Abgeschlossen",
+      "allMeds": "Alle Medikamente",
+      "emptyTitle": "Noch keine Medikamente hinzugefügt",
+      "emptySub": "Tippen Sie auf das + unten rechts, um Ihr erstes Medikament hinzuzufügen.",
+      "deleteTitle": "Medikament löschen",
+      "deleteConfirm": "Sind Sie sicher, dass Sie \"{{name}}\" und alle Benachrichtigungen löschen möchten?",
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    }
+  },
+  "details": {
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "deleteTitle": "Produkt löschen",
+    "deleteMessage": "Sind Sie sicher, dass Sie dieses Produkt aus Ihrer Liste löschen möchten?",
+    "shoppingListAdd": "Zur Einkaufsliste hinzufügen",
+    "shoppingListAdded": "In der Einkaufsliste ✓",
+    "labels": {
+      "expiration": "Ablauf",
+      "daysLeft": "Tage übrig",
+      "createdAt": "Hinzugefügt am",
+      "barcode": "Barcode"
+    },
+    "status": {
+      "expired": "Vor {{count}} Tagen abgelaufen",
+      "today": "Läuft heute ab!",
+      "tomorrow": "Läuft morgen ab!",
+      "daysLeft": "{{count}} Tage übrig"
+    }
+  },
+  "categories": {
+    "deli": "Feinkost",
+    "pharmacy": "Apotheke",
+    "other": "Sonstiges"
+  },
+  "days": {
+    "0": "So",
+    "1": "Mo",
+    "2": "Di",
+    "3": "Mi",
+    "4": "Do",
+    "5": "Fr",
+    "6": "Sa"
+  },
+  "notifications": {
+    "expiry": {
+      "danger": "🔴 Heute ist der letzte Tag!",
+      "dangerBody": "{{productName}} läuft heute ab. Vergessen Sie nicht zu prüfen!",
+      "warning": "⚠️ Ablaufdatum naht",
+      "warningBody": "Ihr Produkt {{productName}} läuft in {{days}} Tagen ab.",
+      "info": "ℹ️ Ablauf-Erinnerung",
+      "infoBody": "Ihr Produkt {{productName}} läuft in {{days}} Tagen ab."
+    },
+    "dailySummary": {
+      "title": "📋 FreshTrack Tageszusammenfassung",
+      "body": "{{expired}} Produkte abgelaufen, {{warning}} Produkte laufen bald ab. Vergessen Sie nicht, Ihre Regale zu prüfen!"
+    },
+    "medication": {
+      "body": "{{dosage}} — Zeit, Ihre Medikamente einzunehmen!",
+      "bodyNoDosage": "Zeit, Ihre Medikamente einzunehmen!"
+    }
+  },
+  "paywall": {
+    "title": "FreshTrack PRO",
+    "subtitle": "Alle Einschränkungen aufheben, unbegrenzt nutzen.\nEinmalige Zahlung — lebenslanger Zugriff.",
+    "alreadyPro": "Sie sind bereits ein PRO-Nutzer 🎉",
+    "alreadyProSubtitle": "Sie genießen alle Premium-Funktionen.",
+    "features": {
+      "noAds": "Alle Anzeigen entfernen",
+      "unlimited": "Unbegrenzte Produktverfolgung",
+      "lifetime": "Lebenslanger Zugriff & Updates",
+      "support": "Prioritärer Support"
+    },
+    "priceLabel": "EINMALIG",
+    "priceNote": "Kein Abonnement • Keine versteckten Kosten",
+    "cta": "Jetzt auf PRO upgraden",
+    "restore": "Kauf wiederherstellen",
+    "legal": "Der Kauf erfolgt über den App Store.\nLesen Sie unsere Datenschutzerklärung für die Bedingungen.",
+    "successTitle": "✅ Vielen Dank!",
+    "successMessage": "Ihre PRO-Mitgliedschaft wurde aktiviert.",
+    "restoreErrorTitle": "Nicht gefunden",
+    "restoreErrorMessage": "Es wurde kein vorheriger Kauf erkannt."
+  },
+  "shopping": {
+    "empty": {
+      "title": "Liste ist leer",
+      "subtitle": "Sie können Produkte über den Produktdetailbildschirm zur Einkaufsliste hinzufügen."
+    },
+    "action": {
+      "share": "Teilen",
+      "clearChecked": "Abgeschlossene löschen",
+      "completed": "abgeschlossen"
+    },
+    "alert": {
+      "emptyList": "Liste ist leer",
+      "shareEmpty": "Die Einkaufsliste muss Artikel zum Teilen enthalten.",
+      "clearTitle": "Liste leeren",
+      "clearMessage": "Möchten Sie die gesamte Einkaufsliste löschen?"
+    },
+    "shareTitle": "🛒 Einkaufsliste"
+  },
+  "onboarding": {
+    "slides": {
+      "1": {
+        "title": "Produkte einfach verfolgen",
+        "description": "Speichern Sie Ablaufdaten von Produkten zu Hause. Vermeiden Sie Verschwendung und schonen Sie Ihr Budget."
+      },
+      "2": {
+        "title": "Sicher bleiben mit Benachrichtigungen",
+        "description": "Erhalten Sie sofortige Warnungen 7 und 3 Tage vor Ablauf und wenn Produkte ablaufen."
+      },
+      "3": {
+        "title": "Medikamente pünktlich einnehmen",
+        "description": "Fügen Sie nicht nur Lebensmittel, sondern auch Ihre Medikamente hinzu und bleiben Sie gesund mit stündlichen Erinnerungen."
+      }
+    },
+    "buttons": {
+      "next": "Weiter",
+      "start": "Loslegen"
+    }
   }
 }

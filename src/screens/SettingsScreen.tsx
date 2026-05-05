@@ -1,6 +1,6 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -16,6 +16,7 @@ const LANGUAGES = [
   { code: 'es', label: 'Español', flag: '🇪🇸' },
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+  { code: 'ja', label: '日本語', flag: '🇯🇵' },
   { code: 'zh', label: '中文', flag: '🇨🇳' },
 ];
 
@@ -29,7 +30,7 @@ const SettingsScreen: React.FC = () => {
     try {
       await changeLanguage(langCode);
     } catch (e) {
-      console.warn('Dil değiştirme hatası:', e);
+      console.warn('Language change error:', e);
     }
   };
 
@@ -91,7 +92,7 @@ const SettingsScreen: React.FC = () => {
           <TouchableOpacity
             style={styles.rowEntry}
             onPress={() => importBackup(() => {
-              Alert.alert(t('common.success') || 'Başarılı', t('settings.importWarning'));
+              Alert.alert(t('common.success'), t('settings.importWarning'));
             })}
             activeOpacity={0.7}
           >
@@ -101,6 +102,26 @@ const SettingsScreen: React.FC = () => {
               </View>
               <Text style={[styles.rowLabel, { color: colors.text }]}>{t('settings.importBackup')}</Text>
             </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Legal */}
+        <Text style={[styles.sectionTitle, { color: colors.secondary, marginTop: SIZES.lg }]}>
+          {t('common.legal') || 'Legal'}
+        </Text>
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
+          <TouchableOpacity
+            style={styles.rowEntry}
+            onPress={() => Linking.openURL('https://github.com/Sw-Dev143/RafOmrum/security/policy')}
+            activeOpacity={0.7}
+          >
+            <View style={styles.rowLeft}>
+              <View style={[styles.iconWrap, { backgroundColor: COLORS.safe + '15' }]}>
+                <Ionicons name="shield-checkmark-outline" size={18} color={COLORS.safe} />
+              </View>
+              <Text style={[styles.rowLabel, { color: colors.text }]}>{t('settings.privacyPolicy')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </TouchableOpacity>
         </View>
 

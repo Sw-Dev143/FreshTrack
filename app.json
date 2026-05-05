@@ -1,32 +1,30 @@
 {
   "expo": {
-    "name": "Raf Ömrüm",
-    "slug": "RafOmrum",
-    "version": "1.1.0",
+    "name": "FreshTrack",
+    "slug": "FreshTrack",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "primaryColor": "#4F46E5",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1A237E"
+      "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Ürün barkodlarını taramak için kamera kullanılır.",
-        "NSPhotoLibraryUsageDescription": "Ürün resimleri için galeri kullanılır."
+        "NSCameraUsageDescription": "Camera access is required to automatically track expiration dates by scanning product barcodes.",
+        "NSPhotoLibraryUsageDescription": "Gallery access is required so you can select product images from your library."
       }
     },
     "android": {
-      "package": "com.melik.rafomrum",
-      "versionCode": 2,
+      "package": "com.freshtrack.pro.global",
+      "versionCode": 3,
       "adaptiveIcon": {
-        "backgroundColor": "#1A237E",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/icon.png"
       },
       "predictiveBackGestureEnabled": false,
       "permissions": [
@@ -47,21 +45,19 @@
       [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-3940256099942544~3347511713"
+          "androidAppId": "ca-app-pub-9730088447835930~5958446448"
         }
       ],
       "expo-font"
     ],
     "extra": {
       "eas": {
-        "projectId": "e9d39e60-a69e-4dbf-ab88-ca41ca35ec5e"
+        "projectId": "5bb84d9f-321f-4b75-9786-100da74ad7f6"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "updates": {
-      "url": "https://u.expo.dev/e9d39e60-a69e-4dbf-ab88-ca41ca35ec5e"
-    }
+    "updates": {}
   }
 }

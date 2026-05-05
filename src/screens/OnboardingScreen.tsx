@@ -7,6 +7,8 @@ import { useTheme } from '../context/ThemeContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
 
+import { useTranslation } from 'react-i18next';
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Onboarding'>;
 
 interface Props {
@@ -15,34 +17,23 @@ interface Props {
 
 const { width, height } = Dimensions.get('window');
 
-const SLIDES = [
-  {
-    id: '1',
-    title: 'Ürünlerinizi Kolayca Takip Edin',
-    description: 'Evdeki ürünlerin son kullanma tarihlerini kaydedin. İsrafı önleyin ve bütçenizi koruyun.',
-    icon: 'barcode-scan',
-    color: '#FF6F00',
-  },
-  {
-    id: '2',
-    title: 'Bildirimler İle Güvende Kalın',
-    description: 'Ürünlerinizin son kullanma tarihi yaklaşmadan 7 ve 3 gün önce, ve süresi dolduğunda anında uyarı alın.',
-    icon: 'bell-ring-outline',
-    color: '#00897B',
-  },
-  {
-    id: '3',
-    title: 'İlaçlarınızı Zamanında İçin',
-    description: 'Sadece gıdalar değil, ilaçlarınızı da sisteme ekleyip saatlik hatırlatıcılarla sağlığınızı güvene alın.',
-    icon: 'pill',
-    color: '#1E88E5',
-  },
+const SLIDE_CONFIG = [
+  { id: '1', icon: 'barcode-scan', color: '#FF6F00' },
+  { id: '2', icon: 'bell-ring-outline', color: '#00897B' },
+  { id: '3', icon: 'pill', color: '#1E88E5' },
 ];
 
 export default function OnboardingScreen({ navigation }: Props) {
   const { colors, isDark } = useTheme();
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+
+  const SLIDES = SLIDE_CONFIG.map(slide => ({
+    ...slide,
+    title: t(`onboarding.slides.${slide.id}.title`),
+    description: t(`onboarding.slides.${slide.id}.description`),
+  }));
 
   const completeOnboarding = async () => {
     try {
@@ -116,7 +107,7 @@ export default function OnboardingScreen({ navigation }: Props) {
           onPress={goToNextSlide}
         >
           <Text style={styles.buttonText}>
-            {currentIndex === SLIDES.length - 1 ? 'Hemen Başla' : 'İleri'}
+            {currentIndex === SLIDES.length - 1 ? t('onboarding.buttons.start') : t('onboarding.buttons.next')}
           </Text>
         </TouchableOpacity>
       </View>

@@ -3,6 +3,7 @@ import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
+import i18n from '../i18n';
 
 export const exportBackup = async () => {
   try {
@@ -30,15 +31,15 @@ export const exportBackup = async () => {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(fileUri, {
         mimeType: 'application/json',
-        dialogTitle: 'Raf Ömrüm Yedek Dosyası',
+        dialogTitle: 'FreshTrack Backup File',
       });
     } else {
-      Alert.alert('Hata', 'Paylaşım veya kaydetme desteklenmiyor.');
+      Alert.alert(i18n.t('common.error'), i18n.t('settings.backup.errorSharing'));
     }
 
   } catch (error) {
     console.error('Export error', error);
-    Alert.alert('Hata', 'Yedekleme oluşturulurken bir hata meydana geldi.');
+    Alert.alert(i18n.t('common.error'), i18n.t('settings.backup.errorExport'));
   }
 };
 
@@ -60,31 +61,31 @@ export const importBackup = async (onSuccess?: () => void) => {
       const parsedData = JSON.parse(fileContent);
 
       if (typeof parsedData !== 'object' || parsedData === null) {
-        throw new Error('Geçersiz JSON objesi');
+        throw new Error(i18n.t('settings.backup.invalidJson'));
       }
 
       const entries = Object.entries(parsedData).filter(([_, val]) => typeof val === 'string') as [string, string][];
       
       Alert.alert(
-        'Geri Yükleme',
-        'Mevcut verilerinizin üzerine yazılabilir. Emin misiniz?',
+        i18n.t('settings.backup.confirmTitle'),
+        i18n.t('settings.backup.confirmMessage'),
         [
-          { text: 'İptal', style: 'cancel' },
+          { text: i18n.t('common.cancel'), style: 'cancel' },
           {
-            text: 'Geri Yükle',
+            text: i18n.t('settings.backup.restoreBtn'),
             style: 'destructive',
             onPress: async () => {
               try {
                 if (entries.length > 0) {
                   await AsyncStorage.multiSet(entries);
-                  Alert.alert('Başarılı', 'Verileriniz başarıyla geri yüklendi.');
+                  Alert.alert(i18n.t('common.success'), i18n.t('settings.backup.success'));
                   if (onSuccess) onSuccess();
                 } else {
-                  Alert.alert('Uyarı', 'Geri yüklenecek geçerli veri bulunamadı.');
+                  Alert.alert(i18n.t('common.error'), i18n.t('settings.backup.noData'));
                 }
               } catch (e) {
                 console.error(e);
-                Alert.alert('Hata', 'Veriler geri yüklenirken hata oluştu.');
+                Alert.alert(i18n.t('common.error'), i18n.t('settings.backup.errorImport'));
               }
             }
           }
@@ -93,6 +94,6 @@ export const importBackup = async (onSuccess?: () => void) => {
     }
   } catch (error) {
     console.error('Import error', error);
-    Alert.alert('Hata', 'Yedek dosyası okunurken hata oluştu. Dosya hatalı olabilir.');
+    Alert.alert(i18n.t('common.error'), i18n.t('settings.backup.errorReadFile'));
   }
 };

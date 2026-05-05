@@ -2,24 +2,22 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { Category } from '../types';
 import { COLORS, SIZES } from '../theme';
-import { useTranslation } from 'react-i18next';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CategoryFilterProps {
-  categories: (Category | 'Tümü')[];
-  selectedCategory: Category | 'Tümü';
-  onSelect: (category: Category | 'Tümü') => void;
+  categories: (Category | 'all')[];
+  selectedCategory: Category | 'all';
+  onSelect: (category: Category | 'all') => void;
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({ categories, selectedCategory, onSelect }) => {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useLanguage();
 
   const getLabel = (cat: string) => {
-    if (cat === 'Tümü') return t('home.filter.all');
-    if (cat === 'Şarküteri') return t('home.filter.deli');
-    if (cat === 'Eczane') return t('home.filter.pharmacy');
-    if (cat === 'Diğer') return t('home.filter.other');
-    return cat;
+    if (cat === 'all') return t('home.filter.all');
+    return t(`categories.${cat.toLowerCase()}`);
   };
 
   return (

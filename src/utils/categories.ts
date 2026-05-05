@@ -11,9 +11,9 @@ export interface CustomCategory {
 const CATEGORIES_KEY = '@raf_omrum_categories';
 
 export const DEFAULT_CATEGORIES: CustomCategory[] = [
-  { id: 'sarküteri', name: 'Şarküteri', icon: 'restaurant-outline', color: '#F97316', isDefault: true },
-  { id: 'eczane',    name: 'Eczane',    icon: 'medkit-outline',     color: '#8B5CF6', isDefault: true },
-  { id: 'diger',     name: 'Diğer',     icon: 'cube-outline',       color: '#64748B', isDefault: true },
+  { id: 'deli',     name: 'deli',     icon: 'restaurant-outline', color: '#F97316', isDefault: true },
+  { id: 'pharmacy', name: 'pharmacy', icon: 'medkit-outline',     color: '#8B5CF6', isDefault: true },
+  { id: 'other',    name: 'other',    icon: 'cube-outline',       color: '#64748B', isDefault: true },
 ];
 
 export const getCategories = async (): Promise<CustomCategory[]> => {

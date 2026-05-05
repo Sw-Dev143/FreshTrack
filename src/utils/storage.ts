@@ -27,7 +27,13 @@ export const getProducts = async (): Promise<Product[]> => {
 
 export const saveProduct = async (product: Product): Promise<void> => {
   try {
-    const products = await getRawProducts(); // Bug fix: use raw read, no unnecessary sort
+    const products = await getRawProducts();
+    if (!Array.isArray(products)) {
+      console.warn('Storage corrupted, resetting products list');
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([product]));
+      return;
+    }
+    
     // Check if updating or adding new
     const existingIndex = products.findIndex(p => p.id === product.id);
     if (existingIndex >= 0) {
@@ -38,6 +44,7 @@ export const saveProduct = async (product: Product): Promise<void> => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(products));
   } catch (e) {
     console.error('Error saving product', e);
+    throw e; // Outer catch in Screen will handle UI alert
   }
 };
 

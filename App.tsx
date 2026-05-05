@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-SplashScreen.preventAutoHideAsync().catch(() => {});
+// SplashScreen.preventAutoHideAsync().catch(() => {});
 
 import { RootStackParamList } from './src/types';
 import HomeScreen from './src/screens/HomeScreen';
@@ -45,59 +46,65 @@ function AppNavigator() {
   useEffect(() => {
     let cancelled = false;
 
-    // 10 saniye güvenlik zamanlayıcısı — bildirim kurulumu takılsa bile uygulama açılır
+    // 5 saniye güvenlik zamanlayıcısı
     const safetyTimer = setTimeout(() => {
-      if (!cancelled) {
-        console.warn('[App] Safety timeout: forcing app ready');
+      if (!cancelled && !isReady) {
         setIsReady(true);
       }
-    }, 10000);
+    }, 5000);
 
     const init = async () => {
-      // ── 1. Bildirimler (hata olsa bile devam et) ──────────────────────────
+      try {
+        // 1. Kritik: Onboarding durumu
+        const hasSeenOnboarding = await AsyncStorage.getItem('@raf_omrum_has_seen_onboarding');
+        
+        if (!cancelled) {
+          if (hasSeenOnboarding !== 'true') {
+            setInitialRoute('Onboarding');
+          } else {
+            setInitialRoute('Home');
+            incrementLaunchCount().catch(() => {});
+            setTimeout(() => requestReviewIfAppropriate(false).catch(() => {}), 2000);
+          }
+        }
+        
+        // Arka Plan: Bildirimleri sessizce kur
+        setupAndScheduleNotifications();
+      } catch (error) {
+        console.warn('[App] Initialization error:', error);
+      } finally {
+        if (!cancelled) {
+          clearTimeout(safetyTimer);
+          setIsReady(true);
+        }
+      }
+    };
+
+    const setupAndScheduleNotifications = async () => {
       try {
         const granted = await setupNotifications();
         if (granted) {
-          const products = await getProducts();
-          await rescheduleAllNotifications(products);
+          const [products, medications] = await Promise.all([
+            getProducts().catch(() => []),
+            getMedications().catch(() => [])
+          ]);
 
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          let expired = 0;
-          let warning = 0;
+          await Promise.all([
+            rescheduleAllNotifications(products).catch(() => {}),
+            rescheduleAllMedicationReminders(medications).catch(() => {})
+          ]);
+
+          // Günlük özet
+          const today = new Date(); today.setHours(0,0,0,0);
+          let expired = 0, warning = 0;
           for (const p of products) {
-            const d = Math.ceil(
-              (new Date(p.expirationDate).getTime() - today.getTime()) / 86400000
-            );
-            if (d < 0) expired++;
-            else if (d <= 3) warning++;
+            const d = Math.ceil((new Date(p.expirationDate).getTime() - today.getTime()) / 86400000);
+            if (d < 0) expired++; else if (d <= 3) warning++;
           }
-          await scheduleDailySummary(expired, warning);
-
-          const medications = await getMedications();
-          await rescheduleAllMedicationReminders(medications);
+          await scheduleDailySummary(expired, warning).catch(() => {});
         }
-      } catch (error) {
-        console.warn('[App] Notification init error:', error);
-      }
-
-      // ── 2. Onboarding kontrolü (her durumda çalışır) ──────────────────────
-      try {
-        const hasSeenOnboarding = await AsyncStorage.getItem('@raf_omrum_has_seen_onboarding');
-        if (hasSeenOnboarding !== 'true') {
-          setInitialRoute('Onboarding');
-        } else {
-          await incrementLaunchCount();
-          setTimeout(() => requestReviewIfAppropriate(false), 2000);
-        }
-      } catch (storageErr) {
-        console.warn('[App] AsyncStorage GET error:', storageErr);
-      }
-
-      // ── 3. Hazır ──────────────────────────────────────────────────────────
-      if (!cancelled) {
-        clearTimeout(safetyTimer);
-        setIsReady(true);
+      } catch (e) {
+        console.warn('[App] Notification task error:', e);
       }
     };
 
@@ -109,37 +116,17 @@ function AppNavigator() {
     };
   }, []);
 
-  // Splash Screen'i gizle
   useEffect(() => {
     if (isReady) {
-      SplashScreen.hideAsync().catch(console.warn);
+      SplashScreen.hideAsync().catch(() => {});
     }
   }, [isReady]);
 
-  // Hazır değilken SplashScreen görünür — beyaz ekran yok
   if (!isReady) return null;
 
   const navTheme = isDark
-    ? {
-        ...DarkTheme,
-        colors: {
-          ...DarkTheme.colors,
-          background: colors.background,
-          card: colors.surface,
-          text: colors.text,
-          border: colors.border,
-        },
-      }
-    : {
-        ...DefaultTheme,
-        colors: {
-          ...DefaultTheme.colors,
-          background: colors.background,
-          card: colors.surface,
-          text: colors.text,
-          border: colors.border,
-        },
-      };
+    ? { ...DarkTheme, colors: { ...DarkTheme.colors, background: colors.background, card: colors.surface, text: colors.text, border: colors.border } }
+    : { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: colors.background, card: colors.surface, text: colors.text, border: colors.border } };
 
   return (
     <>
@@ -153,53 +140,17 @@ function AppNavigator() {
             headerShadowVisible: false,
           }}
         >
-          <Stack.Screen
-            name="Onboarding"
-            component={OnboardingScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="AddProduct"
-            component={AddProductScreen}
-            options={{ title: t('navigation.addProduct') }}
-          />
-          <Stack.Screen
-            name="ProductDetails"
-            component={ProductDetailsScreen}
-            options={{ title: t('navigation.productDetails') }}
-          />
-          <Stack.Screen
-            name="Paywall"
-            component={PaywallScreen}
-            options={{ presentation: 'modal', headerShown: false }}
-          />
-          <Stack.Screen
-            name="Medications"
-            component={MedicationsScreen}
-            options={{ title: t('navigation.medications') }}
-          />
-          <Stack.Screen
-            name="AddMedication"
-            component={AddMedicationScreen}
-            options={({ route }) => ({
-              title: route.params?.medicationToEdit ? t('navigation.editMedication') : t('navigation.addMedication'),
-            })}
-          />
-          <Stack.Screen
-            name="MedicationStats"
-            component={MedicationStatsScreen}
-            options={{ title: t('navigation.medicationStats') }}
-          />
-          <Stack.Screen
-            name="Settings"
-            component={SettingsScreen}
-            options={{ title: t('navigation.settings') || 'Ayarlar' }}
-          />
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AddProduct" component={AddProductScreen} options={{ title: t('navigation.addProduct') }} />
+          <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} options={{ title: t('navigation.productDetails') }} />
+          <Stack.Screen name="Paywall" component={PaywallScreen} options={{ presentation: 'modal', headerShown: false }} />
+          <Stack.Screen name="Medications" component={MedicationsScreen} options={{ title: t('navigation.medications') }} />
+          <Stack.Screen name="AddMedication" component={AddMedicationScreen} options={({ route }) => ({
+            title: route.params?.medicationToEdit ? t('navigation.editMedication') : t('navigation.addMedication'),
+          })} />
+          <Stack.Screen name="MedicationStats" component={MedicationStatsScreen} options={{ title: t('navigation.medicationStats') }} />
+          <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: t('navigation.settings') }} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

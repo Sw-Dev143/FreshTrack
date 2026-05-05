@@ -8,8 +8,8 @@ import { Medication, DoseLog } from '../types';
 import { getMedications, getAllDoseLogs, getDoseLogsForDate } from '../utils/medicationStorage';
 import { COLORS, SIZES, SHADOWS } from '../theme';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
-const DAY_LABELS = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
 const padZ = (n: number) => String(n).padStart(2, '0');
 
 // Son N günün tarih string'ini üretir (bugün dahil)
@@ -34,6 +34,7 @@ interface DayStats {
 
 const MedicationStatsScreen: React.FC = () => {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const [medications, setMedications] = useState<Medication[]>([]);
   const [dayStats, setDayStats]       = useState<DayStats[]>([]);
   const [selectedMed, setSelectedMed] = useState<string | null>(null); // null = tümü
@@ -60,7 +61,7 @@ const MedicationStatsScreen: React.FC = () => {
       }
       return {
         date,
-        label: DAY_LABELS[dow],
+        label: t(`days.${dow}`),
         total,
         taken,
       };
@@ -87,8 +88,8 @@ const MedicationStatsScreen: React.FC = () => {
         {/* ── Genel Uyum Kartı ── */}
         <View style={[styles.adherenceCard, { backgroundColor: colors.surface }]}>
           <View style={styles.adherenceLeft}>
-            <Text style={[styles.adherenceTitle, { color: colors.secondary }]}>Genel Uyum</Text>
-            <Text style={[styles.adherenceSub, { color: colors.textLight }]}>Son 14 gün • {takenDoses}/{totalDoses} doz</Text>
+            <Text style={[styles.adherenceTitle, { color: colors.secondary }]}>{t('medication.stats.overallAdherence')}</Text>
+            <Text style={[styles.adherenceSub, { color: colors.textLight }]}>{t('medication.stats.lastDays', { count: 14 })} • {takenDoses}/{totalDoses} {t('medication.stats.doses')}</Text>
           </View>
           <View style={[styles.adherenceCircle, { borderColor: adherenceColor }]}>
             <Text style={[styles.adherencePct, { color: adherenceColor }]}>{adherence}%</Text>
@@ -103,7 +104,7 @@ const MedicationStatsScreen: React.FC = () => {
               onPress={() => setSelectedMed(null)}
             >
               <Text style={[styles.filterChipText, { color: colors.textLight }, !selectedMed && styles.filterChipTextActive]}>
-                Tümü
+                {t('home.filter.all')}
               </Text>
             </TouchableOpacity>
             {medications.map(med => (
@@ -123,7 +124,7 @@ const MedicationStatsScreen: React.FC = () => {
 
         {/* ── 14 Gün Bar Chart ── */}
         <View style={[styles.chartCard, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.chartTitle, { color: colors.secondary }]}>📅 Son 14 Gün</Text>
+          <Text style={[styles.chartTitle, { color: colors.secondary }]}>📅 {t('medication.stats.lastDays', { count: 14 })}</Text>
           <View style={styles.barsRow}>
             {dayStats.map((day, i) => {
               const fillRatio = day.total > 0 ? day.taken / day.total : 0;
@@ -169,7 +170,7 @@ const MedicationStatsScreen: React.FC = () => {
         {/* ── İlaç Bazlı Özet ── */}
         {medications.length > 0 && (
           <View style={[styles.perMedCard, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.chartTitle, { color: colors.secondary }]}>💊 İlaç Bazlı</Text>
+            <Text style={[styles.chartTitle, { color: colors.secondary }]}>💊 {t('medication.stats.medBased')}</Text>
             {medications.filter(m => m.active).map(med => (
               <MedRow key={med.id} med={med} dayStats={dayStats} colors={colors} />
             ))}

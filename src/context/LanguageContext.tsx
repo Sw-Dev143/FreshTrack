@@ -1,22 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 
 const LANG_KEY = '@raf_omrum_language';
 
 interface LanguageContextType {
   currentLanguage: string;
   changeLanguage: (lang: string) => Promise<void>;
+  t: any;
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   currentLanguage: 'tr',
   changeLanguage: async () => {},
+  t: (key: string) => key,
 });
 
 export const useLanguage = () => useContext(LanguageContext);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'tr');
 
   // Uygulama açılışında kaydedilmiş dili yükle
@@ -36,7 +40,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   return (
-    <LanguageContext.Provider value={{ currentLanguage, changeLanguage }}>
+    <LanguageContext.Provider value={{ currentLanguage, changeLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

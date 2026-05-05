@@ -8,6 +8,7 @@ const LOCALE_MAP: Record<string, string> = {
   fr: 'fr-FR',
   de: 'de-DE',
   zh: 'zh-CN',
+  ja: 'ja-JP',
 };
 
 /**

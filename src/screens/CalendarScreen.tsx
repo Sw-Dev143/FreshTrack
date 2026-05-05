@@ -19,12 +19,6 @@ interface DayInfo {
   status: DayStatus;
 }
 
-const MONTHS_TR = [
-  'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık',
-];
-const DAYS_TR = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-
 function toDateStr(d: Date): string {
   return d.toISOString().split('T')[0];
 }
@@ -43,11 +37,26 @@ function buildCalendarDays(year: number, month: number): (string | null)[] {
 const CalendarScreen: React.FC = () => {
   const { colors } = useTheme();
   const { currentLanguage } = useLanguage();
+  const { t } = useLanguage();
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const today = new Date();
   const [displayMonth, setDisplayMonth] = useState(today.getMonth());
   const [displayYear, setDisplayYear] = useState(today.getFullYear());
+
+  // Dynamic month and day labels based on locale
+  const monthName = useMemo(() => {
+    return new Date(displayYear, displayMonth).toLocaleString(currentLanguage, { month: 'long' });
+  }, [displayMonth, displayYear, currentLanguage]);
+
+  const daysHeader = useMemo(() => {
+    const baseDate = new Date(2024, 0, 1); // Monday
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(baseDate);
+      d.setDate(baseDate.getDate() + i);
+      return d.toLocaleString(currentLanguage, { weekday: 'short' });
+    });
+  }, [currentLanguage]);
 
   const load = async () => {
     setAllProducts(await getProducts());
@@ -55,7 +64,7 @@ const CalendarScreen: React.FC = () => {
 
   useFocusEffect(useCallback(() => { load(); }, []));
 
-  // Tarih → ürün eşlemesi
+  // Date → product mapping
   const dateMap = useMemo<Record<string, DayInfo>>(() => {
     const map: Record<string, DayInfo> = {};
     const todayStr = toDateStr(today);
@@ -68,7 +77,7 @@ const CalendarScreen: React.FC = () => {
       if (!map[expDate]) {
         map[expDate] = { date: expDate, products: [], status };
       } else {
-        // Kötü durum kazanır
+        // Worst status wins
         if (status === 'expired') map[expDate].status = 'expired';
         else if (status === 'warning' && map[expDate].status === 'safe') map[expDate].status = 'warning';
       }
@@ -108,7 +117,7 @@ const CalendarScreen: React.FC = () => {
             <Ionicons name="chevron-back" size={22} color={COLORS.primary} />
           </TouchableOpacity>
           <Text style={[styles.monthTitle, { color: colors.secondary }]}>
-            {MONTHS_TR[displayMonth]} {displayYear}
+            {monthName} {displayYear}
           </Text>
           <TouchableOpacity onPress={nextMonth} style={styles.navBtn}>
             <Ionicons name="chevron-forward" size={22} color={COLORS.primary} />
@@ -117,7 +126,7 @@ const CalendarScreen: React.FC = () => {
 
         {/* Days header */}
         <View style={styles.daysHeader}>
-          {DAYS_TR.map(d => (
+          {daysHeader.map(d => (
             <Text key={d} style={[styles.dayHeaderText, { color: colors.textLight }]}>{d}</Text>
           ))}
         </View>
@@ -156,14 +165,14 @@ const CalendarScreen: React.FC = () => {
           })}
         </View>
 
-        {/* Renk açıklaması */}
+        {/* Status Legend */}
         <View style={styles.legend}>
-          <LegendItem color={COLORS.safe}    label="Güvende" />
-          <LegendItem color={COLORS.warning} label="Yaklaşan (≤3 gün)" />
-          <LegendItem color={COLORS.danger}  label="Süresi geçmiş" />
+          <LegendItem color={COLORS.safe}    label={t('home.stats.safe')} />
+          <LegendItem color={COLORS.warning} label={t('home.stats.warning')} />
+          <LegendItem color={COLORS.danger}  label={t('home.stats.expired')} />
         </View>
 
-        {/* Seçili gün ürünleri */}
+        {/* Selected Day Products */}
         {selectedDate && (
           <View style={[styles.detailCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Text style={[styles.detailTitle, { color: colors.secondary }]}>
@@ -172,7 +181,7 @@ const CalendarScreen: React.FC = () => {
               }, currentLanguage)}
             </Text>
             {selectedProducts.length === 0 ? (
-              <Text style={[styles.noProductText, { color: colors.textLight }]}>Bu tarihe ait ürün yok.</Text>
+              <Text style={[styles.noProductText, { color: colors.textLight }]}>{t('home.empty.noResults', { query: '' }).trim() || 'No products for this date.'}</Text>
             ) : (
               selectedProducts.map(p => {
                 const info = dateMap[p.expirationDate];
@@ -181,7 +190,11 @@ const CalendarScreen: React.FC = () => {
                     <View style={[styles.productDot, { backgroundColor: statusColor(info?.status) }]} />
                     <View style={{ flex: 1 }}>
                       <Text style={[styles.productName, { color: colors.text }]}>{p.name}</Text>
-                      <Text style={[styles.productCat, { color: colors.textLight }]}>{p.category}</Text>
+                      <Text style={[styles.productCat, { color: colors.textLight }]}>
+                        {['deli', 'pharmacy', 'other'].includes(p.category.toLowerCase())
+                          ? t(`categories.${p.category.toLowerCase()}`)
+                          : p.category}
+                      </Text>
                     </View>
                   </View>
                 );

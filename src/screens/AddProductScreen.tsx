@@ -23,21 +23,28 @@ import { useLanguage } from '../context/LanguageContext';
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AddProduct'>;
 type RoutePropType  = RouteProp<RootStackParamList, 'AddProduct'>;
 
-const CATEGORIES: Category[] = ['Şarküteri', 'Eczane', 'Diğer'];
+const CATEGORIES: Category[] = ['deli', 'pharmacy', 'other'];
 
 const CATEGORY_CONFIG: Record<string, { icon: string; color: string }> = {
-  'Şarküteri': { icon: 'restaurant-outline' , color: COLORS.deli },
-  'Eczane':    { icon: 'medkit-outline', color: COLORS.pharmacy },
-  'Diğer':     { icon: 'cube-outline', color: COLORS.other },
+  'deli':     { icon: 'restaurant-outline' , color: COLORS.deli },
+  'pharmacy': { icon: 'medkit-outline', color: COLORS.pharmacy },
+  'other':    { icon: 'cube-outline', color: COLORS.other },
 };
 
 // ── Open Food Facts API ──────────────────────────────────────────────────────
 async function lookupBarcode(barcode: string): Promise<{ name: string; brand?: string } | null> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+
   try {
     const res = await fetch(
       `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`,
-      { headers: { 'User-Agent': 'RafOmrum/1.0' } }
+      { 
+        headers: { 'User-Agent': 'FreshTrack/1.0' },
+        signal: controller.signal
+      }
     );
+    clearTimeout(timeoutId);
     if (!res.ok) return null;
     const json = await res.json();
     if (json.status !== 1) return null;
@@ -52,7 +59,7 @@ async function lookupBarcode(barcode: string): Promise<{ name: string; brand?: s
   }
 }
 
-// ── Toast bileşeni ───────────────────────────────────────────────────────────
+// ── Toast Component ─────────────────────────────────────────────────────────
 type ToastType = 'success' | 'error' | 'info';
 interface ToastState { message: string; type: ToastType; visible: boolean }
 
@@ -86,7 +93,7 @@ const toastStyles = StyleSheet.create({
   text: { color: '#fff', fontWeight: '700', fontSize: 14, flex: 1 },
 });
 
-// ── Ana bileşen ──────────────────────────────────────────────────────────────
+// ── Main Component ──────────────────────────────────────────────────────────
 const AddProductScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const route      = useRoute<RoutePropType>();
@@ -94,13 +101,14 @@ const AddProductScreen: React.FC = () => {
   const { onProductAdded } = useInterstitialAd(isPremium);
   const { colors } = useTheme();
   const { currentLanguage } = useLanguage();
+  const { t } = useLanguage(); // i18next t function for immediate updates
 
-  // Bug 1 Fix: productToEdit param'ı oku
+  // Bug 1 Fix: read productToEdit param
   const productToEdit = route.params?.productToEdit;
   const isEditing     = !!productToEdit;
 
   const [name, setName]         = useState(productToEdit?.name ?? '');
-  const [category, setCategory] = useState<Category>(productToEdit?.category ?? 'Şarküteri');
+  const [category, setCategory] = useState<Category>(productToEdit?.category ?? 'deli');
   const [date, setDate]         = useState(
     productToEdit
       ? new Date(productToEdit.expirationDate)
@@ -112,8 +120,9 @@ const AddProductScreen: React.FC = () => {
   const [isScanning, setIsScanning]         = useState(false);
   const [isLookingUp, setIsLookingUp]       = useState(false);
   const [permission, requestPermission]     = useCameraPermissions();
+  const [isSaving, setIsSaving]             = useState(false);
 
-  // Çift-tarama koruması
+  // Double-scan protection
   const isProcessingRef = useRef(false);
 
   // Toast
@@ -127,15 +136,15 @@ const AddProductScreen: React.FC = () => {
   }, []);
 
   const addDuration = (amount: number, unit: 'week' | 'month' | 'year') => {
-    const newDate = new Date();
+    const newDate = new Date(date);
     if (unit === 'week') newDate.setDate(newDate.getDate() + amount * 7);
     else if (unit === 'month') newDate.setMonth(newDate.getMonth() + amount);
     else if (unit === 'year') newDate.setFullYear(newDate.getFullYear() + amount);
     setDate(newDate);
-    showToast(`Tarih güncellendi: ${formatDate(newDate, undefined, currentLanguage)}`, 'info');
+    showToast(`${t('add.toast.dateUpdated')}: ${formatDate(newDate, undefined, currentLanguage)}`, 'info');
   };
 
-  // Tarayıcı köşe animasyonu
+  // Scanner corner animation
   const scanAnim = useRef(new Animated.Value(0)).current;
   React.useEffect(() => {
     if (isScanning) {
@@ -153,11 +162,15 @@ const AddProductScreen: React.FC = () => {
 
   const scanLineTranslate = scanAnim.interpolate({ inputRange: [0, 1], outputRange: [-60, 60] });
 
-  // ── Barkod tarandı ──────────────────────────────────────────────────────
+  // ── Barcode Scanned ──────────────────────────────────────────────────────
   const handleBarcodeScanned = useCallback(async ({ data }: { type: string; data: string }) => {
     if (isProcessingRef.current) return;
     isProcessingRef.current = true;
-    setIsScanning(false);
+    
+    // Close modal with a small delay so camera doesn't error out
+    setTimeout(() => {
+      setIsScanning(false);
+    }, 150);
 
     setScannedBarcode(data);
     setIsLookingUp(true);
@@ -167,9 +180,9 @@ const AddProductScreen: React.FC = () => {
       if (cached) {
         setName(cached.name);
         setCategory(cached.category);
-        showToast(`✅ Ürün bulundu: ${cached.name}`, 'success');
+        showToast(`✅ ${t('add.toast.productFound')}: ${cached.name}`, 'success');
         setIsLookingUp(false);
-        setTimeout(() => { isProcessingRef.current = false; }, 1500);
+        setTimeout(() => { isProcessingRef.current = false; }, 1000);
         return;
       }
 
@@ -178,24 +191,25 @@ const AddProductScreen: React.FC = () => {
         const productName = result.brand ? `${result.brand} ${result.name}` : result.name;
         setName(productName);
         await saveBarcodeInfo(data, { name: productName, category, brand: result.brand });
-        showToast(`🎉 Ürün tanındı: ${productName}`, 'success');
+        showToast(`🎉 ${t('add.toast.productRecognized')}: ${productName}`, 'success');
       } else {
-        showToast('Yeni barkod — ürün adını siz girin, bir dahaki sefere hatırlayacağız.', 'info');
+        showToast(t('add.toast.newBarcode'), 'info');
       }
-    } catch {
-      showToast('Barkod sorgulanırken hata oluştu.', 'error');
+    } catch (e) {
+      console.warn('Barcode lookup error:', e);
+      showToast(t('add.toast.lookupError'), 'error');
     } finally {
       setIsLookingUp(false);
-      setTimeout(() => { isProcessingRef.current = false; }, 1500);
+      setTimeout(() => { isProcessingRef.current = false; }, 1000);
     }
-  }, [category, showToast]);
+  }, [category, showToast, t]);
 
-  // ── Kamera aç ───────────────────────────────────────────────────────────
+  // ── Open Scanner ───────────────────────────────────────────────────────────
   const openScanner = async () => {
     if (!permission?.granted) {
       const { granted } = await requestPermission();
       if (!granted) {
-        Alert.alert('İzin Reddedildi', 'Kamera izni olmadan barkod tarayamazsınız.');
+        Alert.alert(t('add.camera.permissionDenied'), t('add.camera.permissionSubtitle'));
         return;
       }
     }
@@ -203,44 +217,61 @@ const AddProductScreen: React.FC = () => {
     setIsScanning(true);
   };
 
-  // ── Kaydet ──────────────────────────────────────────────────────────────
+  // ── Save ───────────────────────────────────────────────────────────────────
   const handleSave = async () => {
+    if (isSaving) return;
     if (name.trim() === '') {
-      Alert.alert('Eksik Bilgi', 'Lütfen ürün adı giriniz.');
+      Alert.alert(t('add.validation.noName'), t('add.validation.noNameSubtitle'));
       return;
     }
 
-    const product = {
-      // Bug 1 Fix: düzenleme modunda orijinal id ve createdAt korunur
-      id:             isEditing ? productToEdit!.id        : Date.now().toString(),
-      createdAt:      isEditing ? productToEdit!.createdAt : new Date().toISOString(),
-      name:           name.trim(),
-      category,
-      expirationDate: date.toISOString().split('T')[0],
-      barcode:        scannedBarcode || undefined,
-    };
+    setIsSaving(true);
 
-    if (scannedBarcode) {
-      await saveBarcodeInfo(scannedBarcode, { name: product.name, category: product.category });
-    }
-    await saveProduct(product);
-    await scheduleExpirationNotification(product.id, product.name, product.expirationDate);
+    try {
+      const product = {
+        id:             isEditing ? productToEdit!.id        : Date.now().toString(),
+        createdAt:      isEditing ? productToEdit!.createdAt : new Date().toISOString(),
+        name:           name.trim(),
+        category,
+        expirationDate: date.toISOString().split('T')[0],
+        barcode:        scannedBarcode || undefined,
+      };
 
-    if (!isEditing) {
-      await onProductAdded(); // interstitial sadece yeni ürün eklemede
-      
-      // In-App Review Trigger
-      try {
-        await incrementActionCount();
-        setTimeout(() => requestReviewIfAppropriate(true), 1500);
-      } catch (e) {
-        console.error('In-app review err:', e);
+      if (scannedBarcode) {
+        await saveBarcodeInfo(scannedBarcode, { name: product.name, category: product.category }).catch(() => {});
       }
+      
+      await saveProduct(product);
+      
+      // Notification planning (App should continue even if there's an error)
+      try {
+        await scheduleExpirationNotification(product.id, product.name, product.expirationDate);
+      } catch (notifErr) {
+        console.warn('Notification schedule failed:', notifErr);
+      }
+
+      if (!isEditing) {
+        onProductAdded().catch(() => {}); // Interstitial Ad (App should continue even if there's an error)
+        
+        // In-App Review Trigger
+        try {
+          await incrementActionCount();
+          setTimeout(() => requestReviewIfAppropriate(true).catch(() => {}), 1500);
+        } catch (e) {
+          console.error('In-app review err:', e);
+        }
+      }
+      
+      navigation.goBack();
+    } catch (saveErr) {
+      console.error('Save Product Error:', saveErr);
+      Alert.alert(t('add.toast.error'), t('add.toast.saveError'));
+    } finally {
+      setIsSaving(false);
     }
-    navigation.goBack();
   };
 
-  // Bug 2 Fix: minimum tarih string (web için)
+  // Bug 2 Fix: minimum date string (for web)
   const todayString = new Date().toISOString().split('T')[0];
 
   const onDateChange = (_: any, selectedDate?: Date) => {
@@ -255,14 +286,14 @@ const AddProductScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.container}>
 
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          {/* Ürün Adı */}
+          {/* Product Name */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.secondary }]}>Ürün Adı</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>{t('add.nameLabel')}</Text>
             <View style={[styles.inputContainer, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
               <Ionicons name="pricetag-outline" size={20} color={colors.textLight} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: colors.text }]}
-                placeholder="Örn: Aspirin, Kaşar Peyniri"
+                placeholder={t('add.namePlaceholder')}
                 placeholderTextColor={colors.textMuted}
                 value={name}
                 onChangeText={setName}
@@ -278,14 +309,14 @@ const AddProductScreen: React.FC = () => {
             {scannedBarcode ? (
               <View style={styles.barcodeTag}>
                 <Ionicons name="checkmark-circle" size={14} color={COLORS.primary} />
-                <Text style={[styles.barcodeHintText, { color: COLORS.primary }]}>Barkod: {scannedBarcode}</Text>
+                <Text style={[styles.barcodeHintText, { color: COLORS.primary }]}>{t('add.barcode')}: {scannedBarcode}</Text>
               </View>
             ) : null}
           </View>
 
-          {/* Kategori */}
+          {/* Category */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.secondary }]}>Kategori</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>{t('add.categoryLabel')}</Text>
             <View style={styles.categoryContainer}>
               {CATEGORIES.map((cat) => {
                 const config = CATEGORY_CONFIG[cat];
@@ -311,7 +342,7 @@ const AddProductScreen: React.FC = () => {
                       { color: colors.textLight }, 
                       isActive && { color: config.color, fontWeight: '800' }
                     ]}>
-                      {cat}
+                      {t(`categories.${cat}`)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -319,9 +350,9 @@ const AddProductScreen: React.FC = () => {
             </View>
           </View>
 
-          {/* Tarih */}
+          {/* Date */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.secondary }]}>Son Kullanma Tarihi</Text>
+            <Text style={[styles.label, { color: colors.secondary }]}>{t('add.dateLabel')}</Text>
             {Platform.OS === 'web' ? (
               <View style={[styles.inputContainer, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
                 <Ionicons name="calendar-outline" size={20} color={colors.textLight} style={styles.inputIcon} />
@@ -354,32 +385,43 @@ const AddProductScreen: React.FC = () => {
               </View>
             )}
 
-            {/* Hızlı Seçim Butonları */}
+            {/* Quick Selection Buttons */}
             <View style={styles.quickDateContainer}>
-              <QuickDateBtn label="+1 Hafta" onPress={() => addDuration(1, 'week')} />
-              <QuickDateBtn label="+1 Ay"    onPress={() => addDuration(1, 'month')} />
-              <QuickDateBtn label="+6 Ay"    onPress={() => addDuration(6, 'month')} />
-              <QuickDateBtn label="+1 Yıl"   onPress={() => addDuration(1, 'year')} />
+              <QuickDateBtn label={`+1 ${t('add.date.week')}`} onPress={() => addDuration(1, 'week')} />
+              <QuickDateBtn label={`+1 ${t('add.date.month')}`}    onPress={() => addDuration(1, 'month')} />
+              <QuickDateBtn label={`+6 ${t('add.date.month')}`}    onPress={() => addDuration(6, 'month')} />
+              <QuickDateBtn label={`+1 ${t('add.date.year')}`}   onPress={() => addDuration(1, 'year')} />
             </View>
           </View>
         </View>
 
-        {/* Kaydet butonu */}
-        <TouchableOpacity style={styles.saveBtn} onPress={handleSave} activeOpacity={0.9}>
-          <Text style={styles.saveBtnText}>{isEditing ? 'Güncelle' : 'Kaydet'}</Text>
-          <Ionicons name="checkmark-circle" size={20} color={COLORS.surface} />
+        {/* Save button */}
+        <TouchableOpacity 
+          style={[styles.saveBtn, isSaving && { opacity: 0.7 }]} 
+          onPress={handleSave} 
+          activeOpacity={0.9}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <>
+              <Text style={styles.saveBtnText}>{isEditing ? t('add.updateBtn') : t('add.saveBtn')}</Text>
+              <Ionicons name="checkmark-circle" size={20} color={COLORS.surface} />
+            </>
+          )}
         </TouchableOpacity>
       </ScrollView>
 
       {/* Toast */}
       <Toast toast={toast} />
 
-      {/* Kamera Modal */}
+      {/* Camera Modal */}
       <Modal visible={isScanning} animationType="slide" transparent={false}>
         <SafeAreaView style={styles.cameraModalContainer}>
-          {/* Başlık */}
+          {/* Header */}
           <View style={styles.cameraHeader}>
-            <Text style={styles.cameraTitle}>Barkod Tara</Text>
+            <Text style={styles.cameraTitle}>{t('add.camera.title')}</Text>
             <TouchableOpacity onPress={() => setIsScanning(false)} style={styles.closeBtn}>
               <Ionicons name="close" size={28} color="#fff" />
             </TouchableOpacity>
@@ -394,24 +436,24 @@ const AddProductScreen: React.FC = () => {
                 barcodeTypes: ['ean13', 'ean8', 'qr', 'upc_a', 'upc_e', 'code128', 'code39'],
               }}
             >
-              {/* Karanlık overlay */}
+              {/* Dark overlay */}
               <View style={styles.overlayTop} />
               <View style={styles.overlayRow}>
                 <View style={styles.overlaySide} />
-                {/* Tarama çerçevesi */}
+                {/* Scan frame */}
                 <View style={styles.scanFrame}>
-                  {/* Köşe imleri */}
+                  {/* Corner marks */}
                   <View style={[styles.corner, styles.cornerTL]} />
                   <View style={[styles.corner, styles.cornerTR]} />
                   <View style={[styles.corner, styles.cornerBL]} />
                   <View style={[styles.corner, styles.cornerBR]} />
-                  {/* Tarama çizgisi */}
+                  {/* Scan line */}
                   <Animated.View style={[styles.scanLine, { transform: [{ translateY: scanLineTranslate }] }]} />
                 </View>
                 <View style={styles.overlaySide} />
               </View>
               <View style={styles.overlayBottom}>
-                <Text style={styles.scanHint}>Barkodu çerçeveye hizalayın</Text>
+                <Text style={styles.scanHint}>{t('add.camera.hint')}</Text>
               </View>
             </CameraView>
           )}
@@ -421,7 +463,7 @@ const AddProductScreen: React.FC = () => {
   );
 };
 
-// ── Yardımcı Bileşenler ──────────────────────────────────────────────────────
+// ── Helper Components ───────────────────────────────────────────────────────
 const QuickDateBtn: React.FC<{ label: string; onPress: () => void }> = ({ label, onPress }) => {
   const { colors } = useTheme();
   return (

@@ -8,6 +8,7 @@ import zh from './translations/zh.json';
 import es from './translations/es.json';
 import de from './translations/de.json';
 import fr from './translations/fr.json';
+import ja from './translations/ja.json';
 
 const resources = {
   en: { translation: en },
@@ -16,16 +17,17 @@ const resources = {
   es: { translation: es },
   de: { translation: de },
   fr: { translation: fr },
+  ja: { translation: ja },
 };
 
-const deviceLanguage = getLocales()[0]?.languageCode || 'tr';
+const deviceLanguage = getLocales()[0]?.languageCode || 'en';
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: Object.keys(resources).includes(deviceLanguage) ? deviceLanguage : 'tr',
-    fallbackLng: 'tr',
+    lng: Object.keys(resources).includes(deviceLanguage) ? deviceLanguage : 'en',
+    fallbackLng: 'en',
     compatibilityJSON: 'v4',
     interpolation: {
       escapeValue: false, // react already safes from xss

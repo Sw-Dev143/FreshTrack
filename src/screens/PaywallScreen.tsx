@@ -1,21 +1,24 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, ScrollView,  } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, ScrollView, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS, SIZES, SHADOWS } from '../theme';
 import { usePremium } from '../context/PremiumContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 // ── Feature listesi ──────────────────────────────────────────────────────────
-const FEATURES = [
-  { icon: 'ban'            as const, color: COLORS.danger,   text: 'Tüm Reklamları Kaldır' },
-  { icon: 'infinite'       as const, color: COLORS.primary,  text: 'Sınırsız Ürün Takibi' },
-  { icon: 'shield-checkmark' as const, color: COLORS.safe,   text: 'Ömür Boyu Erişim & Güncellemeler' },
-  { icon: 'flash'          as const, color: COLORS.warning,  text: 'Öncelikli Destek' },
+const getFeatures = (t: any) => [
+  { icon: 'ban' as const, color: COLORS.danger, text: t('paywall.features.noAds') },
+  { icon: 'infinite' as const, color: COLORS.primary, text: t('paywall.features.unlimited') || 'Unlimited Tracking' },
+  { icon: 'flash' as const, color: COLORS.warning, text: t('paywall.features.lifetime') || 'Lifetime Updates' },
+  { icon: 'shield-checkmark' as const, color: COLORS.safe, text: t('paywall.features.support') || 'Priority Support' },
 ];
 
-const AlreadyPro: React.FC<{ onBack: () => void; colors: any }> = ({ onBack, colors }) => (
+const AlreadyPro: React.FC<{ onBack: () => void; colors: any }> = ({ onBack, colors }) => {
+  const { t } = useLanguage();
+  return (
   <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
     <View style={styles.proContainer}>
       <View style={[styles.proIconRing, { borderColor: COLORS.primary + '30' }]}>
@@ -23,19 +26,35 @@ const AlreadyPro: React.FC<{ onBack: () => void; colors: any }> = ({ onBack, col
           <Ionicons name="diamond" size={48} color={COLORS.primary} />
         </View>
       </View>
-      <Text style={[styles.proTitle, { color: colors.secondary }]}>Zaten PRO Kullanıcısısınız 🎉</Text>
-      <Text style={[styles.proSubtitle, { color: colors.textLight }]}>Tüm premium özelliklerin tadını çıkarıyorsunuz.</Text>
+      <Text style={[styles.proTitle, { color: colors.secondary }]}>{t('paywall.alreadyPro')}</Text>
+      <Text style={[styles.proSubtitle, { color: colors.textLight }]}>{t('paywall.alreadyProSubtitle')}</Text>
       <TouchableOpacity style={styles.ctaButton} onPress={onBack} activeOpacity={0.9}>
-        <Text style={styles.ctaText}>Harika!</Text>
+        <Text style={styles.ctaText}>{t('common.success')}</Text>
       </TouchableOpacity>
     </View>
   </SafeAreaView>
-);
+  );
+};
 
 const PaywallScreen: React.FC = () => {
   const navigation = useNavigation();
   const { isPremium, unlockPremium } = usePremium();
   const { colors } = useTheme();
+  const { t, currentLanguage } = useLanguage();
+  const FEATURES = getFeatures(t);
+
+  // Yerel fiyat formatlama (Daha gerçekçi fiyatlar)
+  const getBasePrice = () => {
+    if (currentLanguage === 'tr') return 99.99; // 99.99 TRY
+    if (currentLanguage === 'ja') return 800;   // 800 JPY
+    return 4.99; // 4.99 USD (Global standart)
+  };
+
+  const price = getBasePrice();
+  const formattedPrice = new Intl.NumberFormat(currentLanguage, {
+    style: 'currency',
+    currency: currentLanguage === 'tr' ? 'TRY' : currentLanguage === 'ja' ? 'JPY' : 'USD',
+  }).format(price);
 
   // Ikon pulse animasyonu
   const pulse = useRef(new Animated.Value(1)).current;
@@ -50,17 +69,16 @@ const PaywallScreen: React.FC = () => {
 
   const handlePurchase = () => {
     Alert.alert(
-      'Raf Ömrüm PRO',
-      '₺99,99 karşılığında tek seferlik ödeme ile ömür boyu PRO erişimi kazanacaksınız.',
+      t('paywall.title'),
+      `${formattedPrice} ${t('paywall.subtitle')}`,
       [
-        { text: 'İptal', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Satın Al ₺99,99',
+          text: `${t('paywall.cta')} ${formattedPrice}`,
           onPress: async () => {
-            // TODO: Gerçek IAP entegrasyonu (RevenueCat) production öncesi eklenecek
             await unlockPremium();
-            Alert.alert('✅ Teşekkürler!', 'PRO üyeliğiniz aktif edildi.', [
-              { text: 'Harika!', onPress: () => navigation.goBack() },
+            Alert.alert(t('paywall.successTitle'), t('paywall.successMessage'), [
+              { text: t('common.success'), onPress: () => navigation.goBack() },
             ]);
           },
         },
@@ -69,13 +87,12 @@ const PaywallScreen: React.FC = () => {
   };
 
   const handleRestore = () => {
-    Alert.alert('Satın Alımı Geri Yükle', 'Daha önce satın aldıysanız geri yüklenecek.', [
-      { text: 'İptal', style: 'cancel' },
+    Alert.alert(t('paywall.restore'), t('paywall.priceNote'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Geri Yükle',
+        text: t('paywall.restore'),
         onPress: async () => {
-          // TODO: IAP restore purchase
-          Alert.alert('Bulunamadı', 'Daha önce yapılmış bir satın alım tespit edilemedi.');
+          Alert.alert(t('paywall.restoreErrorTitle'), t('paywall.restoreErrorMessage'));
         },
       },
     ]);
@@ -98,9 +115,9 @@ const PaywallScreen: React.FC = () => {
           <View style={[styles.iconContainer, { backgroundColor: colors.surface }]}>
             <Ionicons name="diamond" size={56} color="#FFD700" />
           </View>
-          <Text style={[styles.title, { color: colors.secondary }]}>Raf Ömrüm PRO</Text>
+          <Text style={[styles.title, { color: colors.secondary }]}>{t('paywall.title')}</Text>
           <Text style={[styles.subtitle, { color: colors.textLight }]}>
-            Tüm kısıtları kaldırın, sınırsız kullanın.{'\n'}Tek seferlik ödeme — ömür boyu erişim.
+            {t('paywall.subtitle')}
           </Text>
         </View>
 
@@ -119,27 +136,32 @@ const PaywallScreen: React.FC = () => {
 
         {/* Fiyat */}
         <View style={styles.priceRow}>
-          <Text style={styles.priceAmount}>₺99,99</Text>
+          <Text style={styles.priceAmount}>{formattedPrice}</Text>
           <View>
-            <Text style={styles.priceLabel}>TEK SEFERLİK</Text>
-            <Text style={styles.priceNote}>Abonelik yok • Gizli ücret yok</Text>
+            <Text style={styles.priceLabel}>{t('paywall.priceLabel')}</Text>
+            <Text style={styles.priceNote}>{t('paywall.priceNote')}</Text>
           </View>
         </View>
 
         {/* CTA */}
         <TouchableOpacity style={styles.ctaButton} onPress={handlePurchase} activeOpacity={0.9}>
           <Ionicons name="diamond" size={20} color="#FFD700" />
-          <Text style={styles.ctaText}>Şimdi PRO'ya Geç</Text>
+          <Text style={styles.ctaText}>{t('paywall.cta')}</Text>
         </TouchableOpacity>
 
         {/* Geri yükle */}
         <TouchableOpacity style={styles.restoreBtn} onPress={handleRestore} activeOpacity={0.7}>
-          <Text style={[styles.restoreText, { color: colors.textLight }]}>Satın Alımı Geri Yükle</Text>
+          <Text style={[styles.restoreText, { color: colors.textLight }]}>{t('paywall.restore')}</Text>
         </TouchableOpacity>
 
-        <Text style={[styles.legalText, { color: colors.textMuted }]}>
-          Satın alma Google Play üzerinden gerçekleşir.{'\n'}
-          Koşullar için gizlilik politikamızı inceleyin.
+        <TouchableOpacity onPress={() => Linking.openURL('https://github.com/Sw-Dev143/RafOmrum/security/policy')} activeOpacity={0.6}>
+          <Text style={[styles.legalText, { color: COLORS.primary, marginTop: 4, textDecorationLine: 'underline' }]}>
+            {t('settings.privacyPolicy')}
+          </Text>
+        </TouchableOpacity>
+
+        <Text style={[styles.legalText, { color: colors.textMuted, marginTop: 8 }]}>
+          {t('paywall.legal')}
         </Text>
 
       </ScrollView>

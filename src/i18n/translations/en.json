@@ -2,7 +2,7 @@
   "navigation": {
     "addProduct": "Add New Product",
     "productDetails": "Product Details",
-    "medications": "💊 Medication Reminder",
+    "medications": "💊 Medication Reminders",
     "addMedication": "Add New Medication",
     "editMedication": "Edit Medication",
     "medicationStats": "📊 Medication Stats",
@@ -10,20 +10,43 @@
     "manageCategories": "Manage Categories",
     "shoppingList": "Shopping List"
   },
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "update": "Update",
+    "success": "Success",
+    "error": "Error",
+    "pro": "PRO",
+    "legal": "Legal"
+  },
   "settings": {
     "title": "Settings",
-    "language": "Language Select",
+    "language": "Language Selection",
     "dataManagement": "Data Management",
     "exportBackup": "Export Data (Backup)",
     "importBackup": "Import Data (Restore)",
     "backupSuccess": "Backup loaded successfully",
-    "importWarning": "Data imported. We recommend restarting the app for changes to take effect."
+    "importWarning": "Data imported. We recommend restarting the app for changes to take effect.",
+    "backup": {
+      "errorSharing": "Sharing or saving is not supported.",
+      "errorExport": "An error occurred while creating backup.",
+      "errorImport": "An error occurred while restoring data.",
+      "errorReadFile": "Error reading backup file. The file might be corrupted.",
+      "invalidJson": "Invalid JSON object",
+      "confirmTitle": "Restore",
+      "confirmMessage": "Your current data might be overwritten. Are you sure?",
+      "restoreBtn": "Restore",
+      "success": "Your data has been successfully restored.",
+      "noData": "No valid data found to restore."
+    },
+    "privacyPolicy": "Privacy Policy"
   },
   "home": {
     "greeting": {
-      "morning": "Good morning 🌤",
-      "afternoon": "Good day 👋",
-      "evening": "Good evening 🌙"
+      "morning": "Good Morning 🌤",
+      "afternoon": "Good Afternoon 👋",
+      "evening": "Good Evening 🌙"
     },
     "stats": {
       "safe": "Safe",
@@ -36,23 +59,226 @@
       "deli": "Deli",
       "pharmacy": "Pharmacy",
       "other": "Other",
-      "resultsCount": "{{count}} products listed",
+      "resultsCount": "Listing {{count}} products",
       "clearFilters": "Clear Filters"
     },
     "empty": {
-      "noResults": "\"{{query}}\" not found",
-      "noProducts": "No products added",
+      "noResults": "No products found matching \"{{query}}\"",
+      "noProducts": "No products added yet",
       "noCategoryProducts": "No products in {{category}}",
-      "suggestion": "Try a different search or clear filters.",
-      "addFirst": "Tap the + button at the bottom right to add a product."
+      "suggestion": "Try a different keyword or clear filters.",
+      "addFirst": "Tap the + button at the bottom right to add your first product! 🚀"
+    },
+    "tip": {
+      "title": "Quick Tip",
+      "body": "Use the barcode icon when adding products to fetch information automatically!"
     }
   },
-  "product": {
+  "add": {
+    "nameLabel": "Product Name",
+    "namePlaceholder": "e.g. Milk, Eggs...",
+    "categoryLabel": "Category",
+    "dateLabel": "Expiration Date",
+    "saveBtn": "Save Product",
+    "updateBtn": "Save Changes",
+    "barcode": "Barcode",
+    "date": {
+      "week": "Week",
+      "month": "Month",
+      "year": "Year"
+    },
+    "camera": {
+      "title": "Scan Barcode",
+      "hint": "Center the barcode in the frame",
+      "permissionDenied": "Camera permission required",
+      "permissionSubtitle": "You need to grant camera permission to scan barcodes."
+    },
+    "toast": {
+      "dateUpdated": "Date updated",
+      "productFound": "Product found",
+      "productRecognized": "Product recognized",
+      "newBarcode": "New barcode detected",
+      "lookupError": "Barcode info could not be fetched",
+      "error": "Operation failed",
+      "saveError": "An error occurred while saving product"
+    },
+    "validation": {
+      "noName": "Product name missing",
+      "noNameSubtitle": "Please enter a name for the product."
+    }
+  },
+  "medication": {
+    "nameLabel": "Medication Name *",
+    "namePlaceholder": "e.g. Aspirin, Omega-3...",
+    "dosageLabel": "Dosage Information",
+    "dosagePlaceholder": "e.g. 500 mg, 1 Tablet...",
+    "colorLabel": "Color",
+    "daysLabel": "Days",
+    "everyDay": "Every day",
+    "timesLabel": "Usage Times",
+    "addTime": "Add Time",
+    "quickTime": {
+      "morning": "Morning",
+      "afternoon": "Noon",
+      "evening": "Evening"
+    },
+    "notesLabel": "Notes",
+    "notesPlaceholder": "e.g. Take after meals, drink plenty of water...",
+    "saveBtn": "Save Medication",
+    "updateBtn": "Update Medication",
+    "validation": {
+      "noName": "Missing Info",
+      "noNameSubtitle": "Please enter the medication name.",
+      "noTimes": "Missing Info",
+      "noTimesSubtitle": "Add at least one dose time."
+    },
+    "list": {
+      "todayDoses": "Today's Doses",
+      "completed": "Completed",
+      "allMeds": "All Medications",
+      "emptyTitle": "No medications added yet",
+      "emptySub": "Tap the + button at the bottom right to add your first medication.",
+      "deleteTitle": "Delete Medication",
+      "deleteConfirm": "Are you sure you want to delete \"{{name}}\" and all its notifications?",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "stats": {
+      "overallAdherence": "Overall Adherence",
+      "lastDays": "Last {{count}} Days",
+      "doses": "doses",
+      "medBased": "Medication Based"
+    }
+  },
+  "details": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteTitle": "Delete Product",
+    "deleteMessage": "Are you sure you want to delete this product from your list?",
+    "shoppingListAdd": "Add to Shopping List",
+    "shoppingListAdded": "In Shopping List ✓",
+    "labels": {
+      "expiration": "Expires",
+      "daysLeft": "Days Left",
+      "createdAt": "Added on",
+      "barcode": "Barcode"
+    },
     "status": {
-      "expired": "{{count}} days passed",
-      "today": "Last day!",
-      "tomorrow": "Tomorrow!",
+      "expired": "Expired {{count}} days ago",
+      "today": "Expires today!",
+      "tomorrow": "Expires tomorrow!",
       "daysLeft": "{{count}} days left"
+    }
+  },
+  "categories": {
+    "deli": "Deli",
+    "pharmacy": "Pharmacy",
+    "other": "Other",
+    "manage": {
+      "title": "Manage Categories",
+      "hint": "Default categories cannot be edited. You can add, edit, or delete custom categories.",
+      "default": "Default",
+      "addNew": "Add New Category",
+      "editTitle": "Edit Category",
+      "newTitle": "New Category",
+      "nameLabel": "Category Name",
+      "placeholder": "e.g. Ice Creams, Canned Goods...",
+      "iconLabel": "Icon",
+      "colorLabel": "Color",
+      "preview": "Preview"
+    },
+    "alert": {
+      "defaultNoEdit": "Default categories cannot be edited.",
+      "defaultNoDelete": "Default categories cannot be deleted.",
+      "nameRequired": "Category name cannot be empty.",
+      "deleteTitle": "Delete Category",
+      "deleteMessage": "Do you want to delete \"{{name}}\"? Products in this category will not be affected."
+    }
+  },
+  "days": {
+    "0": "Sun",
+    "1": "Mon",
+    "2": "Tue",
+    "3": "Wed",
+    "4": "Thu",
+    "5": "Fri",
+    "6": "Sat"
+  },
+  "notifications": {
+    "expiry": {
+      "danger": "🔴 Today is the last day!",
+      "dangerBody": "{{productName}} expires today. Don't forget to check!",
+      "warning": "⚠️ Expiration Date Approaching",
+      "warningBody": "Your product {{productName}} has {{days}} days left until expiration.",
+      "info": "ℹ️ Expiration Reminder",
+      "infoBody": "Your product {{productName}} has {{days}} days left until expiration."
+    },
+    "dailySummary": {
+      "title": "📋 FreshTrack Daily Summary",
+      "body": "{{expired}} products expired, {{warning}} products expiring soon. Don't forget to check your shelves!"
+    },
+    "medication": {
+      "body": "{{dosage}} — Time to take your medication!",
+      "bodyNoDosage": "Time to take your medication!"
+    }
+  },
+  "paywall": {
+    "title": "FreshTrack PRO",
+    "subtitle": "Remove all ads and enjoy a seamless experience.\nOne-time payment — Lifetime access.",
+    "alreadyPro": "You are already a PRO User 🎉",
+    "alreadyProSubtitle": "You are enjoying all premium features.",
+    "features": {
+      "noAds": "Remove all ads",
+      "unlimited": "Unlimited product tracking",
+      "lifetime": "Lifetime access & updates",
+      "support": "Priority support"
+    },
+    "priceLabel": "ONE-TIME",
+    "priceNote": "No subscription • No hidden costs",
+    "cta": "Upgrade to PRO now",
+    "restore": "Restore Purchase",
+    "legal": "Purchase is made through the app store.\nReview our privacy policy for terms.",
+    "successTitle": "✅ Thank You!",
+    "successMessage": "Your PRO membership has been activated.",
+    "restoreErrorTitle": "Not Found",
+    "restoreErrorMessage": "No previous purchase was detected."
+  },
+  "shopping": {
+    "empty": {
+      "title": "List is Empty",
+      "subtitle": "You can add products to the shopping list from the product details screen."
+    },
+    "action": {
+      "share": "Share",
+      "clearChecked": "Delete Completed",
+      "completed": "completed"
+    },
+    "alert": {
+      "emptyList": "List is empty",
+      "shareEmpty": "Shopping list must have items to share.",
+      "clearTitle": "Clear List",
+      "clearMessage": "Do you want to delete the entire shopping list?"
+    },
+    "shareTitle": "🛒 Shopping List"
+  },
+  "onboarding": {
+    "slides": {
+      "1": {
+        "title": "Track Your Products Easily",
+        "description": "Save expiration dates of products at home. Prevent waste and save your budget."
+      },
+      "2": {
+        "title": "Stay Safe with Notifications",
+        "description": "Get instant alerts 7 and 3 days before expiration, and when they expire."
+      },
+      "3": {
+        "title": "Take Your Meds on Time",
+        "description": "Add not only food but also your medications and stay healthy with hourly reminders."
+      }
+    },
+    "buttons": {
+      "next": "Next",
+      "start": "Get Started"
     }
   }
 }

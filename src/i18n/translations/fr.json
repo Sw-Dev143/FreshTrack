@@ -1,10 +1,245 @@
 {
   "navigation": {
-    "addProduct": "Ajouter un produit",
+    "addProduct": "Ajouter un nouveau produit",
     "productDetails": "Détails du produit",
-    "medications": "💊 Rappel de Médicament",
-    "addMedication": "Ajouter un Médicament",
-    "editMedication": "Modifier le Médicament",
-    "medicationStats": "📊 Statistiques"
+    "medications": "💊 Rappel de médicaments",
+    "addMedication": "Ajouter un nouveau médicament",
+    "editMedication": "Modifier le médicament",
+    "medicationStats": "📊 Statistiques des médicaments",
+    "settings": "Paramètres",
+    "manageCategories": "Gérer les catégories",
+    "shoppingList": "Liste de courses"
+  },
+  "common": {
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "update": "Mettre à jour",
+    "success": "Succès",
+    "error": "Erreur",
+    "legal": "Mentions Légales"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Sélection de la langue",
+    "dataManagement": "Gestion des données",
+    "exportBackup": "Exporter les données (Sauvegarde)",
+    "importBackup": "Importer les données (Restauration)",
+    "backupSuccess": "Sauvegarde chargée avec succès",
+    "importWarning": "Données importées. Nous vous recommandons de redémarrer l'application pour que les changements prennent effet.",
+    "privacyPolicy": "Politique de Confidentialité"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Bon matin 🌤",
+      "afternoon": "Bonne journée 👋",
+      "evening": "Bonsoir 🌙"
+    },
+    "stats": {
+      "safe": "Sûr",
+      "warning": "À venir",
+      "expired": "Expiré"
+    },
+    "searchPlaceholder": "Rechercher un produit...",
+    "filter": {
+      "all": "Tous",
+      "deli": "Traiteur",
+      "pharmacy": "Pharmacie",
+      "other": "Autre",
+      "resultsCount": "{{count}} produits listés",
+      "clearFilters": "Effacer les filtres"
+    },
+    "empty": {
+      "noResults": "\"{{query}}\" non trouvé",
+      "noProducts": "Aucun produit ajouté pour le moment",
+      "noCategoryProducts": "Aucun produit dans {{category}}",
+      "suggestion": "Essayez une autre recherche ou effacez les filtres.",
+      "addFirst": "Appuyez sur le bouton + en bas à droite pour ajouter votre premier produit ! 🚀"
+    },
+    "tip": {
+      "title": "Astuce",
+      "body": "Utilisez l'icône du code-barres lors de l'ajout de produits pour récupérer les informations automatiquement !"
+    }
+  },
+  "add": {
+    "nameLabel": "Nom du produit",
+    "namePlaceholder": "ex: Lait, Œufs...",
+    "categoryLabel": "Catégorie",
+    "dateLabel": "Date d'expiration",
+    "saveBtn": "Enregistrer le produit",
+    "updateBtn": "Enregistrer les modifications",
+    "barcode": "Code-barres",
+    "date": {
+      "week": "Semaine",
+      "month": "Mois",
+      "year": "Année"
+    },
+    "camera": {
+      "title": "Scanner le code-barres",
+      "hint": "Centrez le code-barres dans le cadre",
+      "permissionDenied": "Accès à la caméra requis",
+      "permissionSubtitle": "Vous devez autoriser l'accès à la caméra pour scanner les codes-barres."
+    },
+    "toast": {
+      "dateUpdated": "Date mise à jour",
+      "productFound": "Produit trouvé",
+      "productRecognized": "Produit reconnu",
+      "newBarcode": "Nouveau code-barres détecté",
+      "lookupError": "Impossible de récupérer les infos du code-barres",
+      "error": "Opération échouée",
+      "saveError": "Une erreur est survenue lors de l'enregistrement du produit"
+    },
+    "validation": {
+      "noName": "Nom du produit manquant",
+      "noNameSubtitle": "Veuillez entrer un nom pour le produit."
+    }
+  },
+  "medication": {
+    "nameLabel": "Nom du médicament *",
+    "namePlaceholder": "ex: Aspirine, Oméga-3...",
+    "dosageLabel": "Informations sur la posologie",
+    "dosagePlaceholder": "ex: 500 mg, 1 comprimé...",
+    "colorLabel": "Couleur",
+    "daysLabel": "Jours",
+    "everyDay": "Chaque jour",
+    "timesLabel": "Heures de prise",
+    "addTime": "Ajouter l'heure",
+    "quickTime": {
+      "morning": "Matin",
+      "afternoon": "Midi",
+      "evening": "Soir"
+    },
+    "notesLabel": "Remarques",
+    "notesPlaceholder": "ex: Prendre après les repas, boire beaucoup d'eau...",
+    "saveBtn": "Enregistrer le médicament",
+    "updateBtn": "Mettre à jour le médicament",
+    "validation": {
+      "noName": "Info manquante",
+      "noNameSubtitle": "Veuillez entrer le nom du médicament.",
+      "noTimes": "Info manquante",
+      "noTimesSubtitle": "Ajoutez au moins une heure de dose."
+    },
+    "list": {
+      "todayDoses": "Doses d'aujourd'hui",
+      "completed": "Terminé",
+      "allMeds": "Tous les médicaments",
+      "emptyTitle": "Aucun médicament ajouté pour le moment",
+      "emptySub": "Appuyez sur le bouton + en bas à droite pour ajouter votre premier médicament.",
+      "deleteTitle": "Supprimer le médicament",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" et toutes ses notifications ?",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
+  },
+  "details": {
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteTitle": "Supprimer le produit",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer ce produit de votre liste ?",
+    "shoppingListAdd": "Ajouter à la liste de courses",
+    "shoppingListAdded": "Dans la liste de courses ✓",
+    "labels": {
+      "expiration": "Expiration",
+      "daysLeft": "Jours restants",
+      "createdAt": "Ajouté le",
+      "barcode": "Code-barres"
+    },
+    "status": {
+      "expired": "Expiré il y a {{count}} jours",
+      "today": "Expire aujourd'hui !",
+      "tomorrow": "Expire demain !",
+      "daysLeft": "{{count}} jours restants"
+    }
+  },
+  "categories": {
+    "deli": "Traiteur",
+    "pharmacy": "Pharmacie",
+    "other": "Autre"
+  },
+  "days": {
+    "0": "Dim",
+    "1": "Lun",
+    "2": "Mar",
+    "3": "Mer",
+    "4": "Jeu",
+    "5": "Ven",
+    "6": "Sam"
+  },
+  "notifications": {
+    "expiry": {
+      "danger": "🔴 C'est le dernier jour !",
+      "dangerBody": "{{productName}} expire aujourd'hui. N'oubliez pas de vérifier !",
+      "warning": "⚠️ Date d'expiration proche",
+      "warningBody": "Votre produit {{productName}} expire dans {{days}} jours.",
+      "info": "ℹ️ Rappel d'expiration",
+      "infoBody": "Votre produit {{productName}} expire dans {{days}} jours."
+    },
+    "dailySummary": {
+      "title": "📋 Résumé quotidien FreshTrack",
+      "body": "{{expired}} produits ont expiré, {{warning}} produits expirent bientôt. N'oubliez pas de vérifier vos étagères !"
+    },
+    "medication": {
+      "body": "{{dosage}} — il est l'heure de prendre votre médicament !",
+      "bodyNoDosage": "Il est l'heure de prendre votre médicament !"
+    }
+  },
+  "paywall": {
+    "title": "FreshTrack PRO",
+    "subtitle": "Levez toutes les limites, utilisez sans restrictions.\nPaiement unique — accès à vie.",
+    "alreadyPro": "Vous êtes déjà un utilisateur PRO 🎉",
+    "alreadyProSubtitle": "Vous profitez de toutes les fonctionnalités premium.",
+    "features": {
+      "noAds": "Supprimer toutes les publicités",
+      "unlimited": "Suivi illimité des produits",
+      "lifetime": "Accès à vie et mises à jour",
+      "support": "Support prioritaire"
+    },
+    "priceLabel": "UNIQUE",
+    "priceNote": "Pas d'abonnement • Pas de frais cachés",
+    "cta": "Passer à PRO maintenant",
+    "restore": "Restaurer l'achat",
+    "legal": "L'achat s'effectue via l'App Store.\nConsultez notre politique de confidentialité pour les conditions.",
+    "successTitle": "✅ Merci !",
+    "successMessage": "Votre abonnement PRO a été activé.",
+    "restoreErrorTitle": "Non trouvé",
+    "restoreErrorMessage": "Aucun achat précédent n'a été détecté."
+  },
+  "shopping": {
+    "empty": {
+      "title": "La liste est vide",
+      "subtitle": "Vous pouvez ajouter des produits à la liste de courses depuis l'écran de détails du produit."
+    },
+    "action": {
+      "share": "Partager",
+      "clearChecked": "Supprimer les terminés",
+      "completed": "terminé"
+    },
+    "alert": {
+      "emptyList": "La liste est vide",
+      "shareEmpty": "La liste de courses doit contenir des articles pour être partagée.",
+      "clearTitle": "Vider la liste",
+      "clearMessage": "Voulez-vous supprimer toute la liste de courses ?"
+    },
+    "shareTitle": "🛒 Liste de courses"
+  },
+  "onboarding": {
+    "slides": {
+      "1": {
+        "title": "Suivez vos produits facilement",
+        "description": "Enregistrez les dates de péremption des produits à la maison. Évitez le gaspillage et préservez votre budget."
+      },
+      "2": {
+        "title": "Restez en sécurité avec des notifications",
+        "description": "Recevez des alertes instantanées 7 et 3 jours avant l'expiration, et lorsqu'ils expirent."
+      },
+      "3": {
+        "title": "Prenez vos médicaments à temps",
+        "description": "Ajoutez non seulement de la nourriture mais aussi vos médicaments et restez en bonne santé avec des rappels horaires."
+      }
+    },
+    "buttons": {
+      "next": "Suivant",
+      "start": "Commencer"
+    }
   }
 }

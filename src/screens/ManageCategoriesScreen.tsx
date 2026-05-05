@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextI
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { COLORS, SIZES } from '../theme';
 import {
   CustomCategory, getCategories, addCategory,
@@ -26,6 +27,7 @@ const COLOR_OPTIONS = [
 
 const ManageCategoriesScreen: React.FC = () => {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const [categories, setCategories] = useState<CustomCategory[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [editing, setEditing] = useState<CustomCategory | null>(null);
@@ -49,7 +51,7 @@ const ManageCategoriesScreen: React.FC = () => {
 
   const openEdit = (cat: CustomCategory) => {
     if (cat.isDefault) {
-      Alert.alert('Varsayılan Kategori', 'Varsayılan kategoriler düzenlenemez.');
+      Alert.alert(t('categories.manage.default'), t('categories.alert.defaultNoEdit'));
       return;
     }
     setEditing(cat);
@@ -62,7 +64,7 @@ const ManageCategoriesScreen: React.FC = () => {
   const handleSave = async () => {
     const trimmed = name.trim();
     if (!trimmed) {
-      Alert.alert('Hata', 'Kategori adı boş olamaz.');
+      Alert.alert(t('common.error'), t('categories.alert.nameRequired'));
       return;
     }
     if (editing) {
@@ -76,16 +78,16 @@ const ManageCategoriesScreen: React.FC = () => {
 
   const handleDelete = (cat: CustomCategory) => {
     if (cat.isDefault) {
-      Alert.alert('Varsayılan Kategori', 'Varsayılan kategoriler silinemez.');
+      Alert.alert(t('categories.manage.default'), t('categories.alert.defaultNoDelete'));
       return;
     }
     Alert.alert(
-      'Kategoriyi Sil',
-      `"${cat.name}" kategorisini silmek istiyor musunuz? Bu kategorideki ürünler etkilenmez.`,
+      t('categories.alert.deleteTitle'),
+      t('categories.alert.deleteMessage', { name: cat.name }),
       [
-        { text: 'İptal', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Sil', style: 'destructive',
+          text: t('common.delete'), style: 'destructive',
           onPress: async () => { await deleteCategory(cat.id); load(); },
         },
       ]
@@ -100,7 +102,7 @@ const ManageCategoriesScreen: React.FC = () => {
         contentContainerStyle={styles.list}
         ListHeaderComponent={
           <Text style={[styles.hint, { color: colors.textLight }]}>
-            Varsayılan kategoriler düzenlenemez. Özel kategoriler ekleyebilir, düzenleyebilir veya silebilirsiniz.
+            {t('categories.manage.hint')}
           </Text>
         }
         renderItem={({ item }) => (
@@ -108,9 +110,11 @@ const ManageCategoriesScreen: React.FC = () => {
             <View style={[styles.iconBg, { backgroundColor: item.color + '20' }]}>
               <Ionicons name={item.icon as any} size={22} color={item.color} />
             </View>
-            <Text style={[styles.catName, { color: colors.text }]}>{item.name}</Text>
+            <Text style={[styles.catName, { color: colors.text }]}>
+              {item.isDefault ? t(`categories.${item.id}`) : item.name}
+            </Text>
             {item.isDefault
-              ? <View style={styles.defaultBadge}><Text style={styles.defaultBadgeText}>Varsayılan</Text></View>
+              ? <View style={styles.defaultBadge}><Text style={styles.defaultBadgeText}>{t('categories.manage.default')}</Text></View>
               : (
                 <View style={styles.actions}>
                   <TouchableOpacity onPress={() => openEdit(item)} style={styles.actionBtn}>
@@ -127,7 +131,7 @@ const ManageCategoriesScreen: React.FC = () => {
         ListFooterComponent={
           <TouchableOpacity style={[styles.addBtn, { backgroundColor: COLORS.primary }]} onPress={openAdd}>
             <Ionicons name="add" size={20} color="#fff" />
-            <Text style={styles.addBtnText}>Yeni Kategori Ekle</Text>
+            <Text style={styles.addBtnText}>{t('categories.manage.addNew')}</Text>
           </TouchableOpacity>
         }
       />
@@ -137,20 +141,20 @@ const ManageCategoriesScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalCard, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.secondary }]}>
-              {editing ? 'Kategoriyi Düzenle' : 'Yeni Kategori'}
+              {editing ? t('categories.manage.editTitle') : t('categories.manage.newTitle')}
             </Text>
 
-            <Text style={[styles.fieldLabel, { color: colors.textLight }]}>Kategori Adı</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textLight }]}>{t('categories.manage.nameLabel')}</Text>
             <TextInput
               style={[styles.textInput, { backgroundColor: colors.surfaceAlt, borderColor: colors.border, color: colors.text }]}
               value={name}
               onChangeText={setName}
-              placeholder="Örn: Dondurmalar, Konserveler..."
+              placeholder={t('categories.manage.placeholder')}
               placeholderTextColor={colors.textMuted}
               maxLength={30}
             />
 
-            <Text style={[styles.fieldLabel, { color: colors.textLight }]}>İkon</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textLight }]}>{t('categories.manage.iconLabel')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.iconScroll}>
               {ICON_OPTIONS.map(icon => (
                 <TouchableOpacity
@@ -167,7 +171,7 @@ const ManageCategoriesScreen: React.FC = () => {
               ))}
             </ScrollView>
 
-            <Text style={[styles.fieldLabel, { color: colors.textLight }]}>Renk</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textLight }]}>{t('categories.manage.colorLabel')}</Text>
             <View style={styles.colorGrid}>
               {COLOR_OPTIONS.map(color => (
                 <TouchableOpacity
@@ -187,7 +191,7 @@ const ManageCategoriesScreen: React.FC = () => {
             {/* Preview */}
             <View style={[styles.preview, { backgroundColor: selectedColor + '15', borderColor: selectedColor }]}>
               <Ionicons name={selectedIcon as any} size={20} color={selectedColor} />
-              <Text style={[styles.previewText, { color: selectedColor }]}>{name || 'Önizleme'}</Text>
+              <Text style={[styles.previewText, { color: selectedColor }]}>{name || t('categories.manage.preview')}</Text>
             </View>
 
             <View style={styles.modalActions}>
@@ -195,13 +199,13 @@ const ManageCategoriesScreen: React.FC = () => {
                 style={[styles.modalBtn, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={[styles.modalBtnText, { color: colors.textLight }]}>İptal</Text>
+                <Text style={[styles.modalBtnText, { color: colors.textLight }]}>{t('common.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalBtn, { backgroundColor: COLORS.primary }]}
                 onPress={handleSave}
               >
-                <Text style={[styles.modalBtnText, { color: '#fff' }]}>Kaydet</Text>
+                <Text style={[styles.modalBtnText, { color: '#fff' }]}>{t('common.save')}</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -18,20 +18,21 @@ import { AD_UNIT_IDS } from '../utils/adConfig';
 import { exportBackup, importBackup } from '../utils/backup';
 import { Alert } from 'react-native';
 
-import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../context/LanguageContext';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC = () => {
   const { colors, isDark, toggleTheme } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const [products, setProducts]               = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'Tümü'>('Tümü');
+  const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>('all');
   const [statusFilter, setStatusFilter]       = useState<'All' | 'Expired' | 'Warning' | 'Safe'>('All');
   const [searchQuery, setSearchQuery]         = useState('');
   const [refreshing, setRefreshing]           = useState(false);
   const [searchFocused, setSearchFocused]     = useState(false);
+  const [showTip, setShowTip]                 = useState(true);
   const navigation = useNavigation<NavigationProp>();
   const { isPremium } = usePremium();
 
@@ -47,8 +48,8 @@ const HomeScreen: React.FC = () => {
   }, []);
 
   const applyFilter = useCallback(
-    (category: Category | 'Tümü', status: string, data: Product[], query: string) => {
-      let result = category === 'Tümü' ? data : data.filter(p => p.category === category);
+    (category: Category | 'all', status: string, data: Product[], query: string) => {
+      let result = category === 'all' ? data : data.filter(p => p.category === category);
       
       const today = new Date(); today.setHours(0, 0, 0, 0);
       if (status !== 'All') {
@@ -80,7 +81,7 @@ const HomeScreen: React.FC = () => {
 
   useFocusEffect(useCallback(() => { loadProducts(); }, []));
 
-  const handleCategorySelect = (category: Category | 'Tümü') => {
+  const handleCategorySelect = (category: Category | 'all') => {
     setSelectedCategory(category);
     applyFilter(category, statusFilter, products, searchQuery);
   };
@@ -133,36 +134,23 @@ const HomeScreen: React.FC = () => {
         <View style={styles.headerTop}>
           <View>
             <Text style={[styles.greeting, { color: colors.textLight }]}>{greeting}</Text>
-            <Text style={[styles.headerTitle, { color: colors.secondary }]}>Raf Ömrüm</Text>
+            <Text style={[styles.headerTitle, { color: colors.secondary }]}>FreshTrack</Text>
           </View>
           <View style={styles.headerButtons}>
-            {/* Settings / Backup */}
             <TouchableOpacity
               style={[styles.iconButton, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
               onPress={handleSettings}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Ionicons
-                name="settings-outline"
-                size={18}
-                color={colors.textLight}
-              />
+              <Ionicons name="settings-outline" size={18} color={colors.textLight} />
             </TouchableOpacity>
 
-            {/* Dark Mode Toggle */}
             <TouchableOpacity
               style={[styles.iconButton, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
               onPress={toggleTheme}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Ionicons
-                name={isDark ? 'sunny-outline' : 'moon-outline'}
-                size={18}
-                color={isDark ? COLORS.warning : colors.textLight}
-              />
+              <Ionicons name={isDark ? 'sunny-outline' : 'moon-outline'} size={18} color={isDark ? COLORS.warning : colors.textLight} />
             </TouchableOpacity>
 
-            {/* İlaç Hatırlatıcı kısayolu */}
             <TouchableOpacity
               style={[styles.medButton, { backgroundColor: COLORS.pharmacyLight }]}
               onPress={() => navigation.navigate('Medications')}
@@ -172,67 +160,29 @@ const HomeScreen: React.FC = () => {
 
             {!isPremium ? (
               <TouchableOpacity onPress={() => navigation.navigate('Paywall')} activeOpacity={0.8}>
-                <LinearGradient
-                  colors={COLORS.gradientWarm}
-                  start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                  style={styles.proButton}
-                >
+                <LinearGradient colors={COLORS.gradientWarm} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.proButton}>
                   <Ionicons name="diamond" size={14} color="#FFF" />
-                  <Text style={styles.proButtonText}>PRO</Text>
+                  <Text style={styles.proButtonText}>{t('common.pro')}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             ) : (
-              <LinearGradient
-                colors={[COLORS.primary + '20', COLORS.primary + '10']}
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                style={styles.proBadge}
-              >
+              <View style={styles.proBadge}>
                 <Ionicons name="diamond" size={14} color={COLORS.primary} />
-                <Text style={[styles.proBadgeText, { color: COLORS.primary }]}>PRO</Text>
-              </LinearGradient>
+                <Text style={[styles.proBadgeText, { color: COLORS.primary }]}>{t('common.pro')}</Text>
+              </View>
             )}
           </View>
         </View>
 
-        {/* Stats Row */}
         {stats.total > 0 && (
           <View style={styles.statsRow}>
-            <StatChip 
-              icon="checkmark-circle" 
-              value={stats.safe}    
-              label={t('home.stats.safe')}  
-              color={COLORS.safe}    
-              light={COLORS.safeLight}
-              active={statusFilter === 'Safe'}
-              onPress={() => handleStatusToggle('Safe')}
-            />
-            <StatChip 
-              icon="warning"          
-              value={stats.warning} 
-              label={t('home.stats.warning')} 
-              color={COLORS.warning} 
-              light={COLORS.warningLight}
-              active={statusFilter === 'Warning'}
-              onPress={() => handleStatusToggle('Warning')}
-            />
-            <StatChip 
-              icon="alert-circle"     
-              value={stats.expired} 
-              label={t('home.stats.expired')}    
-              color={COLORS.danger}  
-              light={COLORS.dangerLight}
-              active={statusFilter === 'Expired'}
-              onPress={() => handleStatusToggle('Expired')}
-            />
+            <StatChip icon="checkmark-circle" value={stats.safe} label={t('home.stats.safe')} color={COLORS.safe} light={COLORS.safeLight} active={statusFilter === 'Safe'} onPress={() => handleStatusToggle('Safe')} />
+            <StatChip icon="warning" value={stats.warning} label={t('home.stats.warning')} color={COLORS.warning} light={COLORS.warningLight} active={statusFilter === 'Warning'} onPress={() => handleStatusToggle('Warning')} />
+            <StatChip icon="alert-circle" value={stats.expired} label={t('home.stats.expired')} color={COLORS.danger} light={COLORS.dangerLight} active={statusFilter === 'Expired'} onPress={() => handleStatusToggle('Expired')} />
           </View>
         )}
 
-        {/* ── Arama Çubuğu ── */}
-        <View style={[
-          styles.searchContainer,
-          { backgroundColor: colors.surface, borderColor: searchFocused ? COLORS.primary : colors.border },
-          searchFocused && styles.searchContainerFocused,
-        ]}>
+        <View style={[styles.searchContainer, { backgroundColor: colors.surface, borderColor: searchFocused ? COLORS.primary : colors.border }]}>
           <Ionicons name="search" size={18} color={searchFocused ? COLORS.primary : colors.textLight} style={styles.searchIcon} />
           <TextInput
             style={[styles.searchInput, { color: colors.text }]}
@@ -242,100 +192,70 @@ const HomeScreen: React.FC = () => {
             onChangeText={handleSearch}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
-            returnKeyType="search"
-            clearButtonMode="while-editing"
           />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={clearSearch} style={styles.clearBtn}>
-              <Ionicons name="close-circle" size={18} color={colors.textLight} />
-            </TouchableOpacity>
-          )}
         </View>
       </View>
 
       <View style={styles.filterSection}>
-        <CategoryFilter
-          categories={['Tümü', 'Şarküteri', 'Eczane', 'Diğer']}
-          selectedCategory={selectedCategory}
-          onSelect={handleCategorySelect}
+        <CategoryFilter 
+          categories={['all', 'deli', 'pharmacy', 'other']} 
+          selectedCategory={selectedCategory} 
+          onSelect={handleCategorySelect} 
         />
-        {(searchQuery.length > 0 || statusFilter !== 'All') && (
-          <View style={styles.resultsHeader}>
-            <Text style={[styles.resultsText, { color: colors.textLight }]}>
-              {t('home.filter.resultsCount', { count: filteredProducts.length })}
-              {statusFilter !== 'All' && <Text style={{ fontWeight: '700' }}> ({statusFilter === 'Expired' ? t('home.stats.expired') : statusFilter === 'Warning' ? t('home.stats.warning') : t('home.stats.safe')})</Text>}
-            </Text>
-            <TouchableOpacity 
-              onPress={() => {
-                setSearchQuery('');
-                setStatusFilter('All');
-                setSelectedCategory('Tümü');
-                applyFilter('Tümü', 'All', products, '');
-              }}
-            >
-              <Text style={[styles.clearAllText, { color: COLORS.primary }]}>{t('home.filter.clearFilters')}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
+
+      {/* Pro Tip Card */}
+      {showTip && products.length > 0 && (
+        <View style={styles.tipContainer}>
+          <LinearGradient
+            colors={[COLORS.primary + '10', COLORS.primary + '05']}
+            style={styles.tipCard}
+          >
+            <View style={styles.tipHeader}>
+              <View style={styles.tipIconWrap}>
+                <Ionicons name="bulb-outline" size={18} color={COLORS.primary} />
+              </View>
+              <Text style={[styles.tipTitle, { color: colors.secondary }]}>{t('home.tip.title')}</Text>
+              <TouchableOpacity onPress={() => setShowTip(false)}>
+                <Ionicons name="close" size={18} color={colors.textMuted} />
+              </TouchableOpacity>
+            </View>
+            <Text style={[styles.tipBody, { color: colors.textLight }]}>{t('home.tip.body')}</Text>
+          </LinearGradient>
+        </View>
+      )}
 
       <FlatList
         data={filteredProducts}
         keyExtractor={item => item.id}
-        contentContainerStyle={[styles.listContainer, !isPremium && styles.listContainerWithAd]}
+        contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={loadProducts} tintColor={COLORS.primary} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadProducts} tintColor={COLORS.primary} />}
         renderItem={({ item }) => (
-          <ProductCard
-            product={item}
-            onPress={() => navigation.navigate('ProductDetails', { product: item })}
-          />
+          <ProductCard product={item} onPress={() => navigation.navigate('ProductDetails', { product: item })} />
         )}
         ListEmptyComponent={
-          !refreshing ? (
+          !refreshing && (
             <View style={styles.emptyContainer}>
-              <View style={[styles.emptyIconRing, { backgroundColor: COLORS.primary + '12' }]}>
-                <View style={[styles.emptyIconInner, { backgroundColor: COLORS.primary + '20' }]}>
-                  <Ionicons
-                    name={searchQuery ? 'search-outline' : 'basket-outline'}
-                    size={44}
-                    color={COLORS.primary}
-                  />
+              <View style={[styles.emptyIconRing, { backgroundColor: colors.surfaceAlt }]}>
+                <View style={[styles.emptyIconInner, { backgroundColor: COLORS.primary + '15' }]}>
+                  <Ionicons name="basket-outline" size={42} color={COLORS.primary} />
                 </View>
               </View>
-              <Text style={[styles.emptyTitle, { color: colors.secondary }]}>
-                {searchQuery
-                  ? t('home.empty.noResults', { query: searchQuery })
-                  : selectedCategory === 'Tümü'
-                  ? t('home.empty.noProducts')
-                  : t('home.empty.noCategoryProducts', { category: selectedCategory })}
-              </Text>
+              <Text style={[styles.emptyTitle, { color: colors.text }]}>{t('home.empty.noProducts')}</Text>
               <Text style={[styles.emptySubText, { color: colors.textLight }]}>
-                {searchQuery
-                  ? t('home.empty.suggestion')
-                  : t('home.empty.addFirst')}
+                {selectedCategory !== 'all' 
+                  ? t('home.empty.noCategoryProducts', { category: t(`categories.${selectedCategory.toLowerCase()}`) })
+                  : searchQuery 
+                    ? t('home.empty.noResults', { query: searchQuery })
+                    : t('home.empty.addFirst')
+                }
               </Text>
             </View>
-          ) : null
+          )
         }
       />
 
-      {/* Banner reklam */}
-      {!isPremium && (
-        <View style={[styles.adContainer, { backgroundColor: colors.surface }]}>
-          <BannerAd
-            unitId={AD_UNIT_IDS.banner}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            requestOptions={{ requestNonPersonalizedAdsOnly: true }}
-            onAdFailedToLoad={(err: any) => console.warn('[AdMob] Banner failed:', err.message)}
-          />
-        </View>
-      )}
-
-      {/* FAB */}
-      <Animated.View style={[styles.fabRipple, { transform: [{ scale: fabPulse }] }]} />
       <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate('AddProduct', {})}
@@ -343,7 +263,6 @@ const HomeScreen: React.FC = () => {
       >
         <Ionicons name="add" size={32} color="#FFFFFF" />
       </TouchableOpacity>
-
     </SafeAreaView>
   );
 };
@@ -501,6 +420,23 @@ const styles = StyleSheet.create({
     alignItems: 'center', width: '100%',
     paddingBottom: Platform.OS === 'ios' ? 10 : 0,
   },
+  // Pro Tip
+  tipContainer: { paddingHorizontal: SIZES.md, marginBottom: SIZES.sm },
+  tipCard: {
+    padding: SIZES.md,
+    borderRadius: SIZES.radius,
+    borderWidth: 1,
+    borderColor: COLORS.primary + '20',
+  },
+  tipHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  tipIconWrap: { 
+    width: 28, height: 28, borderRadius: 14, 
+    backgroundColor: COLORS.primary + '15', 
+    alignItems: 'center', justifyContent: 'center',
+    marginRight: 8
+  },
+  tipTitle: { flex: 1, fontSize: 14, fontWeight: '800' },
+  tipBody: { fontSize: 13, lineHeight: 18, fontWeight: '500', marginLeft: 36 },
 });
 
 export default HomeScreen;
