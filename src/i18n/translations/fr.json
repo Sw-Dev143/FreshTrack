@@ -17,6 +17,7 @@
     "update": "Mettre à jour",
     "success": "Succès",
     "error": "Erreur",
+    "pro": "PRO",
     "legal": "Mentions Légales"
   },
   "settings": {
@@ -27,7 +28,24 @@
     "importBackup": "Importer les données (Restauration)",
     "backupSuccess": "Sauvegarde chargée avec succès",
     "importWarning": "Données importées. Nous vous recommandons de redémarrer l'application pour que les changements prennent effet.",
-    "privacyPolicy": "Politique de Confidentialité"
+    "backup": {
+      "errorSharing": "Le partage ou l'enregistrement n'est pas pris en charge.",
+      "errorExport": "Une erreur est survenue lors de la création de la sauvegarde.",
+      "errorImport": "Une erreur est survenue lors de la restauration des données.",
+      "errorReadFile": "Erreur de lecture du fichier de sauvegarde. Le fichier est peut-être corrompu.",
+      "invalidJson": "Objet JSON invalide",
+      "confirmTitle": "Restaurer",
+      "confirmMessage": "Vos données actuelles pourraient être écrasées. Êtes-vous sûr ?",
+      "restoreBtn": "Restaurer",
+      "success": "Vos données ont été restaurées avec succès.",
+      "noData": "Aucune donnée valide trouvée pour la restauration."
+    },
+    "privacyPolicy": "Politique de Confidentialité",
+    "resetData": "Réinitialiser toutes les données",
+    "resetConfirmTitle": "Réinitialiser les données",
+    "resetConfirmMessage": "Tous vos produits, médicaments et paramètres seront définitivement supprimés. Cette action ne peut pas être annulée. Êtes-vous sûr ?",
+    "shareApp": "Partager l'application",
+    "shareMessage": "Je suis en train de suivre les dates d'expiration et d'éviter le gaspillage avec FreshTrack ! Vous devriez l'essayer aussi : https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
   },
   "home": {
     "greeting": {
@@ -129,6 +147,12 @@
       "deleteConfirm": "Êtes-vous sûr de vouloir supprimer \"{{name}}\" et toutes ses notifications ?",
       "edit": "Modifier",
       "delete": "Supprimer"
+    },
+    "stats": {
+      "overallAdherence": "Adhésion globale",
+      "lastDays": "Les {{count}} derniers jours",
+      "doses": "doses",
+      "medBased": "Par médicament"
     }
   },
   "details": {
@@ -154,7 +178,27 @@
   "categories": {
     "deli": "Traiteur",
     "pharmacy": "Pharmacie",
-    "other": "Autre"
+    "other": "Autre",
+    "manage": {
+      "title": "Gérer les catégories",
+      "hint": "Les catégories par défaut ne peuvent pas être modifiées. Vous pouvez ajouter, modifier ou supprimer des catégories personnalisées.",
+      "default": "Par défaut",
+      "addNew": "Ajouter une nouvelle catégorie",
+      "editTitle": "Modifier la catégorie",
+      "newTitle": "Nouvelle catégorie",
+      "nameLabel": "Nom de la catégorie",
+      "placeholder": "ex: Glaces, Conserves...",
+      "iconLabel": "Icône",
+      "colorLabel": "Couleur",
+      "preview": "Aperçu"
+    },
+    "alert": {
+      "defaultNoEdit": "Les catégories par défaut ne peuvent pas être modifiées.",
+      "defaultNoDelete": "Les catégories par défaut ne peuvent pas être supprimées.",
+      "nameRequired": "Le nom de la catégorie ne peut pas être vide.",
+      "deleteTitle": "Supprimer la catégorie",
+      "deleteMessage": "Voulez-vous supprimer \"{{name}}\" ? Les produits de cette catégorie ne seront pas affectés."
+    }
   },
   "days": {
     "0": "Dim",
@@ -190,9 +234,7 @@
     "alreadyProSubtitle": "Vous profitez de toutes les fonctionnalités premium.",
     "features": {
       "noAds": "Supprimer toutes les publicités",
-      "unlimited": "Suivi illimité des produits",
-      "lifetime": "Accès à vie et mises à jour",
-      "support": "Support prioritaire"
+      "support": "Soutenir le développement"
     },
     "priceLabel": "UNIQUE",
     "priceNote": "Pas d'abonnement • Pas de frais cachés",
@@ -241,5 +283,14 @@
       "next": "Suivant",
       "start": "Commencer"
     }
+  },
+  "feedback": {
+    "title": "Commentaires",
+    "subtitle": "Aidez-nous à améliorer l'application. Vous pouvez signaler des bugs ou faire des suggestions.",
+    "placeholder": "Écrivez votre message ici...",
+    "send": "Envoyer",
+    "emptyError": "Veuillez écrire un message.",
+    "mailNotAvailable": "Application de messagerie non trouvée. Veuillez vous assurer que l'e-mail est configuré sur votre appareil.",
+    "sendError": "Une erreur s'est produite lors de l'envoi du message."
   }
 }

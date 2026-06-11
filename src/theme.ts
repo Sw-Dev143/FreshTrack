@@ -1,47 +1,54 @@
 // ── Shared (tema bağımsız) ────────────────────────────────────────────────────
 const SHARED = {
-  primary:      '#4F46E5',
-  primaryLight: '#818CF8',
-  primaryDark:  '#3730A3',
-  safe:         '#10B981',
-  safeLight:    '#D1FAE5',
-  warning:      '#F59E0B',
+  primary:      '#5F5DEC', // Vibrant premium violet-blue
+  primaryLight: '#9392FF',
+  primaryDark:  '#3C3AB3',
+  safe:         '#10B981', // Clean Emerald
+  safeLight:    '#ECFDF5',
+  warning:      '#F59E0B', // Amber
   warningLight: '#FEF3C7',
-  danger:       '#EF4444',
+  danger:       '#EF4444', // Rose/Red
   dangerLight:  '#FEE2E2',
-  deli:         '#F59E0B',
-  deliLight:    '#FEF3C7',
-  pharmacy:     '#10B981',
-  pharmacyLight:'#D1FAE5',
-  other:        '#6366F1',
-  otherLight:   '#E0E7FF',
-  gradientPrimary: ['#4F46E5', '#7C3AED'] as [string, string],
-  gradientWarm:    ['#F59E0B', '#EF4444'] as [string, string],
-  gradientSafe:    ['#10B981', '#059669'] as [string, string],
+  deli:         '#FF8A00', // Rich Orange
+  deliLight:    '#FFF4E6',
+  pharmacy:     '#059669', // Emerald Pharmacy
+  pharmacyLight:'#E6F4EA',
+  other:        '#8B5CF6', // Purple Other
+  otherLight:   '#F5F3FF',
+  
+  // High-fidelity gradients
+  gradientPrimary:  ['#5F5DEC', '#8B5CF6'] as [string, string],
+  gradientWarm:     ['#FF8A00', '#EF4444'] as [string, string],
+  gradientSafe:     ['#10B981', '#059669'] as [string, string],
+  gradientDeli:     ['#FF8A00', '#FFB800'] as [string, string],
+  gradientPharmacy: ['#059669', '#10B981'] as [string, string],
+  gradientOther:    ['#8B5CF6', '#A78BFA'] as [string, string],
+  gradientGlassy:   ['rgba(255, 255, 255, 0.8)', 'rgba(255, 255, 255, 0.45)'] as [string, string],
+  gradientGlassyDark: ['rgba(30, 41, 59, 0.7)', 'rgba(15, 23, 42, 0.45)'] as [string, string],
 };
 
 export const LIGHT_COLORS = {
   ...SHARED,
-  secondary:   '#1E293B',
-  background:  '#F1F5F9',
+  secondary:   '#0F172A', // Slate 900
+  background:  '#F8FAFC', // Slate 50 (brighter for premium clean look)
   surface:     '#FFFFFF',
-  surfaceAlt:  '#F8FAFC',
+  surfaceAlt:  '#F1F5F9', // Slate 100
   text:        '#0F172A',
-  textLight:   '#64748B',
-  textMuted:   '#94A3B8',
-  border:      '#E2E8F0',
+  textLight:   '#475569', // Slate 600
+  textMuted:   '#94A3B8', // Slate 400
+  border:      '#E2E8F0', // Slate 200
 };
 
 export const DARK_COLORS = {
   ...SHARED,
-  secondary:   '#E2E8F0',
-  background:  '#0F172A',
-  surface:     '#1E293B',
-  surfaceAlt:  '#273548',
+  secondary:   '#F8FAFC', // Slate 50
+  background:  '#090D16', // Deeper midnight blue-black
+  surface:     '#131B2E', // Premium dark slate card
+  surfaceAlt:  '#1E293B', // Slate 800
   text:        '#F1F5F9',
-  textLight:   '#94A3B8',
-  textMuted:   '#64748B',
-  border:      '#334155',
+  textLight:   '#94A3B8', // Slate 400
+  textMuted:   '#475569', // Slate 600
+  border:      '#1F293D', // Sleek dark border
 };
 
 // Geriye dönük uyum — eski import'lar kırılmaz
@@ -54,34 +61,34 @@ export const SIZES = {
   lg: 24,
   xl: 32,
   radius: 16,
-  radius_sm: 8,
+  radius_sm: 10,
   radius_lg: 24,
 };
 
 export const SHADOWS = {
   sm: {
-    shadowColor: '#1E293B',
+    shadowColor: '#5F5DEC',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
   md: {
-    shadowColor: '#1E293B',
-    shadowOffset: { width: 0, height: 10 },
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.06,
-    shadowRadius: 18,
-    elevation: 5,
+    shadowRadius: 20,
+    elevation: 4,
   },
   lg: {
-    shadowColor: '#1E293B',
-    shadowOffset: { width: 0, height: 18 },
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 16 },
     shadowOpacity: 0.08,
-    shadowRadius: 30,
+    shadowRadius: 32,
     elevation: 8,
   },
   primary: {
-    shadowColor: '#4F46E5',
+    shadowColor: '#5F5DEC',
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.25,
     shadowRadius: 24,

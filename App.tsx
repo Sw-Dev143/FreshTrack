@@ -4,6 +4,8 @@ import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Sentry from '@sentry/react-native';
+import * as Updates from 'expo-updates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -18,6 +20,7 @@ import AddMedicationScreen from './src/screens/AddMedicationScreen';
 import MedicationStatsScreen from './src/screens/MedicationStatsScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
+import FeedbackScreen from './src/screens/FeedbackScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   setupNotifications,
@@ -33,6 +36,12 @@ import { LanguageProvider } from './src/context/LanguageContext';
 import { incrementLaunchCount, requestReviewIfAppropriate } from './src/utils/rating';
 import './src/i18n';
 import { useTranslation } from 'react-i18next';
+import { Alert } from 'react-native';
+
+Sentry.init({
+  dsn: 'https://placeholder-dsn@sentry.io/0', // Kullanıcı kendi DSN'ini eklemeli
+  debug: false,
+});
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -108,7 +117,25 @@ function AppNavigator() {
       }
     };
 
+    const checkUpdates = async () => {
+      if (__DEV__) return;
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          Alert.alert(
+            t('common.update') || 'Update',
+            t('common.updateAvailable') || 'A new update is available. The app will restart to apply it.',
+            [{ text: 'OK', onPress: () => Updates.reloadAsync() }]
+          );
+        }
+      } catch (e) {
+        console.log('Update check failed', e);
+      }
+    };
+
     init();
+    checkUpdates();
 
     return () => {
       cancelled = true;
@@ -151,6 +178,7 @@ function AppNavigator() {
           })} />
           <Stack.Screen name="MedicationStats" component={MedicationStatsScreen} options={{ title: t('navigation.medicationStats') }} />
           <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: t('navigation.settings') }} />
+          <Stack.Screen name="Feedback" component={FeedbackScreen} options={{ title: t('feedback.title') }} />
         </Stack.Navigator>
       </NavigationContainer>
     </>
@@ -158,7 +186,7 @@ function AppNavigator() {
 }
 
 // ── Root ──────────────────────────────────────────────────────────────────────
-export default function App() {
+function App() {
   return (
     <SafeAreaProvider>
       <LanguageProvider>
@@ -171,3 +199,5 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
+
+export default Sentry.wrap(App);

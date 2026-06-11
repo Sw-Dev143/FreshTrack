@@ -17,6 +17,7 @@
     "update": "更新",
     "success": "成功",
     "error": "エラー",
+    "pro": "PRO",
     "legal": "法的情報"
   },
   "settings": {
@@ -27,7 +28,24 @@
     "importBackup": "データをインポート (復元)",
     "backupSuccess": "バックアップが正常に読み込まれました",
     "importWarning": "データがインポートされました。変更を適用するためにアプリを再起動することをお勧めします。",
-    "privacyPolicy": "プライバシーポリシー"
+    "backup": {
+      "errorSharing": "共有または保存はサポートされていません。",
+      "errorExport": "バックアップの作成中にエラーが発生しました。",
+      "errorImport": "データの復元中にエラーが発生しました。",
+      "errorReadFile": "バックアップファイルの読み取りエラー。ファイルが破損している可能性があります。",
+      "invalidJson": "無効な JSON オブジェクト",
+      "confirmTitle": "復元",
+      "confirmMessage": "現在のデータが上書きされる可能性があります。よろしいですか？",
+      "restoreBtn": "復元",
+      "success": "データが正常に復元されました。",
+      "noData": "復元する有効なデータが見つかりませんでした。"
+    },
+    "privacyPolicy": "プライバシーポリシー",
+    "resetData": "すべてのデータをリセット",
+    "resetConfirmTitle": "データのリセット",
+    "resetConfirmMessage": "すべての製品、薬、設定が永久に削除されます。この操作は取り消せません。よろしいですか？",
+    "shareApp": "アプリを共有",
+    "shareMessage": "FreshTrack で賞味期限を追跡して無駄を防いでいます！あなたも試してみてください：https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
   },
   "home": {
     "greeting": {
@@ -129,6 +147,12 @@
       "deleteConfirm": "「{{name}}」とすべての通知を削除してもよろしいですか？",
       "edit": "編集",
       "delete": "削除"
+    },
+    "stats": {
+      "overallAdherence": "全体的な遵守率",
+      "lastDays": "過去 {{count}} 日間",
+      "doses": "回分",
+      "medBased": "薬剤別"
     }
   },
   "details": {
@@ -154,7 +178,27 @@
   "categories": {
     "deli": "デリ",
     "pharmacy": "薬局",
-    "other": "その他"
+    "other": "その他",
+    "manage": {
+      "title": "カテゴリー管理",
+      "hint": "デフォルトのカテゴリーは編集できません。カスタムカテゴリーを追加、編集、または削除できます。",
+      "default": "デフォルト",
+      "addNew": "新しいカテゴリーを追加",
+      "editTitle": "カテゴリーを編集",
+      "newTitle": "新しいカテゴリー",
+      "nameLabel": "カテゴリー名",
+      "placeholder": "例: アイスクリーム、缶詰...",
+      "iconLabel": "アイコン",
+      "colorLabel": "カラー",
+      "preview": "プレビュー"
+    },
+    "alert": {
+      "defaultNoEdit": "デフォルトのカテゴリーは編集できません。",
+      "defaultNoDelete": "デフォルトのカテゴリーは削除できません。",
+      "nameRequired": "カテゴリー名は空にできません。",
+      "deleteTitle": "カテゴリーを削除",
+      "deleteMessage": "「{{name}}」を削除しますか？このカテゴリー内の製品には影響しません。"
+    }
   },
   "days": {
     "0": "日",
@@ -190,9 +234,7 @@
     "alreadyProSubtitle": "すべてのプレミアム機能をご利用いただけます。",
     "features": {
       "noAds": "すべての広告を削除",
-      "unlimited": "無制限の製品追跡",
-      "lifetime": "生涯アクセスとアップデート",
-      "support": "優先サポート"
+      "support": "開発を支援する"
     },
     "priceLabel": "1回限り",
     "priceNote": "サブスクリプションなし • 隠れた費用なし",
@@ -241,5 +283,14 @@
       "next": "次へ",
       "start": "始める"
     }
+  },
+  "feedback": {
+    "title": "フィードバック",
+    "subtitle": "アプリの改善にご協力ください。バグの報告や提案ができます。",
+    "placeholder": "ここにメッセージを書いてください...",
+    "send": "送信",
+    "emptyError": "メッセージを入力してください。",
+    "mailNotAvailable": "メールアプリが見つかりません。デバイスでメールが設定されていることを確認してください。",
+    "sendError": "メッセージの送信中にエラーが発生しました。"
   }
 }

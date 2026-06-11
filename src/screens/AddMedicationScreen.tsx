@@ -65,7 +65,16 @@ const AddMedicationScreen: React.FC = () => {
   };
 
   const addTime = () => {
-    setTimes(prev => [...prev, { hour: 12, minute: 0 }]);
+    const now = new Date();
+    const newTime = { hour: now.getHours(), minute: now.getMinutes() };
+    const newIdx = times.length;
+    
+    setTimes(prev => [...prev, newTime]);
+    
+    // Automatically open picker for the new time
+    setPickerDate(now);
+    setPickerIndex(newIdx);
+    setPickerVisible(true);
   };
 
   const removeTime = (idx: number) => {

@@ -5,6 +5,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { Category, RootStackParamList } from '../types';
 import { saveProduct, getBarcodeInfo, saveBarcodeInfo } from '../utils/storage';
@@ -14,7 +15,7 @@ import * as StoreReview from 'expo-store-review';
 import { incrementActionCount, requestReviewIfAppropriate } from '../utils/rating';
 import { usePremium } from '../context/PremiumContext';
 import { useInterstitialAd } from '../hooks/useInterstitialAd';
-import { COLORS, SIZES } from '../theme';
+import { COLORS, SIZES, SHADOWS } from '../theme';
 import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDate } from '../utils/date';
@@ -397,19 +398,26 @@ const AddProductScreen: React.FC = () => {
 
         {/* Save button */}
         <TouchableOpacity 
-          style={[styles.saveBtn, isSaving && { opacity: 0.7 }]} 
+          style={styles.saveBtnContainer} 
           onPress={handleSave} 
           activeOpacity={0.9}
           disabled={isSaving}
         >
-          {isSaving ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <>
-              <Text style={styles.saveBtnText}>{isEditing ? t('add.updateBtn') : t('add.saveBtn')}</Text>
-              <Ionicons name="checkmark-circle" size={20} color={COLORS.surface} />
-            </>
-          )}
+          <LinearGradient
+            colors={COLORS.gradientPrimary}
+            style={[styles.saveBtnGradient, isSaving && { opacity: 0.75 }]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            {isSaving ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <>
+                <Text style={styles.saveBtnText}>{isEditing ? t('add.updateBtn') : t('add.saveBtn')}</Text>
+                <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
+              </>
+            )}
+          </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
 
@@ -486,40 +494,42 @@ const styles = StyleSheet.create({
   safeArea:  { flex: 1 },
   container: { padding: SIZES.md },
   card: {
-    borderRadius: SIZES.radius + 4,
+    borderRadius: SIZES.radius,
     padding: SIZES.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(95, 93, 236, 0.08)',
     ...Platform.select({
-      ios:     { shadowColor: '#1E293B', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.06, shadowRadius: 16 },
+      ios:     { shadowColor: '#5F5DEC', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.04, shadowRadius: 16 },
       android: { elevation: 3 },
-      web:     { boxShadow: '0 8px 24px rgba(30, 41, 59, 0.06)' },
     }),
   },
   inputGroup:     { marginBottom: SIZES.xl },
-  label:          { fontSize: 15, fontWeight: '700', marginBottom: SIZES.sm, marginLeft: 4 },
+  label:          { fontSize: 14, fontWeight: '800', marginBottom: SIZES.sm, marginLeft: 4, textTransform: 'uppercase', letterSpacing: 0.4 },
   inputContainer: {
     flexDirection: 'row', alignItems: 'center',
-    borderRadius: SIZES.radius,
+    borderRadius: SIZES.radius_sm,
     borderWidth: 1, overflow: 'hidden',
   },
   inputIcon:   { marginLeft: SIZES.md, marginRight: 8 },
-  input:       { flex: 1, paddingVertical: 16, paddingRight: SIZES.md, fontSize: 16, fontWeight: '500' },
+  input:       { flex: 1, paddingVertical: 16, paddingRight: SIZES.md, fontSize: 16, fontWeight: '600' },
   scanButton:  { padding: 12, borderLeftWidth: 1, borderLeftColor: COLORS.border, backgroundColor: COLORS.surfaceAlt, minWidth: 48, alignItems: 'center' },
   barcodeTag:  { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6, marginLeft: 4 },
-  barcodeHintText: { fontSize: 12, fontWeight: '600' },
+  barcodeHintText: { fontSize: 12, fontWeight: '700' },
 
-  categoryContainer: { flexDirection: 'row', gap: 12 },
+  categoryContainer: { flexDirection: 'row', gap: 10 },
   categoryBtn: {
-    flex: 1, paddingVertical: 12,
-    borderRadius: 16, alignItems: 'center', borderWidth: 1.5,
+    flex: 1, paddingVertical: 14,
+    borderRadius: SIZES.radius_sm + 2, alignItems: 'center', borderWidth: 1.5,
     gap: 6,
+    ...SHADOWS.sm,
   },
-  categoryBtnText: { color: COLORS.textLight, fontWeight: '600', fontSize: 13 },
+  categoryBtnText: { color: COLORS.textLight, fontWeight: '700', fontSize: 13 },
 
   datePickerBtnWeb: {
     flex: 1, paddingVertical: 14, paddingRight: SIZES.md,
-    fontSize: 16, borderWidth: 0, backgroundColor: 'transparent', fontWeight: '500',
+    fontSize: 16, borderWidth: 0, backgroundColor: 'transparent', fontWeight: '600',
   },
-  dateText: { flex: 1, paddingVertical: 16, fontSize: 16, fontWeight: '600' },
+  dateText: { flex: 1, paddingVertical: 16, fontSize: 16, fontWeight: '700' },
   iosDatePickerContainer: {
     marginTop: SIZES.sm, backgroundColor: '#F8FAFC',
     borderRadius: SIZES.radius, overflow: 'hidden', padding: 10,
@@ -531,25 +541,27 @@ const styles = StyleSheet.create({
     marginTop: SIZES.md 
   },
   quickDateBtn: { 
-    paddingHorizontal: 12, 
-    paddingVertical: 8, 
+    paddingHorizontal: 14, 
+    paddingVertical: 10, 
     borderRadius: 12, 
-    borderWidth: 1 
+    borderWidth: 1,
   },
-  quickDateText: { fontSize: 13, fontWeight: '700' },
+  quickDateText: { fontSize: 13, fontWeight: '800' },
 
-
-  saveBtn: {
-    flexDirection: 'row', backgroundColor: COLORS.primary,
-    paddingVertical: 16, borderRadius: SIZES.radius,
-    alignItems: 'center', justifyContent: 'center', marginTop: SIZES.md, gap: 8,
-    ...Platform.select({
-      ios:     { shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 12 },
-      android: { elevation: 6 },
-      web:     { boxShadow: `0 8px 20px ${COLORS.primary}50` },
-    }),
+  saveBtnContainer: {
+    marginTop: SIZES.md + 4,
+    borderRadius: SIZES.radius,
+    overflow: 'hidden',
+    ...SHADOWS.primary,
   },
-  saveBtnText: { color: '#FFFFFF', fontSize: 18, fontWeight: '800' },
+  saveBtnGradient: {
+    flexDirection: 'row',
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  saveBtnText: { color: '#FFFFFF', fontSize: 18, fontWeight: '900' },
 
   // ── Kamera modal ────────────────────────────────────────────────────────
   cameraModalContainer: { flex: 1, backgroundColor: '#000' },
@@ -563,11 +575,11 @@ const styles = StyleSheet.create({
   closeBtn:    { padding: 4 },
   cameraArea:  { flex: 1 },
 
-  overlayTop:    { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' },
+  overlayTop:    { flex: 1, backgroundColor: 'rgba(0,0,0,0.65)' },
   overlayRow:    { flexDirection: 'row' },
-  overlaySide:   { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)' },
-  overlayBottom: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', paddingTop: 20 },
-  scanHint:      { color: 'rgba(255,255,255,0.85)', fontSize: 14, fontWeight: '600' },
+  overlaySide:   { flex: 1, backgroundColor: 'rgba(0,0,0,0.65)' },
+  overlayBottom: { flex: 1, backgroundColor: 'rgba(0,0,0,0.65)', alignItems: 'center', paddingTop: 24 },
+  scanHint:      { color: 'rgba(255,255,255,0.9)', fontSize: 14, fontWeight: '700', letterSpacing: 0.2 },
 
   scanFrame: {
     width: FRAME_WIDTH, height: FRAME_HEIGHT,
@@ -578,10 +590,10 @@ const styles = StyleSheet.create({
     position: 'absolute', width: CORNER_SIZE, height: CORNER_SIZE,
     borderColor: '#4ade80',
   },
-  cornerTL: { top: 0,    left: 0,   borderTopWidth:    CORNER_THICKNESS, borderLeftWidth:  CORNER_THICKNESS, borderTopLeftRadius:     4 },
-  cornerTR: { top: 0,    right: 0,  borderTopWidth:    CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderTopRightRadius:    4 },
-  cornerBL: { bottom: 0, left: 0,   borderBottomWidth: CORNER_THICKNESS, borderLeftWidth:  CORNER_THICKNESS, borderBottomLeftRadius:  4 },
-  cornerBR: { bottom: 0, right: 0,  borderBottomWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderBottomRightRadius: 4 },
+  cornerTL: { top: 0,    left: 0,   borderTopWidth:    CORNER_THICKNESS, borderLeftWidth:  CORNER_THICKNESS, borderTopLeftRadius:     6 },
+  cornerTR: { top: 0,    right: 0,  borderTopWidth:    CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderTopRightRadius:    6 },
+  cornerBL: { bottom: 0, left: 0,   borderBottomWidth: CORNER_THICKNESS, borderLeftWidth:  CORNER_THICKNESS, borderBottomLeftRadius:  6 },
+  cornerBR: { bottom: 0, right: 0,  borderBottomWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderBottomRightRadius: 6 },
 
   scanLine: {
     position: 'absolute', left: 8, right: 8, height: 2,

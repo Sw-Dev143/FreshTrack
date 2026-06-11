@@ -17,6 +17,7 @@
     "update": "Aktualisieren",
     "success": "Erfolg",
     "error": "Fehler",
+    "pro": "PRO",
     "legal": "Rechtliches"
   },
   "settings": {
@@ -27,7 +28,24 @@
     "importBackup": "Daten importieren (Wiederherstellen)",
     "backupSuccess": "Backup erfolgreich geladen",
     "importWarning": "Daten importiert. Wir empfehlen, die App neu zu starten, um die Änderungen zu übernehmen.",
-    "privacyPolicy": "Datenschutzerklärung"
+    "backup": {
+      "errorSharing": "Teilen oder Speichern wird nicht unterstützt.",
+      "errorExport": "Ein Fehler ist beim Erstellen des Backups aufgetreten.",
+      "errorImport": "Ein Fehler ist beim Wiederherstellen der Daten aufgetreten.",
+      "errorReadFile": "Fehler beim Lesen der Backup-Datei. Die Datei ist möglicherweise beschädigt.",
+      "invalidJson": "Ungültiges JSON-Objekt",
+      "confirmTitle": "Wiederherstellen",
+      "confirmMessage": "Ihre aktuellen Daten könnten überschrieben werden. Sind Sie sicher?",
+      "restoreBtn": "Wiederherstellen",
+      "success": "Ihre Daten wurden erfolgreich wiederhergestellt.",
+      "noData": "Keine gültigen Daten zum Wiederherstellen gefunden."
+    },
+    "privacyPolicy": "Datenschutzerklärung",
+    "resetData": "Alle Daten zurücksetzen",
+    "resetConfirmTitle": "Daten zurücksetzen",
+    "resetConfirmMessage": "Alle Ihre Produkte, Medikamente und Einstellungen werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher?",
+    "shareApp": "App teilen",
+    "shareMessage": "Ich verfolge Ablaufdaten und vermeide Verschwendung mit FreshTrack! Das solltest du auch probieren: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
   },
   "home": {
     "greeting": {
@@ -129,6 +147,12 @@
       "deleteConfirm": "Sind Sie sicher, dass Sie \"{{name}}\" und alle Benachrichtigungen löschen möchten?",
       "edit": "Bearbeiten",
       "delete": "Löschen"
+    },
+    "stats": {
+      "overallAdherence": "Gesamteinhaltung",
+      "lastDays": "Letzte {{count}} Tage",
+      "doses": "Dosen",
+      "medBased": "Medikamentenbasiert"
     }
   },
   "details": {
@@ -154,7 +178,27 @@
   "categories": {
     "deli": "Feinkost",
     "pharmacy": "Apotheke",
-    "other": "Sonstiges"
+    "other": "Sonstiges",
+    "manage": {
+      "title": "Kategorien verwalten",
+      "hint": "Standardkategorien können nicht bearbeitet werden. Sie können benutzerdefinierte Kategorien hinzufügen, bearbeiten oder löschen.",
+      "default": "Standard",
+      "addNew": "Neue Kategorie hinzufügen",
+      "editTitle": "Kategorie bearbeiten",
+      "newTitle": "Neue Kategorie",
+      "nameLabel": "Kategoriename",
+      "placeholder": "z.B. Eiscreme, Konserven...",
+      "iconLabel": "Symbol",
+      "colorLabel": "Farbe",
+      "preview": "Vorschau"
+    },
+    "alert": {
+      "defaultNoEdit": "Standardkategorien können nicht bearbeitet werden.",
+      "defaultNoDelete": "Standardkategorien können nicht gelöscht werden.",
+      "nameRequired": "Kategoriename darf nicht leer sein.",
+      "deleteTitle": "Kategorie löschen",
+      "deleteMessage": "Möchten Sie \"{{name}}\" löschen? Produkte in dieser Kategorie sind nicht betroffen."
+    }
   },
   "days": {
     "0": "So",
@@ -190,9 +234,7 @@
     "alreadyProSubtitle": "Sie genießen alle Premium-Funktionen.",
     "features": {
       "noAds": "Alle Anzeigen entfernen",
-      "unlimited": "Unbegrenzte Produktverfolgung",
-      "lifetime": "Lebenslanger Zugriff & Updates",
-      "support": "Prioritärer Support"
+      "support": "Unterstützen Sie die Entwicklung"
     },
     "priceLabel": "EINMALIG",
     "priceNote": "Kein Abonnement • Keine versteckten Kosten",
@@ -241,5 +283,14 @@
       "next": "Weiter",
       "start": "Loslegen"
     }
+  },
+  "feedback": {
+    "title": "Feedback",
+    "subtitle": "Helfen Sie uns, die App zu verbessern. Sie können Fehler melden oder Vorschläge machen.",
+    "placeholder": "Schreiben Sie Ihre Nachricht hier...",
+    "send": "Senden",
+    "emptyError": "Bitte schreiben Sie eine Nachricht.",
+    "mailNotAvailable": "E-Mail-App nicht gefunden. Bitte stellen Sie sicher, dass E-Mail auf Ihrem Gerät eingerichtet ist.",
+    "sendError": "Beim Senden der Nachricht ist ein Fehler aufgetreten."
   }
 }

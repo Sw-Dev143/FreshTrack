@@ -40,7 +40,12 @@
       "success": "Your data has been successfully restored.",
       "noData": "No valid data found to restore."
     },
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "resetData": "Reset All Data",
+    "resetConfirmTitle": "Reset Data",
+    "resetConfirmMessage": "All your products, medications, and settings will be permanently deleted. This action cannot be undone. Are you sure?",
+    "shareApp": "Share App",
+    "shareMessage": "I'm tracking expiration dates and preventing waste with FreshTrack! You should try it too: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
   },
   "home": {
     "greeting": {
@@ -229,9 +234,7 @@
     "alreadyProSubtitle": "You are enjoying all premium features.",
     "features": {
       "noAds": "Remove all ads",
-      "unlimited": "Unlimited product tracking",
-      "lifetime": "Lifetime access & updates",
-      "support": "Priority support"
+      "support": "Support the development"
     },
     "priceLabel": "ONE-TIME",
     "priceNote": "No subscription • No hidden costs",
@@ -280,5 +283,14 @@
       "next": "Next",
       "start": "Get Started"
     }
+  },
+  "feedback": {
+    "title": "Feedback",
+    "subtitle": "Help us improve the app. You can report bugs or make suggestions.",
+    "placeholder": "Write your message here...",
+    "send": "Send",
+    "emptyError": "Please write a message.",
+    "mailNotAvailable": "Email app not found. Please make sure you have email setup on your device.",
+    "sendError": "An error occurred while sending message."
   }
 }

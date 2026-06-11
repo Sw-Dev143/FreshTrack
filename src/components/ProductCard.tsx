@@ -17,9 +17,9 @@ interface ProductCardProps {
 const MAX_DAYS = 30;
 
 const CATEGORY_CONFIG: Record<string, { icon: 'restaurant' | 'medkit' | 'cube'; emoji: string; color: string; light: string }> = {
-  'deli':     { icon: 'restaurant' as const, emoji: '🥩', color: COLORS.deli,     light: COLORS.deliLight },
-  'pharmacy': { icon: 'medkit'     as const, emoji: '💊', color: COLORS.pharmacy, light: COLORS.pharmacyLight },
-  'other':    { icon: 'cube'       as const, emoji: '📦', color: COLORS.other,    light: COLORS.otherLight },
+  'deli':     { icon: 'restaurant' as const, emoji: '🥩', color: COLORS.deli,     light: '#FFF4E6' },
+  'pharmacy': { icon: 'medkit'     as const, emoji: '💊', color: COLORS.pharmacy, light: '#E6F4EA' },
+  'other':    { icon: 'cube'       as const, emoji: '📦', color: COLORS.other,    light: '#F5F3FF' },
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
@@ -68,18 +68,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
     return product.category;
   })();
 
-  const handlePressIn  = () => Animated.spring(pressAnim, { toValue: 0.97, useNativeDriver: true, speed: 40 }).start();
-  const handlePressOut = () => Animated.spring(pressAnim, { toValue: 1,    useNativeDriver: true, speed: 20 }).start();
+  const handlePressIn  = () => Animated.spring(pressAnim, { toValue: 0.96, useNativeDriver: true, speed: 50, bounciness: 4 }).start();
+  const handlePressOut = () => Animated.spring(pressAnim, { toValue: 1,    useNativeDriver: true, speed: 30, bounciness: 4 }).start();
 
   return (
     <Animated.View style={[styles.cardWrapper, { transform: [{ scale: pressAnim }] }]}>
       <TouchableOpacity
         style={[
           styles.card, 
-          { backgroundColor: colors.surface },
-          isExpired && { backgroundColor: COLORS.danger + '08' }
+          { backgroundColor: colors.surface, borderColor: colors.border + '60' },
+          isExpired && { backgroundColor: COLORS.danger + '06', borderColor: COLORS.danger + '20' }
         ]}
         onPress={onPress}
+        onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={1}
       >
@@ -90,9 +91,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
               <Text style={styles.categoryEmoji}>{catConfig.emoji}</Text>
             </View>
 
-            <Text style={[styles.productName, { color: colors.text }]} numberOfLines={1}>
-              {product.name}
-            </Text>
+            <View style={styles.nameWrap}>
+              <Text style={[styles.productName, { color: colors.text }]} numberOfLines={1}>
+                {product.name}
+              </Text>
+              
+              <View style={[styles.categoryPill, { backgroundColor: colors.surfaceAlt }]}>
+                <Ionicons name={catConfig.icon} size={11} color={catConfig.color} />
+                <Text style={[styles.categoryText, { color: catConfig.color }]}>{categoryLabel}</Text>
+              </View>
+            </View>
 
             <View style={[styles.statusBadge, { backgroundColor: statusLight }]}>
               <Ionicons name={statusIcon} size={12} color={statusColor} />
@@ -101,14 +109,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
           </View>
 
           {/* ── Progress bar ── */}
-          <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
+          <View style={[styles.progressTrack, { backgroundColor: colors.surfaceAlt }]}>
             <View
               style={[
                 styles.progressFill,
                 {
                   width: `${Math.round(progress * 100)}%` as any,
                   backgroundColor: statusColor,
-                  opacity: isExpired ? 0.4 : 0.85,
+                  opacity: isExpired ? 0.3 : 1.0,
                 },
               ]}
             />
@@ -116,18 +124,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
 
           {/* ── Alt satır ── */}
           <View style={styles.bottomRow}>
-            <View style={[styles.categoryPill, { backgroundColor: colors.border + '60' }]}>
-              <Ionicons name={catConfig.icon} size={11} color={catConfig.color} />
-              <Text style={[styles.categoryText, { color: catConfig.color }]}>{categoryLabel}</Text>
+            <View style={styles.dateLabelGroup}>
+              <Ionicons name="calendar-outline" size={13} color={colors.textMuted} />
+              <Text style={[styles.dateText, { color: colors.textLight }]}>
+                {formatDate(product.expirationDate, {
+                  day: 'numeric', month: 'short', year: 'numeric',
+                }, currentLanguage)}
+              </Text>
             </View>
 
-            <Text style={[styles.dateText, { color: colors.textMuted }]}>
-              {formatDate(product.expirationDate, {
-                day: 'numeric', month: 'short', year: 'numeric',
-              }, currentLanguage)}
-            </Text>
-
-            <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />
+            <View style={styles.arrowGroup}>
+              <Ionicons name="chevron-forward-circle" size={18} color={colors.textMuted} />
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -138,49 +146,53 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
 const styles = StyleSheet.create({
   cardWrapper: {
     marginBottom: SIZES.sm + 4,
-    borderRadius: SIZES.radius + 2,
-    ...SHADOWS.md,
+    borderRadius: SIZES.radius,
+    ...SHADOWS.sm,
   },
   card: {
-    borderRadius: SIZES.radius + 2,
+    borderRadius: SIZES.radius,
     flexDirection: 'row',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'transparent',
   },
   body: {
     flex: 1,
     paddingHorizontal: SIZES.md,
-    paddingVertical: 14,
-    gap: 10,
+    paddingVertical: 16,
+    gap: 12,
   },
-  topRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  topRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   categoryIconWrap: {
-    width: 38, height: 38, borderRadius: SIZES.radius_sm + 2,
+    width: 44, height: 44, borderRadius: SIZES.radius_sm + 2,
     justifyContent: 'center', alignItems: 'center',
     flexShrink: 0,
+    ...SHADOWS.sm,
   },
-  categoryEmoji: { fontSize: 20 },
+  categoryEmoji: { fontSize: 22 },
+  nameWrap: { flex: 1, gap: 4 },
   productName: {
-    flex: 1, fontSize: 15, fontWeight: '800', letterSpacing: -0.3,
+    fontSize: 16, fontWeight: '800', letterSpacing: -0.4,
   },
   statusBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 3,
-    paddingHorizontal: 8, paddingVertical: 4,
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 10, paddingVertical: 5,
     borderRadius: 20, flexShrink: 0,
   },
-  statusText: { fontSize: 11, fontWeight: '700' },
-  progressTrack: { height: 3, borderRadius: 2, overflow: 'hidden' },
-  progressFill:  { height: '100%', borderRadius: 2 },
-  bottomRow:     { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  statusText: { fontSize: 11, fontWeight: '800' },
+  progressTrack: { height: 6, borderRadius: 3, overflow: 'hidden' },
+  progressFill:  { height: '100%', borderRadius: 3 },
+  bottomRow:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   categoryPill:  {
-    flexDirection: 'row', alignItems: 'center', gap: 3,
+    flexDirection: 'row', alignItems: 'center', gap: 4,
     paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20,
+    alignSelf: 'flex-start',
   },
   categoryText: { fontSize: 11, fontWeight: '700' },
+  dateLabelGroup: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   dateText: {
-    flex: 1, fontSize: 12, fontWeight: '600', textAlign: 'right',
+    fontSize: 12, fontWeight: '600',
   },
+  arrowGroup: { flexDirection: 'row', alignItems: 'center' },
 });
 
 export default ProductCard;

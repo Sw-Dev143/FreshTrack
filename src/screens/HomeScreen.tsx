@@ -235,7 +235,7 @@ const HomeScreen: React.FC = () => {
           <ProductCard product={item} onPress={() => navigation.navigate('ProductDetails', { product: item })} />
         )}
         ListEmptyComponent={
-          !refreshing && (
+          !refreshing ? (
             <View style={styles.emptyContainer}>
               <View style={[styles.emptyIconRing, { backgroundColor: colors.surfaceAlt }]}>
                 <View style={[styles.emptyIconInner, { backgroundColor: COLORS.primary + '15' }]}>
@@ -252,17 +252,33 @@ const HomeScreen: React.FC = () => {
                 }
               </Text>
             </View>
-          )
+          ) : null
         }
       />
 
       <TouchableOpacity
-        style={styles.fab}
+        style={styles.fabContainer}
         onPress={() => navigation.navigate('AddProduct', {})}
         activeOpacity={0.85}
       >
-        <Ionicons name="add" size={32} color="#FFFFFF" />
+        <LinearGradient
+          colors={COLORS.gradientPrimary}
+          style={styles.fabGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Ionicons name="add" size={32} color="#FFFFFF" />
+        </LinearGradient>
       </TouchableOpacity>
+
+      {!isPremium && Platform.OS !== 'web' && (
+        <View style={styles.adContainer}>
+          <BannerAd
+            unitId={AD_UNIT_IDS.banner}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -274,24 +290,34 @@ interface StatChipProps {
   active?: boolean;
   onPress: () => void;
 }
-const StatChip: React.FC<StatChipProps> = ({ icon, value, label, color, light, active, onPress }) => (
-  <TouchableOpacity 
-    style={[
-      chipStyles.wrap, 
-      { backgroundColor: active ? color : light, borderColor: color, borderWidth: active ? 1 : 0 }
-    ]} 
-    onPress={onPress}
-    activeOpacity={0.7}
-  >
-    <Ionicons name={icon} size={16} color={active ? '#fff' : color} />
-    <Text style={[chipStyles.value, { color: active ? '#fff' : color }]}>{value}</Text>
-    <Text style={[chipStyles.label, { color: active ? '#fff' : color }]}>{label}</Text>
-  </TouchableOpacity>
-);
+const StatChip: React.FC<StatChipProps> = ({ icon, value, label, color, active, onPress }) => {
+  const { isDark } = useTheme();
+  const inactiveBg = isDark ? color + '18' : color + '0C';
+  const inactiveBorder = isDark ? color + '30' : color + '25';
+
+  return (
+    <TouchableOpacity 
+      style={[
+        chipStyles.wrap, 
+        { 
+          backgroundColor: active ? color : inactiveBg, 
+          borderColor: active ? 'transparent' : inactiveBorder, 
+          borderWidth: 1 
+        }
+      ]} 
+      onPress={onPress}
+      activeOpacity={0.75}
+    >
+      <Ionicons name={icon} size={15} color={active ? '#fff' : color} />
+      <Text style={[chipStyles.value, { color: active ? '#fff' : color }]}>{value}</Text>
+      <Text style={[chipStyles.label, { color: active ? '#fff' : color }]}>{label}</Text>
+    </TouchableOpacity>
+  );
+};
 const chipStyles = StyleSheet.create({
-  wrap:  { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 12, borderRadius: SIZES.radius_sm + 4, ...SHADOWS.sm },
-  value: { fontWeight: '900', fontSize: 16 },
-  label: { fontWeight: '600', fontSize: 12, opacity: 0.9 },
+  wrap:  { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 12, borderRadius: SIZES.radius_sm + 2, ...SHADOWS.sm },
+  value: { fontWeight: '900', fontSize: 15 },
+  label: { fontWeight: '700', fontSize: 11, opacity: 0.9 },
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -303,48 +329,51 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.md,
     paddingTop: SIZES.md,
     paddingBottom: SIZES.sm,
-    gap: SIZES.sm,
+    gap: 12,
   },
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   greeting: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 2,
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 1,
+    letterSpacing: 0.2,
   },
   headerTitle: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: '900',
     letterSpacing: -1,
   },
   iconButton: {
-    width: 36, height: 36, borderRadius: 18,
+    width: 38, height: 38, borderRadius: 19,
     justifyContent: 'center', alignItems: 'center',
     borderWidth: 1,
+    ...SHADOWS.sm,
   },
   proButton: {
     flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 16, paddingVertical: 8,
-    borderRadius: 20, gap: 6,
+    paddingHorizontal: 14, paddingVertical: 8,
+    borderRadius: 20, gap: 5,
     ...SHADOWS.sm,
   },
   proButtonText: { color: '#FFF', fontWeight: '800', fontSize: 12 },
   proBadge: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 14, paddingVertical: 8,
-    borderRadius: 20, gap: 6,
+    borderRadius: 20, gap: 5,
     borderWidth: 1, borderColor: COLORS.primary + '30',
   },
   proBadgeText: { fontWeight: '800', fontSize: 12 },
   headerButtons: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   medButton: {
-    width: 36, height: 36, borderRadius: 18,
+    width: 38, height: 38, borderRadius: 19,
     justifyContent: 'center', alignItems: 'center',
+    ...SHADOWS.sm,
   },
-  statsRow: { flexDirection: 'row', gap: 8, paddingBottom: 4 },
+  statsRow: { flexDirection: 'row', gap: 8, paddingBottom: 2 },
 
   filterSection: { gap: 12, marginBottom: 8 },
   resultsHeader: { 
@@ -361,11 +390,11 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row', alignItems: 'center',
     borderRadius: SIZES.radius,
-    borderWidth: 1.5,
+    borderWidth: 1,
     paddingHorizontal: SIZES.sm,
-    gap: 4,
+    gap: 6,
     ...Platform.select({
-      ios:     { shadowColor: '#1E293B', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 6 },
+      ios:     { shadowColor: '#5F5DEC', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 8 },
       android: { elevation: 2 },
     }),
   },
@@ -378,9 +407,9 @@ const styles = StyleSheet.create({
   searchIcon:  { marginLeft: 4 },
   searchInput: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 14,
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   clearBtn: { padding: 4 },
 
@@ -389,12 +418,15 @@ const styles = StyleSheet.create({
   listContainerWithAd:  { paddingBottom: 180 },
 
   // FAB
-  fab: {
+  fabContainer: {
     position: 'absolute', bottom: SIZES.xl, right: SIZES.lg,
-    backgroundColor: COLORS.primary,
     width: 62, height: 62, borderRadius: 31,
-    justifyContent: 'center', alignItems: 'center',
     ...SHADOWS.primary,
+  },
+  fabGradient: {
+    width: '100%', height: '100%',
+    borderRadius: 31,
+    justifyContent: 'center', alignItems: 'center',
   },
   fabRipple: {
     position: 'absolute', bottom: SIZES.xl, right: SIZES.lg,

@@ -11,9 +11,7 @@ import { useLanguage } from '../context/LanguageContext';
 // ── Feature listesi ──────────────────────────────────────────────────────────
 const getFeatures = (t: any) => [
   { icon: 'ban' as const, color: COLORS.danger, text: t('paywall.features.noAds') },
-  { icon: 'infinite' as const, color: COLORS.primary, text: t('paywall.features.unlimited') || 'Unlimited Tracking' },
-  { icon: 'flash' as const, color: COLORS.warning, text: t('paywall.features.lifetime') || 'Lifetime Updates' },
-  { icon: 'shield-checkmark' as const, color: COLORS.safe, text: t('paywall.features.support') || 'Priority Support' },
+  { icon: 'shield-checkmark' as const, color: COLORS.safe, text: t('paywall.features.support') },
 ];
 
 const AlreadyPro: React.FC<{ onBack: () => void; colors: any }> = ({ onBack, colors }) => {
@@ -45,9 +43,9 @@ const PaywallScreen: React.FC = () => {
 
   // Yerel fiyat formatlama (Daha gerçekçi fiyatlar)
   const getBasePrice = () => {
-    if (currentLanguage === 'tr') return 99.99; // 99.99 TRY
-    if (currentLanguage === 'ja') return 800;   // 800 JPY
-    return 4.99; // 4.99 USD (Global standart)
+    if (currentLanguage === 'tr') return 149.99; // 149.99 TRY
+    if (currentLanguage === 'ja') return 450;    // ~3 USD
+    return 2.99; // 2.99 USD (Tatlı nokta)
   };
 
   const price = getBasePrice();

@@ -11,6 +11,13 @@ interface CategoryFilterProps {
   onSelect: (category: Category | 'all') => void;
 }
 
+const CATEGORY_EMOJIS: Record<string, string> = {
+  'all':      '🍽️',
+  'deli':     '🥩',
+  'pharmacy': '💊',
+  'other':    '📦',
+};
+
 const CategoryFilter: React.FC<CategoryFilterProps> = ({ categories, selectedCategory, onSelect }) => {
   const { colors } = useTheme();
   const { t } = useLanguage();
@@ -29,17 +36,23 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ categories, selectedCat
       >
         {categories.map((category) => {
           const isSelected = selectedCategory === category;
+          const emoji = CATEGORY_EMOJIS[category.toLowerCase()] ?? '📦';
+          
           return (
             <TouchableOpacity
               key={category}
               style={[
                 styles.filterButton,
-                { backgroundColor: isSelected ? COLORS.primary : colors.surface },
+                { 
+                  backgroundColor: isSelected ? COLORS.primary : colors.surface,
+                  borderColor: isSelected ? COLORS.primary : colors.border + '60'
+                },
                 isSelected && styles.filterButtonSelected,
               ]}
               onPress={() => onSelect(category)}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
+              <Text style={styles.emojiText}>{emoji}</Text>
               <Text
                 style={[
                   styles.filterText,
@@ -59,30 +72,36 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ categories, selectedCat
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: SIZES.md + 4,
+    marginBottom: SIZES.sm,
   },
   scrollContent: {
     paddingHorizontal: SIZES.md,
-    gap: 8,
+    gap: 10,
+    paddingVertical: 4,
   },
   filterButton: {
-    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 24,
+    borderWidth: 1,
     ...Platform.select({
-      ios:     { shadowColor: '#1E293B', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 4 },
-      android: { elevation: 2 },
-      web:     { boxShadow: '0 2px 8px rgba(30, 41, 59, 0.04)' },
+      ios:     { shadowColor: '#5F5DEC', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 4 },
+      android: { elevation: 1 },
     }),
   },
   filterButtonSelected: {
+    borderWidth: 1,
+    borderColor: 'transparent',
     ...Platform.select({
-      ios:     { shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
-      android: { elevation: 6 },
-      web:     { boxShadow: `0 4px 12px ${COLORS.primary}40` },
+      ios:     { shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.25, shadowRadius: 10 },
+      android: { elevation: 4 },
     }),
   },
-  filterText:         { fontSize: 14, fontWeight: '600' },
+  emojiText: { fontSize: 15 },
+  filterText:         { fontSize: 13, fontWeight: '600' },
   filterTextSelected: { color: '#FFFFFF', fontWeight: '800' },
 });
 

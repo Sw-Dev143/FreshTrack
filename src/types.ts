@@ -51,4 +51,5 @@ export type RootStackParamList = {
   ShoppingList: undefined;
   Calendar: undefined;
   Settings: undefined;
+  Feedback: undefined;
 };

@@ -96,8 +96,8 @@ const ProductDetailsScreen: React.FC = () => {
 
         {/* ── Hero Kart ── */}
         <LinearGradient
-          colors={isDark ? ['#1E293B', '#0F172A'] : ['#FFFFFF', '#F8FAFC']}
-          style={styles.heroCard}
+          colors={isDark ? ['#131B2E', '#090D16'] : ['#FFFFFF', '#F8FAFC']}
+          style={[styles.heroCard, { borderColor: colors.border + '50', borderWidth: 1 }]}
         >
           <View style={[styles.iconCircle, { backgroundColor: catConfig.light }]}>
             <Ionicons name={catConfig.icon} size={42} color={catConfig.color} />
@@ -105,19 +105,19 @@ const ProductDetailsScreen: React.FC = () => {
 
           <Text style={[styles.productName, { color: colors.text }]}>{product.name}</Text>
 
-          <View style={[styles.categoryBadge, { backgroundColor: catConfig.light }]}>
+          <View style={[styles.categoryBadge, { backgroundColor: colors.surfaceAlt, borderColor: colors.border + '40', borderWidth: 1 }]}>
             <Text style={[styles.categoryBadgeText, { color: catConfig.color }]}>
               {t(`categories.${product.category}`)}
             </Text>
           </View>
 
           <LinearGradient
-            colors={[statusLight, statusLight + '80']}
+            colors={[statusLight, statusLight + '60']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
-            style={styles.bigStatus}
+            style={[styles.bigStatus, { borderColor: statusColor + '20', borderWidth: 1 }]}
           >
-            <Ionicons name={statusIcon} size={28} color={statusColor} />
+            <Ionicons name={statusIcon} size={24} color={statusColor} />
             <Text style={[styles.bigStatusText, { color: statusColor }]}>{statusText}</Text>
           </LinearGradient>
         </LinearGradient>
@@ -180,7 +180,7 @@ const ProductDetailsScreen: React.FC = () => {
           style={[
             styles.shoppingBtn,
             { backgroundColor: inShoppingList ? COLORS.safe + '15' : colors.surface,
-              borderColor: inShoppingList ? COLORS.safe : colors.border },
+              borderColor: inShoppingList ? COLORS.safe : colors.border + '80' },
           ]}
           onPress={async () => {
             if (inShoppingList) {
@@ -217,26 +217,27 @@ interface InfoCardProps {
   colors: any;
 }
 const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value, color, colors }) => (
-  <View style={[infoCardStyles.card, { backgroundColor: colors.surface }]}>
-    <View style={[infoCardStyles.iconWrap, { backgroundColor: color + '15' }]}>
-      <Ionicons name={icon} size={20} color={color} />
+  <View style={[infoCardStyles.card, { backgroundColor: colors.surface, borderColor: colors.border + '60' }]}>
+    <View style={[infoCardStyles.iconWrap, { backgroundColor: color + '12' }]}>
+      <Ionicons name={icon} size={18} color={color} />
     </View>
-    <Text style={[infoCardStyles.label, { color: colors.textMuted }]}>{label}</Text>
+    <Text style={[infoCardStyles.label, { color: colors.textLight }]}>{label}</Text>
     <Text style={[infoCardStyles.value, { color: colors.text }]} numberOfLines={2}>{value}</Text>
   </View>
 );
 const infoCardStyles = StyleSheet.create({
   card: {
     borderRadius: SIZES.radius,
-    padding: SIZES.md,
-    gap: 6,
+    padding: 16,
+    gap: 8,
     flex: 1,
     minWidth: '45%',
+    borderWidth: 1,
     ...SHADOWS.sm,
   },
-  iconWrap: { width: 36, height: 36, borderRadius: SIZES.radius_sm, justifyContent: 'center', alignItems: 'center' },
-  label:    { fontSize: 12, fontWeight: '600' },
-  value:    { fontSize: 15, fontWeight: '800' },
+  iconWrap: { width: 34, height: 34, borderRadius: SIZES.radius_sm, justifyContent: 'center', alignItems: 'center' },
+  label:    { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
+  value:    { fontSize: 15, fontWeight: '800', marginTop: 2 },
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -251,11 +252,12 @@ const styles = StyleSheet.create({
     padding: SIZES.xl,
     alignItems: 'center',
     gap: SIZES.md,
-    ...SHADOWS.lg,
+    ...SHADOWS.md,
   },
   iconCircle: {
     width: 90, height: 90, borderRadius: 45,
     justifyContent: 'center', alignItems: 'center',
+    ...SHADOWS.sm,
   },
   productName: {
     fontSize: 26, fontWeight: '900',
@@ -265,14 +267,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 6,
     borderRadius: 20,
   },
-  categoryBadgeText: { fontWeight: '700', fontSize: 14 },
+  categoryBadgeText: { fontWeight: '800', fontSize: 13 },
   bigStatus: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
+    flexDirection: 'row', alignItems: 'center', gap: 8,
     paddingHorizontal: 20, paddingVertical: 14,
     borderRadius: SIZES.radius, width: '100%',
     justifyContent: 'center',
   },
-  bigStatusText: { fontWeight: '800', fontSize: 16 },
+  bigStatusText: { fontWeight: '800', fontSize: 15 },
 
   // Info grid
   infoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: SIZES.sm },
@@ -282,25 +284,25 @@ const styles = StyleSheet.create({
   editBtn: {
     flex: 1,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: COLORS.primary + '12',
-    paddingVertical: 18, borderRadius: SIZES.radius + 4,
+    backgroundColor: COLORS.primary + '0B',
+    paddingVertical: 18, borderRadius: SIZES.radius,
     gap: 10, borderWidth: 1, borderColor: COLORS.primary + '30',
   },
   editBtnText:   { color: COLORS.primary, fontSize: 16, fontWeight: '800' },
   deleteBtn: {
     flex: 1,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: COLORS.dangerLight,
-    paddingVertical: 18, borderRadius: SIZES.radius + 4,
+    backgroundColor: COLORS.dangerLight + '40',
+    paddingVertical: 18, borderRadius: SIZES.radius,
     gap: 10, borderWidth: 1, borderColor: COLORS.danger + '30',
   },
   deleteBtnText: { color: COLORS.danger, fontSize: 16, fontWeight: '800' },
   shoppingBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    paddingVertical: 14, borderRadius: SIZES.radius + 4,
+    paddingVertical: 14, borderRadius: SIZES.radius,
     gap: 10, borderWidth: 1, marginTop: -4,
   },
-  shoppingBtnText: { fontSize: 15, fontWeight: '700' },
+  shoppingBtnText: { fontSize: 15, fontWeight: '800' },
 });
 
 export default ProductDetailsScreen;

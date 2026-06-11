@@ -40,7 +40,12 @@
       "success": "Verileriniz başarıyla geri yüklendi.",
       "noData": "Geri yüklenecek geçerli veri bulunamadı."
     },
-    "privacyPolicy": "Gizlilik Politikası"
+    "privacyPolicy": "Gizlilik Politikası",
+    "resetData": "Tüm Verileri Sıfırla",
+    "resetConfirmTitle": "Verileri Sıfırla",
+    "resetConfirmMessage": "Tüm ürünleriniz, ilaçlarınız ve ayarlarınız kalıcı olarak silinecektir. Bu işlem geri alınamaz. Emin misiniz?",
+    "shareApp": "Uygulamayı Paylaş",
+    "shareMessage": "FreshTrack ile ürünlerimin son kullanma tarihlerini takip ediyor ve israfı önlüyorum! Sen de denemelisin: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
   },
   "home": {
     "greeting": {
@@ -229,9 +234,7 @@
     "alreadyProSubtitle": "Tüm premium özelliklerin keyfini çıkarıyorsunuz.",
     "features": {
       "noAds": "Tüm reklamları kaldırın",
-      "unlimited": "Sınırsız ürün takibi",
-      "lifetime": "Ömür boyu erişim ve güncellemeler",
-      "support": "Öncelikli destek"
+      "support": "Geliştirmeyi destekleyin"
     },
     "priceLabel": "TEK SEFERLİK",
     "priceNote": "Abonelik yok • Gizli maliyet yok",
@@ -280,5 +283,14 @@
       "next": "İleri",
       "start": "Hemen Başla"
     }
+  },
+  "feedback": {
+    "title": "Geri Bildirim",
+    "subtitle": "Uygulamayı geliştirmemize yardımcı olun. Hataları bildirebilir veya öneri yapabilirsiniz.",
+    "placeholder": "Mesajınızı buraya yazın...",
+    "send": "Gönder",
+    "emptyError": "Lütfen bir mesaj yazın.",
+    "mailNotAvailable": "E-posta uygulaması bulunamadı. Lütfen cihazınızda e-posta kurulu olduğundan emin olun.",
+    "sendError": "Mesaj gönderilirken bir hata oluştu."
   }
 }

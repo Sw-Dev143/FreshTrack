@@ -17,6 +17,7 @@
     "update": "更新",
     "success": "成功",
     "error": "错误",
+    "pro": "专业版",
     "legal": "法律信息"
   },
   "settings": {
@@ -27,7 +28,24 @@
     "importBackup": "导入数据（恢复）",
     "backupSuccess": "备份加载成功",
     "importWarning": "数据已导入。我们建议重启应用以使更改生效。",
-    "privacyPolicy": "隐私政策"
+    "backup": {
+      "errorSharing": "不支持分享或保存。",
+      "errorExport": "创建备份时出错。",
+      "errorImport": "恢复数据时出错。",
+      "errorReadFile": "读取备份文件出错。文件可能已损坏。",
+      "invalidJson": "无效的 JSON 对象",
+      "confirmTitle": "恢复",
+      "confirmMessage": "您当前的数据可能会被覆盖。您确定吗？",
+      "restoreBtn": "恢复",
+      "success": "您的数据已成功恢复。",
+      "noData": "未找到有效的恢复数据。"
+    },
+    "privacyPolicy": "隐私政策",
+    "resetData": "重置所有数据",
+    "resetConfirmTitle": "重置数据",
+    "resetConfirmMessage": "您的所有产品、药物和设置将被永久删除。此操作无法撤销。您确定吗？",
+    "shareApp": "分享应用",
+    "shareMessage": "我正在使用 FreshTrack 追踪过期日期并防止浪费！你也应该试试：https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
   },
   "home": {
     "greeting": {
@@ -129,6 +147,12 @@
       "deleteConfirm": "您确定要删除 \"{{name}}\" 及其所有通知吗？",
       "edit": "编辑",
       "delete": "删除"
+    },
+    "stats": {
+      "overallAdherence": "总体服从性",
+      "lastDays": "最近 {{count}} 天",
+      "doses": "剂量",
+      "medBased": "基于药物"
     }
   },
   "details": {
@@ -154,7 +178,27 @@
   "categories": {
     "deli": "熟食",
     "pharmacy": "医药",
-    "other": "其他"
+    "other": "其他",
+    "manage": {
+      "title": "管理分类",
+      "hint": "默认分类无法编辑。您可以添加、编辑或删除自定义分类。",
+      "default": "默认",
+      "addNew": "添加新分类",
+      "editTitle": "编辑分类",
+      "newTitle": "新分类",
+      "nameLabel": "分类名称",
+      "placeholder": "例如：冰淇淋、罐头...",
+      "iconLabel": "图标",
+      "colorLabel": "颜色",
+      "preview": "预览"
+    },
+    "alert": {
+      "defaultNoEdit": "默认分类无法编辑。",
+      "defaultNoDelete": "默认分类无法删除。",
+      "nameRequired": "分类名称不能为空。",
+      "deleteTitle": "删除分类",
+      "deleteMessage": "您要删除 \"{{name}}\" 吗？此分类中的产品将不受影响。"
+    }
   },
   "days": {
     "0": "日",
@@ -190,9 +234,7 @@
     "alreadyProSubtitle": "您正在享受所有高级功能。",
     "features": {
       "noAds": "移除所有广告",
-      "unlimited": "无限制产品追踪",
-      "lifetime": "终身访问和更新",
-      "support": "优先支持"
+      "support": "支持开发"
     },
     "priceLabel": "一次性付款",
     "priceNote": "无订阅 • 无隐藏费用",
@@ -241,5 +283,14 @@
       "next": "下一步",
       "start": "开始使用"
     }
+  },
+  "feedback": {
+    "title": "反馈",
+    "subtitle": "帮助我们改进应用。您可以报告错误或提出建议。",
+    "placeholder": "在此处输入您的信息...",
+    "send": "发送",
+    "emptyError": "请输入信息。",
+    "mailNotAvailable": "未找到电子邮件应用。请确保您的设备已设置电子邮件。",
+    "sendError": "发送信息时出错。"
   }
 }

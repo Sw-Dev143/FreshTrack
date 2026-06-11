@@ -17,6 +17,7 @@
     "update": "Actualizar",
     "success": "Éxito",
     "error": "Error",
+    "pro": "PRO",
     "legal": "Legal"
   },
   "settings": {
@@ -27,7 +28,24 @@
     "importBackup": "Importar Datos (Restaurar)",
     "backupSuccess": "Copia de seguridad cargada con éxito",
     "importWarning": "Datos importados. Recomendamos reiniciar la aplicación para que los cambios surtan efecto.",
-    "privacyPolicy": "Política de Privacidad"
+    "backup": {
+      "errorSharing": "No se admite compartir o guardar.",
+      "errorExport": "Ocurrió un error al crear la copia de seguridad.",
+      "errorImport": "Ocurrió un error al restaurar los datos.",
+      "errorReadFile": "Error al leer el archivo de copia de seguridad. El archivo podría estar dañado.",
+      "invalidJson": "Objeto JSON no válido",
+      "confirmTitle": "Restaurar",
+      "confirmMessage": "Tus datos actuales podrían ser sobrescritos. ¿Estás seguro?",
+      "restoreBtn": "Restaurar",
+      "success": "Tus datos han sido restaurados con éxito.",
+      "noData": "No se encontraron datos válidos para restaurar."
+    },
+    "privacyPolicy": "Política de Privacidad",
+    "resetData": "Restablecer todos los datos",
+    "resetConfirmTitle": "Restablecer datos",
+    "resetConfirmMessage": "Todos sus productos, medicamentos y ajustes se eliminarán permanentemente. Esta acción no se puede deshacer. ¿Está seguro?",
+    "shareApp": "Compartir aplicación",
+    "shareMessage": "¡Estoy haciendo un seguimiento de las fechas de vencimiento y evitando el desperdicio con FreshTrack! Tú también deberías probarlo: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
   },
   "home": {
     "greeting": {
@@ -129,6 +147,12 @@
       "deleteConfirm": "¿Estás seguro de que quieres eliminar \"{{name}}\" y todas sus notificaciones?",
       "edit": "Editar",
       "delete": "Eliminar"
+    },
+    "stats": {
+      "overallAdherence": "Adherencia general",
+      "lastDays": "Últimos {{count}} días",
+      "doses": "dosis",
+      "medBased": "Por medicamento"
     }
   },
   "details": {
@@ -154,7 +178,27 @@
   "categories": {
     "deli": "Delicatessen",
     "pharmacy": "Farmacia",
-    "other": "Otros"
+    "other": "Otros",
+    "manage": {
+      "title": "Gestionar Categorías",
+      "hint": "Las categorías predeterminadas no se pueden editar. Puedes añadir, editar o eliminar categorías personalizadas.",
+      "default": "Predeterminado",
+      "addNew": "Añadir Nueva Categoría",
+      "editTitle": "Editar Categoría",
+      "newTitle": "Nueva Categoría",
+      "nameLabel": "Nombre de la Categoría",
+      "placeholder": "ej. Helados, Conservas...",
+      "iconLabel": "Icono",
+      "colorLabel": "Color",
+      "preview": "Vista previa"
+    },
+    "alert": {
+      "defaultNoEdit": "Las categorías predeterminadas no se pueden editar.",
+      "defaultNoDelete": "Las categorías predeterminadas no se pueden eliminar.",
+      "nameRequired": "El nombre de la categoría no puede estar vacío.",
+      "deleteTitle": "Eliminar Categoría",
+      "deleteMessage": "¿Quieres eliminar \"{{name}}\"? Los productos en esta categoría no se verán afectados."
+    }
   },
   "days": {
     "0": "Dom",
@@ -190,9 +234,7 @@
     "alreadyProSubtitle": "Estás disfrutando de todas las funciones premium.",
     "features": {
       "noAds": "Eliminar todos los anuncios",
-      "unlimited": "Seguimiento de productos ilimitado",
-      "lifetime": "Acceso de por vida y actualizaciones",
-      "support": "Soporte prioritario"
+      "support": "Apoye el desarrollo"
     },
     "priceLabel": "PAGO ÚNICO",
     "priceNote": "Sin suscripción • Sin cargos ocultos",
@@ -241,5 +283,14 @@
       "next": "Siguiente",
       "start": "Empezar"
     }
+  },
+  "feedback": {
+    "title": "Comentarios",
+    "subtitle": "Ayúdenos a mejorar la aplicación. Puede informar errores o hacer sugerencias.",
+    "placeholder": "Escriba su mensaje aquí...",
+    "send": "Enviar",
+    "emptyError": "Por favor, escriba un mensaje.",
+    "mailNotAvailable": "No se encontró la aplicación de correo electrónico. Asegúrese de tener configurado el correo en su dispositivo.",
+    "sendError": "Ocurrió un error al enviar el mensaje."
   }
 }

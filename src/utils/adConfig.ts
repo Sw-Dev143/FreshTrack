@@ -33,5 +33,5 @@ export const AD_UNIT_IDS = {
   rewarded:     IS_TEST ? ANDROID_TEST.rewarded     : ANDROID_PROD.rewarded,
 };
 
-/** Kaç ürün eklenince interstitial reklam gösterilsin */
-export const INTERSTITIAL_EVERY_N = 3;
+/** Kaç ürün eklenince interstitial reklam gösterilsin (UX için daha seyrek yapıldı) */
+export const INTERSTITIAL_EVERY_N = 7;
