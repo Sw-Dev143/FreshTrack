@@ -49,8 +49,7 @@
           "androidAppId": "ca-app-pub-9730088447835930~5958446448"
         }
       ],
-      "expo-font",
-      "@sentry/react-native"
+      "expo-font"
     ],
     "extra": {
       "eas": {

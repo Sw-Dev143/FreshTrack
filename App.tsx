@@ -4,7 +4,6 @@ import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
-import * as Sentry from '@sentry/react-native';
 import * as Updates from 'expo-updates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -38,10 +37,6 @@ import './src/i18n';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
-Sentry.init({
-  dsn: 'https://placeholder-dsn@sentry.io/0', // Kullanıcı kendi DSN'ini eklemeli
-  debug: false,
-});
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -200,4 +195,4 @@ function App() {
   );
 }
 
-export default Sentry.wrap(App);
+export default App;
