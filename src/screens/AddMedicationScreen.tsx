@@ -1,6 +1,6 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, Alert,  } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, Alert, KeyboardAvoidingView, Modal } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -130,7 +130,12 @@ const AddMedicationScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+      >
+        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
 
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
 
@@ -293,16 +298,47 @@ const AddMedicationScreen: React.FC = () => {
           <Text style={styles.saveBtnText}>{isEditing ? t('medication.updateBtn') : t('medication.saveBtn')}</Text>
         </TouchableOpacity>
       </ScrollView>
+      </KeyboardAvoidingView>
 
-      {/* Time Picker (Android native, iOS inline) */}
+      {/* Time Picker (Android native, iOS inline bottom modal) */}
       {pickerVisible && pickerIndex !== null && (
-        <DateTimePicker
-          value={pickerDate}
-          mode="time"
-          is24Hour={true}
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={onPickerChange}
-        />
+        Platform.OS === 'ios' ? (
+          <Modal transparent visible={pickerVisible} animationType="slide">
+            <TouchableOpacity 
+              style={styles.modalBackdrop} 
+              activeOpacity={1} 
+              onPress={() => setPickerVisible(false)}
+            >
+              <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+                <View style={[styles.modalHeader, { borderColor: colors.border }]}>
+                  <TouchableOpacity onPress={() => setPickerVisible(false)}>
+                    <Text style={{ color: colors.textLight, fontSize: 16, fontWeight: '600' }}>{t('common.cancel')}</Text>
+                  </TouchableOpacity>
+                  <Text style={[styles.modalTitle, { color: colors.text }]}>{t('medication.timesLabel')}</Text>
+                  <TouchableOpacity onPress={() => setPickerVisible(false)}>
+                    <Text style={[styles.modalDoneBtnText, { color: color }]}>{t('common.save') || 'Done'}</Text>
+                  </TouchableOpacity>
+                </View>
+                <DateTimePicker
+                  value={pickerDate}
+                  mode="time"
+                  is24Hour={true}
+                  display="spinner"
+                  onChange={onPickerChange}
+                  textColor={colors.text}
+                />
+              </View>
+            </TouchableOpacity>
+          </Modal>
+        ) : (
+          <DateTimePicker
+            value={pickerDate}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={onPickerChange}
+          />
+        )
       )}
     </SafeAreaView>
   );
@@ -408,6 +444,36 @@ const styles = StyleSheet.create({
     }),
   },
   saveBtnText: { color: '#fff', fontSize: 17, fontWeight: '900' },
+
+  // iOS Modal Time Picker
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 40,
+    paddingTop: 10,
+    alignItems: 'stretch',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  modalDoneBtnText: {
+    fontSize: 16,
+    fontWeight: '800',
+  },
 });
 
 export default AddMedicationScreen;

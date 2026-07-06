@@ -262,7 +262,9 @@
       "clearTitle": "リストをクリア",
       "clearMessage": "ショッピングリスト全体を削除しますか？"
     },
-    "shareTitle": "🛒 ショッピングリスト"
+    "shareTitle": "🛒 ショッピングリスト",
+    "addPlaceholder": "新しいアイテム名を入力...",
+    "addBtn": "追加"
   },
   "onboarding": {
     "slides": {

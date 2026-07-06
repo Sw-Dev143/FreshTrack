@@ -52,4 +52,5 @@ export type RootStackParamList = {
   Calendar: undefined;
   Settings: undefined;
   Feedback: undefined;
+  PrivacyPolicy: undefined;
 };

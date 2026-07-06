@@ -262,7 +262,9 @@
       "clearTitle": "Liste leeren",
       "clearMessage": "Möchten Sie die gesamte Einkaufsliste löschen?"
     },
-    "shareTitle": "🛒 Einkaufsliste"
+    "shareTitle": "🛒 Einkaufsliste",
+    "addPlaceholder": "Neuen Artikelnamen eingeben...",
+    "addBtn": "Hinzufügen"
   },
   "onboarding": {
     "slides": {

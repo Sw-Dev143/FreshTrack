@@ -262,7 +262,9 @@
       "clearTitle": "Clear List",
       "clearMessage": "Do you want to delete the entire shopping list?"
     },
-    "shareTitle": "🛒 Shopping List"
+    "shareTitle": "🛒 Shopping List",
+    "addPlaceholder": "Type a new item name...",
+    "addBtn": "Add"
   },
   "onboarding": {
     "slides": {

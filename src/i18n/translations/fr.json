@@ -262,7 +262,9 @@
       "clearTitle": "Vider la liste",
       "clearMessage": "Voulez-vous supprimer toute la liste de courses ?"
     },
-    "shareTitle": "🛒 Liste de courses"
+    "shareTitle": "🛒 Liste de courses",
+    "addPlaceholder": "Saisir un nouvel article...",
+    "addBtn": "Ajouter"
   },
   "onboarding": {
     "slides": {

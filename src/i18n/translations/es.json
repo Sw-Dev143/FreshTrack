@@ -262,7 +262,9 @@
       "clearTitle": "Limpiar lista",
       "clearMessage": "¿Quieres eliminar toda la lista de compras?"
     },
-    "shareTitle": "🛒 Lista de Compras"
+    "shareTitle": "🛒 Lista de Compras",
+    "addPlaceholder": "Escribe un nuevo artículo...",
+    "addBtn": "Añadir"
   },
   "onboarding": {
     "slides": {

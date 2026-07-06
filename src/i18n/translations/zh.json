@@ -262,7 +262,9 @@
       "clearTitle": "清除清单",
       "clearMessage": "您确定要删除整个购物清单吗？"
     },
-    "shareTitle": "🛒 购物清单"
+    "shareTitle": "🛒 购物清单",
+    "addPlaceholder": "输入新商品名称...",
+    "addBtn": "添加"
   },
   "onboarding": {
     "slides": {

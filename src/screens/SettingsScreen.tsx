@@ -173,7 +173,7 @@ const SettingsScreen: React.FC = () => {
 
           <TouchableOpacity
             style={[styles.rowEntry, { borderBottomWidth: 1, borderBottomColor: colors.border }]}
-            onPress={() => Linking.openURL('https://github.com/Sw-Dev143/FreshTrack/security/policy')}
+            onPress={() => navigation.navigate('PrivacyPolicy' as never)}
             activeOpacity={0.7}
           >
             <View style={styles.rowLeft}>

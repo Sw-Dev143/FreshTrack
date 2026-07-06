@@ -152,7 +152,7 @@ const PaywallScreen: React.FC = () => {
           <Text style={[styles.restoreText, { color: colors.textLight }]}>{t('paywall.restore')}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => Linking.openURL('https://github.com/Sw-Dev143/FreshTrack/security/policy')} activeOpacity={0.6}>
+        <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy' as never)} activeOpacity={0.6}>
           <Text style={[styles.legalText, { color: COLORS.primary, marginTop: 4, textDecorationLine: 'underline' }]}>
             {t('settings.privacyPolicy')}
           </Text>

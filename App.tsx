@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, Alert, Animated, StyleSheet } from 'react-native';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
@@ -7,7 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as Updates from 'expo-updates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-// SplashScreen.preventAutoHideAsync().catch(() => {});
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 import { RootStackParamList } from './src/types';
 import HomeScreen from './src/screens/HomeScreen';
@@ -20,6 +20,7 @@ import MedicationStatsScreen from './src/screens/MedicationStatsScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
+import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   setupNotifications,
@@ -35,7 +36,7 @@ import { LanguageProvider } from './src/context/LanguageContext';
 import { incrementLaunchCount, requestReviewIfAppropriate } from './src/utils/rating';
 import './src/i18n';
 import { useTranslation } from 'react-i18next';
-import { Alert } from 'react-native';
+// Alert is imported above
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -44,8 +45,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function AppNavigator() {
   const { colors, isDark } = useTheme();
   const { t } = useTranslation();
-  const [isReady, setIsReady] = React.useState(false);
-  const [initialRoute, setInitialRoute] = React.useState<'Home' | 'Onboarding'>('Home');
+  const [isReady, setIsReady] = useState(false);
+  const [initialRoute, setInitialRoute] = useState<'Home' | 'Onboarding'>('Home');
+
+  // Animated splash screen overlay states
+  const [showSplash, setShowSplash] = useState(true);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     let cancelled = false;
@@ -140,7 +146,24 @@ function AppNavigator() {
 
   useEffect(() => {
     if (isReady) {
+      // 1. Hide native splash immediately so our custom overlay takes over
       SplashScreen.hideAsync().catch(() => {});
+
+      // 2. Animate out the custom overlay beautifully
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 450,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1.12,
+          duration: 480,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setShowSplash(false);
+      });
     }
   }, [isReady]);
 
@@ -174,8 +197,48 @@ function AppNavigator() {
           <Stack.Screen name="MedicationStats" component={MedicationStatsScreen} options={{ title: t('navigation.medicationStats') }} />
           <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: t('navigation.settings') }} />
           <Stack.Screen name="Feedback" component={FeedbackScreen} options={{ title: t('feedback.title') }} />
+          <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: t('settings.privacyPolicy') }} />
         </Stack.Navigator>
       </NavigationContainer>
+
+      {showSplash && (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor: colors.background,
+              opacity: fadeAnim,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 99999,
+            },
+          ]}
+        >
+          <Animated.Image
+            source={require('./assets/icon.png')}
+            style={{
+              width: 120,
+              height: 120,
+              borderRadius: 24,
+              transform: [{ scale: scaleAnim }],
+            }}
+            resizeMode="contain"
+          />
+          <Animated.Text
+            style={{
+              color: colors.text,
+              fontSize: 24,
+              fontWeight: '900',
+              marginTop: 16,
+              letterSpacing: 0.5,
+              transform: [{ scale: scaleAnim }],
+            }}
+          >
+            FreshTrack
+          </Animated.Text>
+        </Animated.View>
+      )}
     </>
   );
 }

@@ -262,7 +262,9 @@
       "clearTitle": "Listeyi Temizle",
       "clearMessage": "Tüm alışveriş listesini silmek istiyor musunuz?"
     },
-    "shareTitle": "🛒 Alışveriş Listesi"
+    "shareTitle": "🛒 Alışveriş Listesi",
+    "addPlaceholder": "Yeni ürün adı yazın...",
+    "addBtn": "Ekle"
   },
   "onboarding": {
     "slides": {
