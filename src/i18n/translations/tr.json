@@ -1,0 +1,298 @@
+{
+  "navigation": {
+    "addProduct": "Yeni Ürün Ekle",
+    "productDetails": "Ürün Detayı",
+    "medications": "💊 İlaç Hatırlatıcı",
+    "addMedication": "Yeni İlaç Ekle",
+    "editMedication": "İlacı Düzenle",
+    "medicationStats": "📊 İlaç İstatistikleri",
+    "settings": "Ayarlar",
+    "manageCategories": "Kategori Yönetimi",
+    "shoppingList": "Alışveriş Listesi"
+  },
+  "common": {
+    "cancel": "İptal",
+    "delete": "Sil",
+    "save": "Kaydet",
+    "update": "Güncelle",
+    "success": "Başarılı",
+    "error": "Hata",
+    "pro": "PRO",
+    "legal": "Yasal"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "language": "Dil Seçimi",
+    "dataManagement": "Veri Yönetimi",
+    "exportBackup": "Verileri Dışa Aktar (Yedekle)",
+    "importBackup": "Verileri İçe Aktar (Geri Yükle)",
+    "backupSuccess": "Yedekleme başarıyla yüklendi",
+    "importWarning": "Veriler içe aktarıldı. Değişikliklerin uygulanması için uygulamayı yeniden başlatmanızı öneririz.",
+    "backup": {
+      "errorSharing": "Paylaşım veya kaydetme desteklenmiyor.",
+      "errorExport": "Yedekleme oluşturulurken bir hata meydana geldi.",
+      "errorImport": "Veriler geri yüklenirken hata oluştu.",
+      "errorReadFile": "Yedek dosyası okunurken hata oluştu. Dosya hatalı olabilir.",
+      "invalidJson": "Geçersiz JSON objesi",
+      "confirmTitle": "Geri Yükleme",
+      "confirmMessage": "Mevcut verilerinizin üzerine yazılabilir. Emin misiniz?",
+      "restoreBtn": "Geri Yükle",
+      "success": "Verileriniz başarıyla geri yüklendi.",
+      "noData": "Geri yüklenecek geçerli veri bulunamadı."
+    },
+    "privacyPolicy": "Gizlilik Politikası",
+    "resetData": "Tüm Verileri Sıfırla",
+    "resetConfirmTitle": "Verileri Sıfırla",
+    "resetConfirmMessage": "Tüm ürünleriniz, ilaçlarınız ve ayarlarınız kalıcı olarak silinecektir. Bu işlem geri alınamaz. Emin misiniz?",
+    "shareApp": "Uygulamayı Paylaş",
+    "shareMessage": "FreshTrack ile ürünlerimin son kullanma tarihlerini takip ediyor ve israfı önlüyorum! Sen de denemelisin: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Günaydın 🌤",
+      "afternoon": "Tünaydın 👋",
+      "evening": "İyi Akşamlar 🌙"
+    },
+    "stats": {
+      "safe": "Güvenli",
+      "warning": "Yaklaşan",
+      "expired": "Günü Geçen"
+    },
+    "searchPlaceholder": "Ürün ara...",
+    "filter": {
+      "all": "Tümü",
+      "deli": "Şarküteri",
+      "pharmacy": "Eczane",
+      "other": "Diğer",
+      "resultsCount": "{{count}} ürün listeleniyor",
+      "clearFilters": "Filtreleri Temizle"
+    },
+    "empty": {
+      "noResults": "\"{{query}}\" ile eşleşen ürün bulunamadı",
+      "noProducts": "Henüz ürün eklemediniz",
+      "noCategoryProducts": "{{category}} kategorisinde ürün bulunmuyor",
+      "suggestion": "Farklı bir anahtar kelime deneyin veya filtreleri temizleyin.",
+      "addFirst": "Sağ alttaki + butonuna dokunarak ilk ürününüzü ekleyin! 🚀"
+    },
+    "tip": {
+      "title": "Küçük Bir İpucu",
+      "body": "Ürün eklerken barkod simgesini kullanarak bilgileri otomatik getirebilirsiniz!"
+    }
+  },
+  "add": {
+    "nameLabel": "Ürün Adı",
+    "namePlaceholder": "Örn: Süt, Yumurta...",
+    "categoryLabel": "Kategori",
+    "dateLabel": "Son Tüketim Tarihi",
+    "saveBtn": "Ürünü Kaydet",
+    "updateBtn": "Değişiklikleri Kaydet",
+    "barcode": "Barkod",
+    "date": {
+      "week": "Hafta",
+      "month": "Ay",
+      "year": "Yıl"
+    },
+    "camera": {
+      "title": "Barkod Tara",
+      "hint": "Barkodu çerçeveye ortalayın",
+      "permissionDenied": "Kamera izni gerekli",
+      "permissionSubtitle": "Barkod taramak için kamera kullanımına izin vermeniz gerekmektedir."
+    },
+    "toast": {
+      "dateUpdated": "Tarih güncellendi",
+      "productFound": "Ürün bulundu",
+      "productRecognized": "Ürün tanındı",
+      "newBarcode": "Yeni barkod algılandı",
+      "lookupError": "Barkod bilgisi getirilemedi",
+      "error": "İşlem başarısız",
+      "saveError": "Ürün kaydedilirken bir hata oluştu"
+    },
+    "validation": {
+      "noName": "Ürün adı eksik",
+      "noNameSubtitle": "Lütfen ürün için bir ad girin."
+    }
+  },
+  "medication": {
+    "nameLabel": "İlaç Adı *",
+    "namePlaceholder": "Örn: Aspirin, Omega-3...",
+    "dosageLabel": "Doz Bilgisi",
+    "dosagePlaceholder": "Örn: 500 mg, 1 Tablet...",
+    "colorLabel": "Renk",
+    "daysLabel": "Günler",
+    "everyDay": "Her gün",
+    "timesLabel": "Kullanım Saatleri",
+    "addTime": "Saat Ekle",
+    "quickTime": {
+      "morning": "Sabah",
+      "afternoon": "Öğle",
+      "evening": "Akşam"
+    },
+    "notesLabel": "Notlar",
+    "notesPlaceholder": "Örn: Yemekten sonra, bol su ile...",
+    "saveBtn": "İlacı Kaydet",
+    "updateBtn": "İlacı Güncelle",
+    "validation": {
+      "noName": "Eksik Bilgi",
+      "noNameSubtitle": "Lütfen ilaç adını girin.",
+      "noTimes": "Eksik Bilgi",
+      "noTimesSubtitle": "En az bir doz saati ekleyin."
+    },
+    "list": {
+      "todayDoses": "Bugünkü Dozlar",
+      "completed": "Tamamlandı",
+      "allMeds": "Tüm İlaçlar",
+      "emptyTitle": "Henüz ilaç eklemediniz",
+      "emptySub": "Sağ alttaki + butonuna dokunarak ilaç ekleyebilirsiniz.",
+      "deleteTitle": "İlacı Sil",
+      "deleteConfirm": "\"{{name}}\" ilacını ve tüm bildirimlerini silmek istediğinize emin misiniz?",
+      "edit": "Düzenle",
+      "delete": "Sil"
+    },
+    "stats": {
+      "overallAdherence": "Genel Uyum",
+      "lastDays": "Son {{count}} Gün",
+      "doses": "doz",
+      "medBased": "İlaç Bazlı"
+    }
+  },
+  "details": {
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "deleteTitle": "Ürünü Sil",
+    "deleteMessage": "Bu ürünü listenizden silmek istediğinize emin misiniz?",
+    "shoppingListAdd": "Alışveriş Listesine Ekle",
+    "shoppingListAdded": "Alışveriş Listesinde ✓",
+    "labels": {
+      "expiration": "Bitiş",
+      "daysLeft": "Kalan Gün",
+      "createdAt": "Eklenme",
+      "barcode": "Barkod"
+    },
+    "status": {
+      "expired": "{{count}} gün önce bitti",
+      "today": "Bugün bitiyor!",
+      "tomorrow": "Yarın bitiyor!",
+      "daysLeft": "{{count}} gün kaldı"
+    }
+  },
+  "categories": {
+    "deli": "Şarküteri",
+    "pharmacy": "Eczane",
+    "other": "Diğer",
+    "manage": {
+      "title": "Kategorileri Yönet",
+      "hint": "Varsayılan kategoriler düzenlenemez. Özel kategoriler ekleyebilir, düzenleyebilir veya silebilirsiniz.",
+      "default": "Varsayılan",
+      "addNew": "Yeni Kategori Ekle",
+      "editTitle": "Kategoriyi Düzenle",
+      "newTitle": "Yeni Kategori",
+      "nameLabel": "Kategori Adı",
+      "placeholder": "Örn: Dondurmalar, Konserveler...",
+      "iconLabel": "İkon",
+      "colorLabel": "Renk",
+      "preview": "Önizleme"
+    },
+    "alert": {
+      "defaultNoEdit": "Varsayılan kategoriler düzenlenemez.",
+      "defaultNoDelete": "Varsayılan kategoriler silinemez.",
+      "nameRequired": "Kategori adı boş olamaz.",
+      "deleteTitle": "Kategoriyi Sil",
+      "deleteMessage": "\"{{name}}\" kategorisini silmek istiyor musunuz? Bu kategorideki ürünler etkilenmez."
+    }
+  },
+  "days": {
+    "0": "Paz",
+    "1": "Pzt",
+    "2": "Sal",
+    "3": "Çar",
+    "4": "Per",
+    "5": "Cum",
+    "6": "Cmt"
+  },
+  "notifications": {
+    "expiry": {
+      "danger": "🔴 Bugün Son Gün!",
+      "dangerBody": "{{productName}} ürünü bugün bitiyor. Kontrol etmeyi unutmayın!",
+      "warning": "⚠️ Son Tüketim Tarihi Yaklaşıyor",
+      "warningBody": "{{productName}} ürününün bitmesine {{days}} gün kaldı.",
+      "info": "ℹ️ Tarih Hatırlatıcı",
+      "infoBody": "{{productName}} ürününün bitmesine {{days}} gün kaldı."
+    },
+    "dailySummary": {
+      "title": "📋 FreshTrack Günlük Özet",
+      "body": "{{expired}} ürünün tarihi geçti, {{warning}} ürün yakında bitecek. Rafları kontrol etmeyi unutma!"
+    },
+    "medication": {
+      "body": "{{dosage}} — İlaç kullanım saatiniz geldi!",
+      "bodyNoDosage": "İlaç kullanım saatiniz geldi!"
+    }
+  },
+  "paywall": {
+    "title": "FreshTrack PRO",
+    "subtitle": "Reklamları kaldırın ve kesintisiz bir deneyimin keyfini çıkarın.\nTek seferlik ödeme — Ömür boyu erişim.",
+    "alreadyPro": "Zaten PRO Kullanıcısısınız 🎉",
+    "alreadyProSubtitle": "Tüm premium özelliklerin keyfini çıkarıyorsunuz.",
+    "features": {
+      "noAds": "Tüm reklamları kaldırın",
+      "support": "Geliştirmeyi destekleyin"
+    },
+    "priceLabel": "TEK SEFERLİK",
+    "priceNote": "Abonelik yok • Gizli maliyet yok",
+    "cta": "Şimdi PRO'ya Yükselt",
+    "restore": "Satın Alımı Geri Yükle",
+    "legal": "Satın alma işlemi uygulama mağazası üzerinden yapılır.\nŞartlar için gizlilik politikamızı inceleyin.",
+    "successTitle": "✅ Teşekkürler!",
+    "successMessage": "PRO üyeliğiniz aktif edildi.",
+    "restoreErrorTitle": "Bulunamadı",
+    "restoreErrorMessage": "Daha önce yapılmış bir satın alım tespit edilemedi."
+  },
+  "shopping": {
+    "empty": {
+      "title": "Liste Boş",
+      "subtitle": "Ürün detay ekranından ürünleri alışveriş listesine ekleyebilirsiniz."
+    },
+    "action": {
+      "share": "Paylaş",
+      "clearChecked": "Tamamlananları Sil",
+      "completed": "tamamlandı"
+    },
+    "alert": {
+      "emptyList": "Liste boş",
+      "shareEmpty": "Paylaşmak için alışveriş listesi dolu olmalı.",
+      "clearTitle": "Listeyi Temizle",
+      "clearMessage": "Tüm alışveriş listesini silmek istiyor musunuz?"
+    },
+    "shareTitle": "🛒 Alışveriş Listesi",
+    "addPlaceholder": "Yeni ürün adı yazın...",
+    "addBtn": "Ekle"
+  },
+  "onboarding": {
+    "slides": {
+      "1": {
+        "title": "Ürünlerinizi Kolayca Takip Edin",
+        "description": "Evdeki ürünlerin son kullanma tarihlerini kaydedin. İsrafı önleyin ve bütçenizi koruyun."
+      },
+      "2": {
+        "title": "Bildirimler İle Güvende Kalın",
+        "description": "Ürünlerinizin son kullanma tarihi yaklaşmadan 7 ve 3 gün önce, ve süresi dolduğunda anında uyarı alın."
+      },
+      "3": {
+        "title": "İlaçlarınızı Zamanında İçin",
+        "description": "Sadece gıdalar değil, ilaçlarınızı da sisteme ekleyip saatlik hatırlatıcılarla sağlığınızı güvene alın."
+      }
+    },
+    "buttons": {
+      "next": "İleri",
+      "start": "Hemen Başla"
+    }
+  },
+  "feedback": {
+    "title": "Geri Bildirim",
+    "subtitle": "Uygulamayı geliştirmemize yardımcı olun. Hataları bildirebilir veya öneri yapabilirsiniz.",
+    "placeholder": "Mesajınızı buraya yazın...",
+    "send": "Gönder",
+    "emptyError": "Lütfen bir mesaj yazın.",
+    "mailNotAvailable": "E-posta uygulaması bulunamadı. Lütfen cihazınızda e-posta kurulu olduğundan emin olun.",
+    "sendError": "Mesaj gönderilirken bir hata oluştu."
+  }
+}

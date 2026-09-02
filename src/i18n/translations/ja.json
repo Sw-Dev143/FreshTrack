@@ -1,0 +1,298 @@
+{
+  "navigation": {
+    "addProduct": "新しい製品を追加",
+    "productDetails": "製品の詳細",
+    "medications": "💊 服薬リマインダー",
+    "addMedication": "新しい薬を追加",
+    "editMedication": "薬を編集",
+    "medicationStats": "📊 服薬統計",
+    "settings": "設定",
+    "manageCategories": "カテゴリー管理",
+    "shoppingList": "買い物リスト"
+  },
+  "common": {
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "save": "保存",
+    "update": "更新",
+    "success": "成功",
+    "error": "エラー",
+    "pro": "PRO",
+    "legal": "法的情報"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "言語選択",
+    "dataManagement": "データ管理",
+    "exportBackup": "データをエクスポート (バックアップ)",
+    "importBackup": "データをインポート (復元)",
+    "backupSuccess": "バックアップが正常に読み込まれました",
+    "importWarning": "データがインポートされました。変更を適用するためにアプリを再起動することをお勧めします。",
+    "backup": {
+      "errorSharing": "共有または保存はサポートされていません。",
+      "errorExport": "バックアップの作成中にエラーが発生しました。",
+      "errorImport": "データの復元中にエラーが発生しました。",
+      "errorReadFile": "バックアップファイルの読み取りエラー。ファイルが破損している可能性があります。",
+      "invalidJson": "無効な JSON オブジェクト",
+      "confirmTitle": "復元",
+      "confirmMessage": "現在のデータが上書きされる可能性があります。よろしいですか？",
+      "restoreBtn": "復元",
+      "success": "データが正常に復元されました。",
+      "noData": "復元する有効なデータが見つかりませんでした。"
+    },
+    "privacyPolicy": "プライバシーポリシー",
+    "resetData": "すべてのデータをリセット",
+    "resetConfirmTitle": "データのリセット",
+    "resetConfirmMessage": "すべての製品、薬、設定が永久に削除されます。この操作は取り消せません。よろしいですか？",
+    "shareApp": "アプリを共有",
+    "shareMessage": "FreshTrack で賞味期限を追跡して無駄を防いでいます！あなたも試してみてください：https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+  },
+  "home": {
+    "greeting": {
+      "morning": "おはようございます 🌤",
+      "afternoon": "こんにちは 👋",
+      "evening": "こんばんは 🌙"
+    },
+    "stats": {
+      "safe": "安全",
+      "warning": "期限間近",
+      "expired": "期限切れ"
+    },
+    "searchPlaceholder": "製品を検索...",
+    "filter": {
+      "all": "すべて",
+      "deli": "デリ",
+      "pharmacy": "薬局",
+      "other": "その他",
+      "resultsCount": "{{count}} 件の製品が表示されています",
+      "clearFilters": "フィルターをクリア"
+    },
+    "empty": {
+      "noResults": "\"{{query}}\" は見つかりませんでした",
+      "noProducts": "製品がまだ追加されていません",
+      "noCategoryProducts": "{{category}} に製品はありません",
+      "suggestion": "別のキーワードで検索するか、フィルターをクリアしてください。",
+      "addFirst": "右下の + ボタンをタップして、最初の製品を追加しましょう！ 🚀"
+    },
+    "tip": {
+      "title": "便利なヒント",
+      "body": "製品を追加する際にバーコードアイコンを使用すると、情報を自動的に取得できます！"
+    }
+  },
+  "add": {
+    "nameLabel": "製品名",
+    "namePlaceholder": "例: 牛乳、卵...",
+    "categoryLabel": "カテゴリー",
+    "dateLabel": "賞味期限・消費期限",
+    "saveBtn": "製品を保存",
+    "updateBtn": "変更を保存",
+    "barcode": "バーコード",
+    "date": {
+      "week": "週",
+      "month": "ヶ月",
+      "year": "年"
+    },
+    "camera": {
+      "title": "バーコードをスキャン",
+      "hint": "バーコードを枠内の中央に合わせてください",
+      "permissionDenied": "カメラの権限が必要です",
+      "permissionSubtitle": "バーコードをスキャンするには、カメラの使用を許可する必要があります。"
+    },
+    "toast": {
+      "dateUpdated": "日付が更新されました",
+      "productFound": "製品が見つかりました",
+      "productRecognized": "製品が認識されました",
+      "newBarcode": "新しいバーコードが検出されました",
+      "lookupError": "バーコード情報を取得できませんでした",
+      "error": "操作に失敗しました",
+      "saveError": "製品の保存中にエラーが発生しました"
+    },
+    "validation": {
+      "noName": "製品名が未入力です",
+      "noNameSubtitle": "製品名を入力してください。"
+    }
+  },
+  "medication": {
+    "nameLabel": "薬の名前 *",
+    "namePlaceholder": "例: アスピリン、オメガ3...",
+    "dosageLabel": "服用量",
+    "dosagePlaceholder": "例: 500 mg、1錠...",
+    "colorLabel": "カラー",
+    "daysLabel": "曜日",
+    "everyDay": "毎日",
+    "timesLabel": "服用時間",
+    "addTime": "時間を追加",
+    "quickTime": {
+      "morning": "朝",
+      "afternoon": "昼",
+      "evening": "夜"
+    },
+    "notesLabel": "ノート",
+    "notesPlaceholder": "例：食後に服用、多めの水で...",
+    "saveBtn": "薬を保存",
+    "updateBtn": "薬を更新",
+    "validation": {
+      "noName": "情報の不足",
+      "noNameSubtitle": "薬の名前を入力してください。",
+      "noTimes": "情報の不足",
+      "noTimesSubtitle": "少なくとも1つの服用時間を追加してください。"
+    },
+    "list": {
+      "todayDoses": "今日の服用",
+      "completed": "完了",
+      "allMeds": "すべての薬",
+      "emptyTitle": "薬がまだ追加されていません",
+      "emptySub": "右下の + ボタンをタップして、最初の薬を追加してください。",
+      "deleteTitle": "薬を削除",
+      "deleteConfirm": "「{{name}}」とすべての通知を削除してもよろしいですか？",
+      "edit": "編集",
+      "delete": "削除"
+    },
+    "stats": {
+      "overallAdherence": "全体的な遵守率",
+      "lastDays": "過去 {{count}} 日間",
+      "doses": "回分",
+      "medBased": "薬剤別"
+    }
+  },
+  "details": {
+    "edit": "編集",
+    "delete": "削除",
+    "deleteTitle": "製品を削除",
+    "deleteMessage": "この製品をリストから削除してもよろしいですか？",
+    "shoppingListAdd": "買い物リストに追加",
+    "shoppingListAdded": "買い物リストに保存済み ✓",
+    "labels": {
+      "expiration": "期限",
+      "daysLeft": "残り日数",
+      "createdAt": "追加日",
+      "barcode": "バーコード"
+    },
+    "status": {
+      "expired": "期限を {{count}} 日過ぎています",
+      "today": "期限は今日です！",
+      "tomorrow": "期限は明日です！",
+      "daysLeft": "残り {{count}} 日"
+    }
+  },
+  "categories": {
+    "deli": "デリ",
+    "pharmacy": "薬局",
+    "other": "その他",
+    "manage": {
+      "title": "カテゴリー管理",
+      "hint": "デフォルトのカテゴリーは編集できません。カスタムカテゴリーを追加、編集、または削除できます。",
+      "default": "デフォルト",
+      "addNew": "新しいカテゴリーを追加",
+      "editTitle": "カテゴリーを編集",
+      "newTitle": "新しいカテゴリー",
+      "nameLabel": "カテゴリー名",
+      "placeholder": "例: アイスクリーム、缶詰...",
+      "iconLabel": "アイコン",
+      "colorLabel": "カラー",
+      "preview": "プレビュー"
+    },
+    "alert": {
+      "defaultNoEdit": "デフォルトのカテゴリーは編集できません。",
+      "defaultNoDelete": "デフォルトのカテゴリーは削除できません。",
+      "nameRequired": "カテゴリー名は空にできません。",
+      "deleteTitle": "カテゴリーを削除",
+      "deleteMessage": "「{{name}}」を削除しますか？このカテゴリー内の製品には影響しません。"
+    }
+  },
+  "days": {
+    "0": "日",
+    "1": "月",
+    "2": "火",
+    "3": "水",
+    "4": "木",
+    "5": "金",
+    "6": "土"
+  },
+  "notifications": {
+    "expiry": {
+      "danger": "🔴 今日が最終日です！",
+      "dangerBody": "{{productName}} の期限は今日です。忘れずに確認してください！",
+      "warning": "⚠️ 賞味期限・消費期限が近づいています",
+      "warningBody": "製品 {{productName}} の期限まであと {{days}} 日です。",
+      "info": "ℹ️ 期限リマインダー",
+      "infoBody": "製品 {{productName}} の期限まであと {{days}} 日です。"
+    },
+    "dailySummary": {
+      "title": "📋 FreshTrack デイリーサマリー",
+      "body": "{{expired}} 件の期限切れ、{{warning}} 件の期限間近な製品があります。棚を確認しましょう！"
+    },
+    "medication": {
+      "body": "{{dosage}} — お薬の時間です！",
+      "bodyNoDosage": "お薬の時間です！"
+    }
+  },
+  "paywall": {
+    "title": "FreshTrack PRO",
+    "subtitle": "すべての制限を解除し、無制限に使用できます。\n1回限りの支払いで、生涯アクセス可能です。",
+    "alreadyPro": "すでにPROユーザーです 🎉",
+    "alreadyProSubtitle": "すべてのプレミアム機能をご利用いただけます。",
+    "features": {
+      "noAds": "すべての広告を削除",
+      "support": "開発を支援する"
+    },
+    "priceLabel": "1回限り",
+    "priceNote": "サブスクリプションなし • 隠れた費用なし",
+    "cta": "今すぐPROにアップグレード",
+    "restore": "購入を復元",
+    "legal": "購入はアプリストアを通じて行われます。\n規約についてはプライバシーポリシーをご確認ください。",
+    "successTitle": "✅ ありがとうございます！",
+    "successMessage": "PROメンバーシップが有効になりました。",
+    "restoreErrorTitle": "見つかりません",
+    "restoreErrorMessage": "以前の購入は検出されませんでした。"
+  },
+  "shopping": {
+    "empty": {
+      "title": "リストは空です",
+      "subtitle": "製品詳細画面から製品をショッピングリストに追加できます。"
+    },
+    "action": {
+      "share": "共有",
+      "clearChecked": "完了済みを削除",
+      "completed": "完了"
+    },
+    "alert": {
+      "emptyList": "リストは空です",
+      "shareEmpty": "共有するにはショッピングリストにアイテムが必要です。",
+      "clearTitle": "リストをクリア",
+      "clearMessage": "ショッピングリスト全体を削除しますか？"
+    },
+    "shareTitle": "🛒 ショッピングリスト",
+    "addPlaceholder": "新しいアイテム名を入力...",
+    "addBtn": "追加"
+  },
+  "onboarding": {
+    "slides": {
+      "1": {
+        "title": "製品を簡単に追跡",
+        "description": "家庭内の製品の賞味期限を保存します。無駄を防ぎ、予算を節約しましょう。"
+      },
+      "2": {
+        "title": "通知で安全を確保",
+        "description": "期限の7日前、3日前、および期限が切れたときに即座にアラートを受け取ります。"
+      },
+      "3": {
+        "title": "薬を時間通りに服用",
+        "description": "食品だけでなく薬も追加し、1時間ごとのリマインダーで健康を維持しましょう。"
+      }
+    },
+    "buttons": {
+      "next": "次へ",
+      "start": "始める"
+    }
+  },
+  "feedback": {
+    "title": "フィードバック",
+    "subtitle": "アプリの改善にご協力ください。バグの報告や提案ができます。",
+    "placeholder": "ここにメッセージを書いてください...",
+    "send": "送信",
+    "emptyError": "メッセージを入力してください。",
+    "mailNotAvailable": "メールアプリが見つかりません。デバイスでメールが設定されていることを確認してください。",
+    "sendError": "メッセージの送信中にエラーが発生しました。"
+  }
+}

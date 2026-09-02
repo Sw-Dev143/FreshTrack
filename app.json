@@ -1,0 +1,67 @@
+{
+  "expo": {
+    "name": "FreshTrack",
+    "slug": "FreshTrack",
+    "version": "1.2.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "primaryColor": "#4F46E5",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.freshtrack.pro.global",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Camera access is required to automatically track expiration dates by scanning product barcodes.",
+        "NSPhotoLibraryUsageDescription": "Gallery access is required so you can select product images from your library."
+      }
+    },
+    "android": {
+      "package": "com.freshtrack.pro.global",
+      "versionCode": 3,
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/icon.png"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.USE_EXACT_ALARM"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-dev-client",
+      "expo-updates",
+      "@react-native-community/datetimepicker",
+      "expo-notifications",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-9730088447835930~5958446448"
+        }
+      ],
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5bb84d9f-321f-4b75-9786-100da74ad7f6"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD"
+    }
+  }
+}

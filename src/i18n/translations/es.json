@@ -1,0 +1,298 @@
+{
+  "navigation": {
+    "addProduct": "Agregar Nuevo Producto",
+    "productDetails": "Detalles del Producto",
+    "medications": "💊 Recordatorio de Medicamentos",
+    "addMedication": "Agregar Nueva Medicación",
+    "editMedication": "Editar Medicación",
+    "medicationStats": "📊 Estadísticas de Medicación",
+    "settings": "Ajustes",
+    "manageCategories": "Gestionar Categorías",
+    "shoppingList": "Lista de Compras"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "update": "Actualizar",
+    "success": "Éxito",
+    "error": "Error",
+    "pro": "PRO",
+    "legal": "Legal"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Seleccionar Idioma",
+    "dataManagement": "Gestión de Datos",
+    "exportBackup": "Exportar Datos (Copia de Seguridad)",
+    "importBackup": "Importar Datos (Restaurar)",
+    "backupSuccess": "Copia de seguridad cargada con éxito",
+    "importWarning": "Datos importados. Recomendamos reiniciar la aplicación para que los cambios surtan efecto.",
+    "backup": {
+      "errorSharing": "No se admite compartir o guardar.",
+      "errorExport": "Ocurrió un error al crear la copia de seguridad.",
+      "errorImport": "Ocurrió un error al restaurar los datos.",
+      "errorReadFile": "Error al leer el archivo de copia de seguridad. El archivo podría estar dañado.",
+      "invalidJson": "Objeto JSON no válido",
+      "confirmTitle": "Restaurar",
+      "confirmMessage": "Tus datos actuales podrían ser sobrescritos. ¿Estás seguro?",
+      "restoreBtn": "Restaurar",
+      "success": "Tus datos han sido restaurados con éxito.",
+      "noData": "No se encontraron datos válidos para restaurar."
+    },
+    "privacyPolicy": "Política de Privacidad",
+    "resetData": "Restablecer todos los datos",
+    "resetConfirmTitle": "Restablecer datos",
+    "resetConfirmMessage": "Todos sus productos, medicamentos y ajustes se eliminarán permanentemente. Esta acción no se puede deshacer. ¿Está seguro?",
+    "shareApp": "Compartir aplicación",
+    "shareMessage": "¡Estoy haciendo un seguimiento de las fechas de vencimiento y evitando el desperdicio con FreshTrack! Tú también deberías probarlo: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+  },
+  "home": {
+    "greeting": {
+      "morning": "Buenos días 🌤",
+      "afternoon": "Buenas tardes 👋",
+      "evening": "Buenas noches 🌙"
+    },
+    "stats": {
+      "safe": "Seguro",
+      "warning": "Próximo",
+      "expired": "Vencido"
+    },
+    "searchPlaceholder": "Buscar producto...",
+    "filter": {
+      "all": "Todos",
+      "deli": "Delicatessen",
+      "pharmacy": "Farmacia",
+      "other": "Otros",
+      "resultsCount": "{{count}} productos listados",
+      "clearFilters": "Limpiar Filtros"
+    },
+    "empty": {
+      "noResults": "\"{{query}}\" no encontrado",
+      "noProducts": "Aún no has añadido productos",
+      "noCategoryProducts": "No hay productos en {{category}}",
+      "suggestion": "Intenta con otra búsqueda o limpia los filtros.",
+      "addFirst": "¡Toca el botón + abajo a la derecha para añadir tu primer producto! 🚀"
+    },
+    "tip": {
+      "title": "Consejo Rápido",
+      "body": "¡Usa el icono del código de barras al añadir productos para obtener información automáticamente!"
+    }
+  },
+  "add": {
+    "nameLabel": "Nombre del Producto",
+    "namePlaceholder": "ej. Leche, Huevos...",
+    "categoryLabel": "Categoría",
+    "dateLabel": "Fecha de Vencimiento",
+    "saveBtn": "Guardar Producto",
+    "updateBtn": "Guardar Cambios",
+    "barcode": "Código de Barras",
+    "date": {
+      "week": "Semana",
+      "month": "Mes",
+      "year": "Año"
+    },
+    "camera": {
+      "title": "Escanear Código",
+      "hint": "Centra el código en el marco",
+      "permissionDenied": "Permiso de Cámara Requerido",
+      "permissionSubtitle": "Necesitas otorgar permiso de cámara para escanear códigos."
+    },
+    "toast": {
+      "dateUpdated": "Fecha actualizada",
+      "productFound": "Producto encontrado",
+      "productRecognized": "Producto reconocido",
+      "newBarcode": "Nuevo código detectado",
+      "lookupError": "No se pudo obtener información del código",
+      "error": "Operación fallida",
+      "saveError": "Ocurrió un error al guardar el producto"
+    },
+    "validation": {
+      "noName": "Falta el Nombre",
+      "noNameSubtitle": "Por favor ingresa un nombre para el producto."
+    }
+  },
+  "medication": {
+    "nameLabel": "Nombre del Medicamento *",
+    "namePlaceholder": "ej. Aspirina, Omega-3...",
+    "dosageLabel": "Dosis",
+    "dosagePlaceholder": "ej. 500 mg, 1 tableta...",
+    "colorLabel": "Color",
+    "daysLabel": "Días",
+    "everyDay": "Cada día",
+    "timesLabel": "Horas de dosis",
+    "addTime": "Añadir Hora",
+    "quickTime": {
+      "morning": "Mañana",
+      "afternoon": "Mediodía",
+      "evening": "Noche"
+    },
+    "notesLabel": "Notas",
+    "notesPlaceholder": "ej. Tomar después de las comidas, beber mucha agua...",
+    "saveBtn": "Guardar Medicamento",
+    "updateBtn": "Actualizar Medicamento",
+    "validation": {
+      "noName": "Falta Información",
+      "noNameSubtitle": "Por favor ingresa el nombre del medicamento.",
+      "noTimes": "Falta Información",
+      "noTimesSubtitle": "Añade al menos una hora de dosis."
+    },
+    "list": {
+      "todayDoses": "Dosis de Hoy",
+      "completed": "Completado",
+      "allMeds": "Todos los Medicamentos",
+      "emptyTitle": "Aún no has añadido medicamentos",
+      "emptySub": "Toca el botón + abajo a la derecha para añadir tu primer medicamento.",
+      "deleteTitle": "Eliminar Medicamento",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar \"{{name}}\" y todas sus notificaciones?",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "stats": {
+      "overallAdherence": "Adherencia general",
+      "lastDays": "Últimos {{count}} días",
+      "doses": "dosis",
+      "medBased": "Por medicamento"
+    }
+  },
+  "details": {
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "deleteTitle": "Eliminar Producto",
+    "deleteMessage": "¿Estás seguro de que quieres eliminar este producto de tu lista?",
+    "shoppingListAdd": "Añadir a la Lista",
+    "shoppingListAdded": "En la Lista ✓",
+    "labels": {
+      "expiration": "Vencimiento",
+      "daysLeft": "Días restantes",
+      "createdAt": "Fecha añadido",
+      "barcode": "Código"
+    },
+    "status": {
+      "expired": "Venció hace {{count}} días",
+      "today": "¡Vence hoy!",
+      "tomorrow": "¡Vence mañana!",
+      "daysLeft": "{{count}} días restantes"
+    }
+  },
+  "categories": {
+    "deli": "Delicatessen",
+    "pharmacy": "Farmacia",
+    "other": "Otros",
+    "manage": {
+      "title": "Gestionar Categorías",
+      "hint": "Las categorías predeterminadas no se pueden editar. Puedes añadir, editar o eliminar categorías personalizadas.",
+      "default": "Predeterminado",
+      "addNew": "Añadir Nueva Categoría",
+      "editTitle": "Editar Categoría",
+      "newTitle": "Nueva Categoría",
+      "nameLabel": "Nombre de la Categoría",
+      "placeholder": "ej. Helados, Conservas...",
+      "iconLabel": "Icono",
+      "colorLabel": "Color",
+      "preview": "Vista previa"
+    },
+    "alert": {
+      "defaultNoEdit": "Las categorías predeterminadas no se pueden editar.",
+      "defaultNoDelete": "Las categorías predeterminadas no se pueden eliminar.",
+      "nameRequired": "El nombre de la categoría no puede estar vacío.",
+      "deleteTitle": "Eliminar Categoría",
+      "deleteMessage": "¿Quieres eliminar \"{{name}}\"? Los productos en esta categoría no se verán afectados."
+    }
+  },
+  "days": {
+    "0": "Dom",
+    "1": "Lun",
+    "2": "Mar",
+    "3": "Mié",
+    "4": "Jue",
+    "5": "Vie",
+    "6": "Sáb"
+  },
+  "notifications": {
+    "expiry": {
+      "danger": "🔴 ¡Hoy es el último día!",
+      "dangerBody": "{{productName}} vence hoy. ¡No olvides revisarlo!",
+      "warning": "⚠️ Vencimiento Próximo",
+      "warningBody": "A tu producto {{productName}} le quedan {{days}} días para vencer.",
+      "info": "ℹ️ Recordatorio de Vencimiento",
+      "infoBody": "A tu producto {{productName}} le quedan {{days}} días para vencer."
+    },
+    "dailySummary": {
+      "title": "📋 Resumen Diario FreshTrack",
+      "body": "{{expired}} productos vencidos, {{warning}} próximos a vencer. ¡Revisa tus estantes!"
+    },
+    "medication": {
+      "body": "{{dosage}} — ¡hora de tomar tu medicina!",
+      "bodyNoDosage": "¡Hora de tomar tu medicina!"
+    }
+  },
+  "paywall": {
+    "title": "FreshTrack PRO",
+    "subtitle": "Elimina todos los límites, úsalo sin restricciones.\nPago único — acceso de por vida.",
+    "alreadyPro": "Ya eres un Usuario PRO 🎉",
+    "alreadyProSubtitle": "Estás disfrutando de todas las funciones premium.",
+    "features": {
+      "noAds": "Eliminar todos los anuncios",
+      "support": "Apoye el desarrollo"
+    },
+    "priceLabel": "PAGO ÚNICO",
+    "priceNote": "Sin suscripción • Sin cargos ocultos",
+    "cta": "Mejorar a PRO ahora",
+    "restore": "Restaurar compra",
+    "legal": "La compra se realiza a través de la tienda de aplicaciones.\nRevisa nuestra política de privacidad para ver los términos.",
+    "successTitle": "✅ ¡Gracias!",
+    "successMessage": "Tu membresía PRO ha sido activada.",
+    "restoreErrorTitle": "No encontrado",
+    "restoreErrorMessage": "No se detectó ninguna compra previa."
+  },
+  "shopping": {
+    "empty": {
+      "title": "La lista está vacía",
+      "subtitle": "Puedes añadir productos a la lista desde la pantalla de detalles del producto."
+    },
+    "action": {
+      "share": "Compartir",
+      "clearChecked": "Eliminar completados",
+      "completed": "completado"
+    },
+    "alert": {
+      "emptyList": "La lista está vacía",
+      "shareEmpty": "La lista debe tener artículos para compartir.",
+      "clearTitle": "Limpiar lista",
+      "clearMessage": "¿Quieres eliminar toda la lista de compras?"
+    },
+    "shareTitle": "🛒 Lista de Compras",
+    "addPlaceholder": "Escribe un nuevo artículo...",
+    "addBtn": "Añadir"
+  },
+  "onboarding": {
+    "slides": {
+      "1": {
+        "title": "Rastrea tus productos fácilmente",
+        "description": "Guarda las fechas de vencimiento de los productos en casa. Evita el desperdicio y ahorra tu presupuesto."
+      },
+      "2": {
+        "title": "Mantente seguro con notificaciones",
+        "description": "Recibe alertas instantáneas 7 y 3 días antes del vencimiento y cuando caduquen."
+      },
+      "3": {
+        "title": "Toma tus medicinas a tempo",
+        "description": "Agrega no solo comida sino también tus medicamentos y mantente saludable con recordatorios cada hora."
+      }
+    },
+    "buttons": {
+      "next": "Siguiente",
+      "start": "Empezar"
+    }
+  },
+  "feedback": {
+    "title": "Comentarios",
+    "subtitle": "Ayúdenos a mejorar la aplicación. Puede informar errores o hacer sugerencias.",
+    "placeholder": "Escriba su mensaje aquí...",
+    "send": "Enviar",
+    "emptyError": "Por favor, escriba un mensaje.",
+    "mailNotAvailable": "No se encontró la aplicación de correo electrónico. Asegúrese de tener configurado el correo en su dispositivo.",
+    "sendError": "Ocurrió un error al enviar el mensaje."
+  }
+}

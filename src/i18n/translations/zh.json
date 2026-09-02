@@ -1,0 +1,298 @@
+{
+  "navigation": {
+    "addProduct": "添加新产品",
+    "productDetails": "产品详情",
+    "medications": "💊 服药提醒",
+    "addMedication": "添加新药物",
+    "editMedication": "编辑药物",
+    "medicationStats": "📊 服药统计",
+    "settings": "设置",
+    "manageCategories": "管理分类",
+    "shoppingList": "购物清单"
+  },
+  "common": {
+    "cancel": "取消",
+    "delete": "删除",
+    "save": "保存",
+    "update": "更新",
+    "success": "成功",
+    "error": "错误",
+    "pro": "专业版",
+    "legal": "法律信息"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言选择",
+    "dataManagement": "数据管理",
+    "exportBackup": "导出数据（备份）",
+    "importBackup": "导入数据（恢复）",
+    "backupSuccess": "备份加载成功",
+    "importWarning": "数据已导入。我们建议重启应用以使更改生效。",
+    "backup": {
+      "errorSharing": "不支持分享或保存。",
+      "errorExport": "创建备份时出错。",
+      "errorImport": "恢复数据时出错。",
+      "errorReadFile": "读取备份文件出错。文件可能已损坏。",
+      "invalidJson": "无效的 JSON 对象",
+      "confirmTitle": "恢复",
+      "confirmMessage": "您当前的数据可能会被覆盖。您确定吗？",
+      "restoreBtn": "恢复",
+      "success": "您的数据已成功恢复。",
+      "noData": "未找到有效的恢复数据。"
+    },
+    "privacyPolicy": "隐私政策",
+    "resetData": "重置所有数据",
+    "resetConfirmTitle": "重置数据",
+    "resetConfirmMessage": "您的所有产品、药物和设置将被永久删除。此操作无法撤销。您确定吗？",
+    "shareApp": "分享应用",
+    "shareMessage": "我正在使用 FreshTrack 追踪过期日期并防止浪费！你也应该试试：https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+  },
+  "home": {
+    "greeting": {
+      "morning": "早上好 🌤",
+      "afternoon": "下午好 👋",
+      "evening": "晚上好 🌙"
+    },
+    "stats": {
+      "safe": "安全",
+      "warning": "即将到期",
+      "expired": "已过期"
+    },
+    "searchPlaceholder": "搜索产品...",
+    "filter": {
+      "all": "全部",
+      "deli": "熟食",
+      "pharmacy": "医药",
+      "other": "其他",
+      "resultsCount": "列出 {{count}} 个产品",
+      "clearFilters": "清除筛选"
+    },
+    "empty": {
+      "noResults": "未找到 \"{{query}}\"",
+      "noProducts": "尚未添加产品",
+      "noCategoryProducts": "{{category}} 分类中没有产品",
+      "suggestion": "请尝试不同的搜索或清除筛选。",
+      "addFirst": "点击右下角的 + 按钮添加您的第一个产品！ 🚀"
+    },
+    "tip": {
+      "title": "快速提示",
+      "body": "添加产品时使用条形码图标可自动获取信息！"
+    }
+  },
+  "add": {
+    "nameLabel": "产品名称",
+    "namePlaceholder": "例如：牛奶、鸡蛋...",
+    "categoryLabel": "分类",
+    "dateLabel": "过期日期",
+    "saveBtn": "保存产品",
+    "updateBtn": "保存更改",
+    "barcode": "条形码",
+    "date": {
+      "week": "周",
+      "month": "月",
+      "year": "年"
+    },
+    "camera": {
+      "title": "扫描条形码",
+      "hint": "将条形码置于框中心",
+      "permissionDenied": "需要相机权限",
+      "permissionSubtitle": "您需要授予相机权限才能扫描条形码。"
+    },
+    "toast": {
+      "dateUpdated": "日期已更新",
+      "productFound": "产品已找到",
+      "productRecognized": "产品已识别",
+      "newBarcode": "检测到新条形码",
+      "lookupError": "无法获取条形码信息",
+      "error": "操作失败",
+      "saveError": "保存产品时出错"
+    },
+    "validation": {
+      "noName": "产品名称缺失",
+      "noNameSubtitle": "请输入产品名称。"
+    }
+  },
+  "medication": {
+    "nameLabel": "药物名称 *",
+    "namePlaceholder": "例如：阿司匹林、欧米伽-3...",
+    "dosageLabel": "剂量信息",
+    "dosagePlaceholder": "例如：500 mg、1 片...",
+    "colorLabel": "颜色",
+    "daysLabel": "天数",
+    "everyDay": "每天",
+    "timesLabel": "服药时间",
+    "addTime": "添加时间",
+    "quickTime": {
+      "morning": "早上",
+      "afternoon": "中午",
+      "evening": "晚上"
+    },
+    "notesLabel": "备注",
+    "notesPlaceholder": "例：饭后服用，多喝水...",
+    "saveBtn": "保存药物",
+    "updateBtn": "更新药物",
+    "validation": {
+      "noName": "信息缺失",
+      "noNameSubtitle": "请输入药物名称。",
+      "noTimes": "信息缺失",
+      "noTimesSubtitle": "请至少添加一个服药时间。"
+    },
+    "list": {
+      "todayDoses": "今日剂量",
+      "completed": "已完成",
+      "allMeds": "所有药物",
+      "emptyTitle": "尚未添加药物",
+      "emptySub": "点击右下角的 + 按钮添加您的第一种药物。",
+      "deleteTitle": "删除药物",
+      "deleteConfirm": "您确定要删除 \"{{name}}\" 及其所有通知吗？",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+    "stats": {
+      "overallAdherence": "总体服从性",
+      "lastDays": "最近 {{count}} 天",
+      "doses": "剂量",
+      "medBased": "基于药物"
+    }
+  },
+  "details": {
+    "edit": "编辑",
+    "delete": "删除",
+    "deleteTitle": "删除产品",
+    "deleteMessage": "您确定要从列表中删除此产品吗？",
+    "shoppingListAdd": "添加到购物清单",
+    "shoppingListAdded": "已在购物清单中 ✓",
+    "labels": {
+      "expiration": "过期",
+      "daysLeft": "剩余天数",
+      "createdAt": "添加日期",
+      "barcode": "条形码"
+    },
+    "status": {
+      "expired": "{{count}} 天前已过期",
+      "today": "今天过期！",
+      "tomorrow": "明天过期！",
+      "daysLeft": "剩余 {{count}} 天"
+    }
+  },
+  "categories": {
+    "deli": "熟食",
+    "pharmacy": "医药",
+    "other": "其他",
+    "manage": {
+      "title": "管理分类",
+      "hint": "默认分类无法编辑。您可以添加、编辑或删除自定义分类。",
+      "default": "默认",
+      "addNew": "添加新分类",
+      "editTitle": "编辑分类",
+      "newTitle": "新分类",
+      "nameLabel": "分类名称",
+      "placeholder": "例如：冰淇淋、罐头...",
+      "iconLabel": "图标",
+      "colorLabel": "颜色",
+      "preview": "预览"
+    },
+    "alert": {
+      "defaultNoEdit": "默认分类无法编辑。",
+      "defaultNoDelete": "默认分类无法删除。",
+      "nameRequired": "分类名称不能为空。",
+      "deleteTitle": "删除分类",
+      "deleteMessage": "您要删除 \"{{name}}\" 吗？此分类中的产品将不受影响。"
+    }
+  },
+  "days": {
+    "0": "日",
+    "1": "一",
+    "2": "二",
+    "3": "三",
+    "4": "四",
+    "5": "五",
+    "6": "六"
+  },
+  "notifications": {
+    "expiry": {
+      "danger": "🔴 今天是最后一天！",
+      "dangerBody": "{{productName}} 今天过期。别忘了检查！",
+      "warning": "⚠️ 过期日期临近",
+      "warningBody": "您的产品 {{productName}} 距离过期还有 {{days}} 天。",
+      "info": "ℹ️ 过期提醒",
+      "infoBody": "您的产品 {{productName}} 距离过期还有 {{days}} 天。"
+    },
+    "dailySummary": {
+      "title": "📋 FreshTrack 每日摘要",
+      "body": "{{expired}} 个产品已过期，{{warning}} 个产品即将过期。别忘了检查您的货架！"
+    },
+    "medication": {
+      "body": "{{dosage}} — 该吃药了！",
+      "bodyNoDosage": "该吃药了！"
+    }
+  },
+  "paywall": {
+    "title": "FreshTrack PRO",
+    "subtitle": "解除所有限制，无限制使用。\n一次性付款 — 终身访问。",
+    "alreadyPro": "您已经是 PRO 用户 🎉",
+    "alreadyProSubtitle": "您正在享受所有高级功能。",
+    "features": {
+      "noAds": "移除所有广告",
+      "support": "支持开发"
+    },
+    "priceLabel": "一次性付款",
+    "priceNote": "无订阅 • 无隐藏费用",
+    "cta": "立即升级到 PRO",
+    "restore": "恢复购买",
+    "legal": "购买通过应用商店进行。\n查看我们的隐私政策了解条款。",
+    "successTitle": "✅ 谢谢！",
+    "successMessage": "您的 PRO 会员资格已激活。",
+    "restoreErrorTitle": "未找到",
+    "restoreErrorMessage": "未检测到之前的购买。"
+  },
+  "shopping": {
+    "empty": {
+      "title": "清单为空",
+      "subtitle": "您可以从产品详情页面将产品添加到购物清单。"
+    },
+    "action": {
+      "share": "分享",
+      "clearChecked": "删除已完成",
+      "completed": "已完成"
+    },
+    "alert": {
+      "emptyList": "清单为空",
+      "shareEmpty": "购物清单必须有项目才能分享。",
+      "clearTitle": "清除清单",
+      "clearMessage": "您确定要删除整个购物清单吗？"
+    },
+    "shareTitle": "🛒 购物清单",
+    "addPlaceholder": "输入新商品名称...",
+    "addBtn": "添加"
+  },
+  "onboarding": {
+    "slides": {
+      "1": {
+        "title": "轻松追踪您的产品",
+        "description": "保存家中产品的保质期。防止浪费，节省预算。"
+      },
+      "2": {
+        "title": "通过通知保持安全",
+        "description": "在过期前 7 天和 3 天以及过期时获取即时警报。"
+      },
+      "3": {
+        "title": "按时服药",
+        "description": "不仅添加食物，还添加您的药物，并通过每小时的提醒保持健康。"
+      }
+    },
+    "buttons": {
+      "next": "下一步",
+      "start": "开始使用"
+    }
+  },
+  "feedback": {
+    "title": "反馈",
+    "subtitle": "帮助我们改进应用。您可以报告错误或提出建议。",
+    "placeholder": "在此处输入您的信息...",
+    "send": "发送",
+    "emptyError": "请输入信息。",
+    "mailNotAvailable": "未找到电子邮件应用。请确保您的设备已设置电子邮件。",
+    "sendError": "发送信息时出错。"
+  }
+}
