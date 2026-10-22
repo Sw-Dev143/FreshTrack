@@ -9,6 +9,7 @@ import es from './translations/es.json';
 import de from './translations/de.json';
 import fr from './translations/fr.json';
 import ja from './translations/ja.json';
+import ru from './translations/ru.json';
 
 const resources = {
   en: { translation: en },
@@ -18,6 +19,7 @@ const resources = {
   de: { translation: de },
   fr: { translation: fr },
   ja: { translation: ja },
+  ru: { translation: ru },
 };
 
 const deviceLanguage = getLocales()[0]?.languageCode || 'en';

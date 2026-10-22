@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { COLORS, SIZES, SHADOWS } from '../theme';
+import { Ionicons } from '@expo/vector-icons';
 
 interface PolicyText {
   title: string;
@@ -233,9 +234,24 @@ export default function PrivacyPolicyScreen() {
 
   const policy = POLICY_TRANSLATIONS[currentLanguage] || POLICY_TRANSLATIONS.en;
 
+  const handleOpenWeb = () => {
+    Linking.openURL('https://gist.githubusercontent.com/Sw-Dev143/c61da11d4f11bcf01a42a798a165ec1c/raw/5f362301f1fa12af8e990c9239eb4bccf1aebe0f/privacy-policy.md');
+  };
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
+          style={[styles.webLinkBtn, { backgroundColor: COLORS.primary + '10', borderColor: COLORS.primary }]}
+          onPress={handleOpenWeb}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="globe-outline" size={18} color={COLORS.primary} />
+          <Text style={[styles.webLinkText, { color: COLORS.primary }]}>
+            {currentLanguage === 'tr' ? 'Resmi Politikayı Web\'de Oku' : 'Read Official Policy on Web'}
+          </Text>
+        </TouchableOpacity>
+
         <View style={[styles.headerCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.title, { color: colors.secondary }]}>{policy.title}</Text>
           <Text style={[styles.updatedText, { color: colors.textLight }]}>{policy.lastUpdated}</Text>
@@ -291,5 +307,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 22,
     fontWeight: '500',
+  },
+  webLinkBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: SIZES.radius,
+    borderWidth: 1,
+    gap: 8,
+    marginBottom: 4,
+  },
+  webLinkText: {
+    fontSize: 14,
+    fontWeight: '800',
   },
 });

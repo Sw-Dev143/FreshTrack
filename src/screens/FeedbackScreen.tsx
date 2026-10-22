@@ -45,7 +45,7 @@ App Version: 1.2.0
 
       if (isAvailable) {
         await MailComposer.composeAsync({
-          recipients: ['destek@rafomrum.com'], // Buraya kendi mailinizi yazabilirsiniz
+          recipients: ['hkilinc326@gmail.com'],
           subject: `FreshTrack Feedback - ${Device.modelName}`,
           body: `${feedback}\n\n${deviceInfo}`,
         });

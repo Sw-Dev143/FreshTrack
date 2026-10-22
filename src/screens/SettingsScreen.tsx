@@ -20,6 +20,7 @@ const LANGUAGES = [
   { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
   { code: 'ja', label: '日本語', flag: '🇯🇵' },
   { code: 'zh', label: '中文', flag: '🇨🇳' },
+  { code: 'ru', label: 'Русский', flag: '🇷🇺' },
 ];
 
 const SettingsScreen: React.FC = () => {

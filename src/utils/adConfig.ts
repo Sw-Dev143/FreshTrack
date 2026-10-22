@@ -1,25 +1,28 @@
 /**
- * AdMob reklam ID'leri.
+ * FreshTrack AdMob Configuration
  *
- * ⚠️  PRODUCTION BUILD ÖNCE:
- *     Aşağıdaki ANDROID_PROD nesnesini Google AdMob Console'dan
- *     aldığınız GERÇEK ID'lerle güncellediğinizden emin olun.
+ * ⚠️ ACTION REQUIRED FOR PRODUCTION:
+ * 1. Replace placeholder IDs in ANDROID_PROD with your actual AdMob Unit IDs.
+ * 2. Update 'androidAppId' in app.json with your AdMob App ID.
  *
- *     Ayrıca app.json > plugins > react-native-google-mobile-ads > androidAppId
- *     değerini de üretim App ID'niz ile güncellemeyi unutmayın.
+ * In development mode (__DEV__), Google's official test IDs are used automatically.
  */
 
 const IS_TEST = __DEV__;
 
-// ── Üretim (Production) ID'leri ──────────────────────────────────────────────
-// TODO: AdMob Console'dan aldığınız gerçek ID'leri buraya yapıştırın.
+// ── Production IDs (From AdMob Console) ──────────────────────────────────────
 const ANDROID_PROD = {
+  // TODO: Replace with your actual Banner Ad Unit ID
   banner:       'ca-app-pub-9730088447835930/5766874757',
+
+  // TODO: Replace with your actual Interstitial Ad Unit ID
   interstitial: 'ca-app-pub-9730088447835930/6094177816',
-  rewarded:     'ca-app-pub-9730088447835930/XXXXXXXXXX', // Gelecek kullanım için
+
+  // Optional: Replace with your Rewarded Ad Unit ID if used in the future
+  rewarded:     'ca-app-pub-9730088447835930/XXXXXXXXXX',
 };
 
-// ── Test ID'leri (Google Resmi Test ID'leri) ──────────────────────────────────
+// ── Google's Official Test IDs (Safe for Development) ───────────────────────
 const ANDROID_TEST = {
   banner:       'ca-app-pub-3940256099942544/6300978111',
   interstitial: 'ca-app-pub-3940256099942544/1033173712',
@@ -27,8 +30,7 @@ const ANDROID_TEST = {
 };
 
 /**
- * Uygulamanın hangi reklam birimlerini kullanacağını belirler.
- * Geliştirme aşamasında otomatik olarak Test ID'leri kullanılır.
+ * Automatically selects the appropriate ID based on the environment.
  */
 export const AD_UNIT_IDS = {
   banner:       IS_TEST ? ANDROID_TEST.banner       : ANDROID_PROD.banner,
@@ -37,7 +39,11 @@ export const AD_UNIT_IDS = {
 };
 
 /**
- * Kullanıcı Deneyimi (UX): Reklamların kullanıcıyı çok sıkmaması için
- * her N üründe bir gösterilecek şekilde ayarlanmıştır.
+ * UX Tuning: Show an interstitial ad every N items added to avoid annoying users.
  */
 export const INTERSTITIAL_EVERY_N = 5;
+
+// Validation Check
+if (!IS_TEST && ANDROID_PROD.banner.includes('XXXXX')) {
+  console.warn('⚠️ FreshTrack: You are using placeholder AdMob IDs in production!');
+}

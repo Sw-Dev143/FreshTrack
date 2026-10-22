@@ -41,17 +41,24 @@ const PaywallScreen: React.FC = () => {
   const { t, currentLanguage } = useLanguage();
   const FEATURES = getFeatures(t);
 
-  // Yerel fiyat formatlama (Daha gerçekçi fiyatlar)
-  const getBasePrice = () => {
-    if (currentLanguage === 'tr') return 149.99; // 149.99 TRY
-    if (currentLanguage === 'ja') return 450;    // ~3 USD
-    return 2.99; // 2.99 USD (Tatlı nokta)
+  // Yerel fiyat formatlama (Profesyonel Global Fiyatlandırma)
+  const getPricing = () => {
+    switch (currentLanguage) {
+      case 'tr': return { price: 149.99, currency: 'TRY' };
+      case 'ja': return { price: 450,    currency: 'JPY' };
+      case 'zh': return { price: 21,     currency: 'CNY' };
+      case 'de':
+      case 'es':
+      case 'fr': return { price: 3.49,   currency: 'EUR' };
+      case 'ru': // Rusça dili için belirsizliği önlemek adına Global USD kullanıyoruz
+      default:   return { price: 2.99,   currency: 'USD' };
+    }
   };
 
-  const price = getBasePrice();
-  const formattedPrice = new Intl.NumberFormat(currentLanguage, {
+  const { price, currency } = getPricing();
+  const formattedPrice = new Intl.NumberFormat(currentLanguage === 'ru' ? 'ru-RU' : currentLanguage, {
     style: 'currency',
-    currency: currentLanguage === 'tr' ? 'TRY' : currentLanguage === 'ja' ? 'JPY' : 'USD',
+    currency: currency,
   }).format(price);
 
   // Ikon pulse animasyonu

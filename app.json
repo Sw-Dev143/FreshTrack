@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#4F46E5"
     },
     "ios": {
       "supportsTablet": true,
@@ -22,10 +22,10 @@
     },
     "android": {
       "package": "com.freshtrack.pro.global",
-      "versionCode": 3,
+      "versionCode": 6,
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff",
-        "foregroundImage": "./assets/icon.png"
+        "backgroundColor": "#4F46E5",
+        "foregroundImage": "./assets/adaptive-icon.png"
       },
       "permissions": [
         "android.permission.CAMERA",
