@@ -22,7 +22,9 @@
     },
     "android": {
       "package": "com.freshtrack.pro.global",
-      "versionCode": 6,
+      "versionCode": 7,
+      "compileSdkVersion": 36,
+      "targetSdkVersion": 36,
       "adaptiveIcon": {
         "backgroundColor": "#4F46E5",
         "foregroundImage": "./assets/adaptive-icon.png"
@@ -49,7 +51,17 @@
           "androidAppId": "ca-app-pub-9730088447835930~5958446448"
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "buildToolsVersion": "36.0.0"
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {
