@@ -22,7 +22,7 @@
     },
     "android": {
       "package": "com.freshtrack.pro.global",
-      "versionCode": 7,
+      "versionCode": 8,
       "compileSdkVersion": 36,
       "targetSdkVersion": 36,
       "adaptiveIcon": {
