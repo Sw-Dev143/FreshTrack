@@ -41,13 +41,16 @@
       "noData": "No se encontraron datos válidos para restaurar."
     },
     "privacyPolicy": "Política de Privacidad",
+    "rateApp": "Calificar FreshTrack",
+    "rateAppSubtitle": "Apóyanos con 5 estrellas en Google Play",
     "resetData": "Restablecer todos los datos",
     "resetConfirmTitle": "Restablecer datos",
     "resetConfirmMessage": "Todos sus productos, medicamentos y ajustes se eliminarán permanentemente. Esta acción no se puede deshacer. ¿Está seguro?",
     "shareApp": "Compartir aplicación",
-    "shareMessage": "¡Estoy haciendo un seguimiento de las fechas de vencimiento y evitando el desperdicio con FreshTrack! Tú también deberías probarlo: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+    "shareMessage": "¡Estoy haciendo un seguimiento de las fechas de vencimiento y evitando el desperdicio con FreshTrack! Tú también deberías probarlo: https://play.google.com/store/apps/details?id=com.freshtrack.pro.global"
   },
   "home": {
+    "exitToast": "Presiona atrás de nuevo para salir",
     "greeting": {
       "morning": "Buenos días 🌤",
       "afternoon": "Buenas tardes 👋",
@@ -223,18 +226,20 @@
       "body": "{{expired}} productos vencidos, {{warning}} próximos a vencer. ¡Revisa tus estantes!"
     },
     "medication": {
-      "body": "{{dosage}} — ¡hora de tomar tu medicina!",
+      "body": "{{dosage}} - ¡hora de tomar tu medicina!",
       "bodyNoDosage": "¡Hora de tomar tu medicina!"
     }
   },
   "paywall": {
     "title": "FreshTrack PRO",
-    "subtitle": "Elimina todos los límites, úsalo sin restricciones.\nPago único — acceso de por vida.",
+    "subtitle": "Elimina todos los límites, úsalo sin restricciones.\nPago único - acceso de por vida.",
     "alreadyPro": "Ya eres un Usuario PRO 🎉",
     "alreadyProSubtitle": "Estás disfrutando de todas las funciones premium.",
     "features": {
       "noAds": "Eliminar todos los anuncios",
-      "support": "Apoye el desarrollo"
+      "support": "Apoye el desarrollo",
+      "unlimited": "Seguimiento ilimitado de productos y medicamentos",
+      "cloudBackup": "Copia de seguridad y protección de datos"
     },
     "priceLabel": "PAGO ÚNICO",
     "priceNote": "Sin suscripción • Sin cargos ocultos",
@@ -283,7 +288,8 @@
     },
     "buttons": {
       "next": "Siguiente",
-      "start": "Empezar"
+      "start": "Empezar",
+      "skip": "Omitir"
     }
   },
   "feedback": {

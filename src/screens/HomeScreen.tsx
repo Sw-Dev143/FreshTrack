@@ -1,6 +1,6 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useCallback, useRef } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text, RefreshControl, Platform, Animated, TextInput,  } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, Text, RefreshControl, Platform, Animated, TextInput, BackHandler, ToastAndroid, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -16,7 +16,6 @@ import { usePremium } from '../context/PremiumContext';
 import { BannerAd, BannerAdSize } from '../utils/ads';
 import { AD_UNIT_IDS } from '../utils/adConfig';
 import { exportBackup, importBackup } from '../utils/backup';
-import { Alert } from 'react-native';
 
 import { useLanguage } from '../context/LanguageContext';
 
@@ -79,7 +78,32 @@ const HomeScreen: React.FC = () => {
     setRefreshing(false);
   };
 
-  useFocusEffect(useCallback(() => { loadProducts(); }, []));
+  // Back button double press to exit
+  const lastBackPressTime = useRef<number>(0);
+  useFocusEffect(
+    useCallback(() => {
+      loadProducts();
+
+      const onBackPress = () => {
+        const now = Date.now();
+        if (now - lastBackPressTime.current < 2000) {
+          BackHandler.exitApp();
+          return true;
+        }
+        lastBackPressTime.current = now;
+        const msg = t('home.exitToast') || 'Press back again to exit';
+        if (Platform.OS === 'android') {
+          ToastAndroid.show(msg, ToastAndroid.SHORT);
+        } else {
+          Alert.alert('', msg);
+        }
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [selectedCategory, statusFilter, searchQuery, t])
+  );
 
   const handleCategorySelect = (category: Category | 'all') => {
     setSelectedCategory(category);

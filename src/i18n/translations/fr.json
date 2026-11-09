@@ -41,13 +41,16 @@
       "noData": "Aucune donnée valide trouvée pour la restauration."
     },
     "privacyPolicy": "Politique de Confidentialité",
+    "rateApp": "Noter FreshTrack",
+    "rateAppSubtitle": "Soutenez-nous avec 5 étoiles sur Google Play",
     "resetData": "Réinitialiser toutes les données",
     "resetConfirmTitle": "Réinitialiser les données",
     "resetConfirmMessage": "Tous vos produits, médicaments et paramètres seront définitivement supprimés. Cette action ne peut pas être annulée. Êtes-vous sûr ?",
     "shareApp": "Partager l'application",
-    "shareMessage": "Je suis en train de suivre les dates d'expiration et d'éviter le gaspillage avec FreshTrack ! Vous devriez l'essayer aussi : https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+    "shareMessage": "Je suis en train de suivre les dates d'expiration et d'éviter le gaspillage avec FreshTrack ! Vous devriez l'essayer aussi : https://play.google.com/store/apps/details?id=com.freshtrack.pro.global"
   },
   "home": {
+    "exitToast": "Appuyez à nouveau pour quitter",
     "greeting": {
       "morning": "Bon matin 🌤",
       "afternoon": "Bonne journée 👋",
@@ -223,18 +226,20 @@
       "body": "{{expired}} produits ont expiré, {{warning}} produits expirent bientôt. N'oubliez pas de vérifier vos étagères !"
     },
     "medication": {
-      "body": "{{dosage}} — il est l'heure de prendre votre médicament !",
+      "body": "{{dosage}} - il est l'heure de prendre votre médicament !",
       "bodyNoDosage": "Il est l'heure de prendre votre médicament !"
     }
   },
   "paywall": {
     "title": "FreshTrack PRO",
-    "subtitle": "Levez toutes les limites, utilisez sans restrictions.\nPaiement unique — accès à vie.",
+    "subtitle": "Levez toutes les limites, utilisez sans restrictions.\nPaiement unique - accès à vie.",
     "alreadyPro": "Vous êtes déjà un utilisateur PRO 🎉",
     "alreadyProSubtitle": "Vous profitez de toutes les fonctionnalités premium.",
     "features": {
       "noAds": "Supprimer toutes les publicités",
-      "support": "Soutenir le développement"
+      "support": "Soutenir le développement",
+      "unlimited": "Suivi illimité des produits et des médicaments",
+      "cloudBackup": "Sauvegarde et protection des données"
     },
     "priceLabel": "UNIQUE",
     "priceNote": "Pas d'abonnement • Pas de frais cachés",
@@ -283,7 +288,8 @@
     },
     "buttons": {
       "next": "Suivant",
-      "start": "Commencer"
+      "start": "Commencer",
+      "skip": "Passer"
     }
   },
   "feedback": {

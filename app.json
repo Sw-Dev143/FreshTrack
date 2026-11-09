@@ -2,7 +2,7 @@
   "expo": {
     "name": "FreshTrack",
     "slug": "FreshTrack",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -22,7 +22,7 @@
     },
     "android": {
       "package": "com.freshtrack.pro.global",
-      "versionCode": 8,
+      "versionCode": 9,
       "compileSdkVersion": 36,
       "targetSdkVersion": 36,
       "adaptiveIcon": {

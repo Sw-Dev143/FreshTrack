@@ -41,13 +41,16 @@
       "noData": "No valid data found to restore."
     },
     "privacyPolicy": "Privacy Policy",
+    "rateApp": "Rate FreshTrack",
+    "rateAppSubtitle": "Support us with 5 stars on Google Play",
     "resetData": "Reset All Data",
     "resetConfirmTitle": "Reset Data",
     "resetConfirmMessage": "All your products, medications, and settings will be permanently deleted. This action cannot be undone. Are you sure?",
     "shareApp": "Share App",
-    "shareMessage": "I'm tracking expiration dates and preventing waste with FreshTrack! You should try it too: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+    "shareMessage": "I'm tracking expiration dates and preventing waste with FreshTrack! You should try it too: https://play.google.com/store/apps/details?id=com.freshtrack.pro.global"
   },
   "home": {
+    "exitToast": "Press back again to exit",
     "greeting": {
       "morning": "Good Morning 🌤",
       "afternoon": "Good Afternoon 👋",
@@ -223,18 +226,20 @@
       "body": "{{expired}} products expired, {{warning}} products expiring soon. Don't forget to check your shelves!"
     },
     "medication": {
-      "body": "{{dosage}} — Time to take your medication!",
+      "body": "{{dosage}} - Time to take your medication!",
       "bodyNoDosage": "Time to take your medication!"
     }
   },
   "paywall": {
     "title": "FreshTrack PRO",
-    "subtitle": "Remove all ads and enjoy a seamless experience.\nOne-time payment — Lifetime access.",
+    "subtitle": "Remove all ads and enjoy a seamless experience.\nOne-time payment - Lifetime access.",
     "alreadyPro": "You are already a PRO User 🎉",
     "alreadyProSubtitle": "You are enjoying all premium features.",
     "features": {
-      "noAds": "Remove all ads",
-      "support": "Support the development"
+      "noAds": "Remove all advertisements",
+      "support": "Support ongoing development",
+      "unlimited": "Unlimited product & medication tracking",
+      "cloudBackup": "Enhanced backup & data protection"
     },
     "priceLabel": "ONE-TIME",
     "priceNote": "No subscription • No hidden costs",
@@ -283,7 +288,8 @@
     },
     "buttons": {
       "next": "Next",
-      "start": "Get Started"
+      "start": "Get Started",
+      "skip": "Skip"
     }
   },
   "feedback": {

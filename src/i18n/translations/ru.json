@@ -23,6 +23,7 @@
     "shoppingList": "Список покупок"
   },
   "home": {
+    "exitToast": "Нажмите назад еще раз для выхода",
     "greeting": {
       "morning": "Доброе утро!",
       "afternoon": "Добрый день!",
@@ -119,8 +120,10 @@
     "resetConfirmTitle": "Вы уверены?",
     "resetConfirmMessage": "Это удалит все продукты и настройки. Это действие необратимо.",
     "privacyPolicy": "Политика конфиденциальности",
+    "rateApp": "Оценить FreshTrack",
+    "rateAppSubtitle": "Поддержите нас 5 звездами в Google Play",
     "shareApp": "Поделиться приложением",
-    "shareMessage": "Следи за сроками годности и здоровьем с FreshTrack! Скачай здесь:",
+    "shareMessage": "Следи за сроками годности и здоровьем с FreshTrack! Скачай здесь: https://play.google.com/store/apps/details?id=com.freshtrack.pro.global",
     "about": "О приложении",
     "version": "Версия"
   },

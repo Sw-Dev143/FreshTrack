@@ -11,6 +11,8 @@ import { useLanguage } from '../context/LanguageContext';
 // ── Feature listesi ──────────────────────────────────────────────────────────
 const getFeatures = (t: any) => [
   { icon: 'ban' as const, color: COLORS.danger, text: t('paywall.features.noAds') },
+  { icon: 'infinite' as const, color: COLORS.primary, text: t('paywall.features.unlimited') || 'Unlimited tracking' },
+  { icon: 'cloud-done' as const, color: COLORS.warning, text: t('paywall.features.cloudBackup') || 'Enhanced backup' },
   { icon: 'shield-checkmark' as const, color: COLORS.safe, text: t('paywall.features.support') },
 ];
 

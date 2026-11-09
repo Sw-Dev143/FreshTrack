@@ -47,6 +47,24 @@ const SettingsScreen: React.FC = () => {
     }
   };
 
+  const handleRateApp = () => {
+    const packageName = 'com.freshtrack.pro.global';
+    const storeUrl = `market://details?id=${packageName}`;
+    const webUrl = `https://play.google.com/store/apps/details?id=${packageName}`;
+
+    Linking.canOpenURL(storeUrl)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(storeUrl);
+        } else {
+          Linking.openURL(webUrl);
+        }
+      })
+      .catch(() => {
+        Linking.openURL(webUrl);
+      });
+  };
+
   const handleResetData = () => {
     Alert.alert(
       t('settings.resetConfirmTitle'),
@@ -188,6 +206,25 @@ const SettingsScreen: React.FC = () => {
 
           <TouchableOpacity
             style={[styles.rowEntry, { borderBottomWidth: 1, borderBottomColor: colors.border }]}
+            onPress={handleRateApp}
+            activeOpacity={0.7}
+          >
+            <View style={styles.rowLeft}>
+              <View style={[styles.iconWrap, { backgroundColor: '#FFD70025' }]}>
+                <Ionicons name="star" size={18} color="#E6B800" />
+              </View>
+              <View>
+                <Text style={[styles.rowLabel, { color: colors.text }]}>{t('settings.rateApp') || 'Rate FreshTrack'}</Text>
+                <Text style={{ fontSize: 12, color: colors.textMuted, marginTop: 2 }}>
+                  {t('settings.rateAppSubtitle') || 'Support us with 5 stars on Google Play'}
+                </Text>
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.rowEntry, { borderBottomWidth: 1, borderBottomColor: colors.border }]}
             onPress={handleShareApp}
             activeOpacity={0.7}
           >
@@ -207,7 +244,7 @@ const SettingsScreen: React.FC = () => {
               </View>
               <Text style={[styles.rowLabel, { color: colors.textLight }]}>{t('settings.version') || 'Version'}</Text>
             </View>
-            <Text style={[styles.versionText, { color: colors.textMuted }]}>1.2.0 (Build 3)</Text>
+            <Text style={[styles.versionText, { color: colors.textMuted }]}>1.2.1 (Build 9)</Text>
           </View>
         </View>
 

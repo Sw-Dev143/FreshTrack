@@ -41,13 +41,16 @@
       "noData": "Keine gültigen Daten zum Wiederherstellen gefunden."
     },
     "privacyPolicy": "Datenschutzerklärung",
+    "rateApp": "FreshTrack bewerten",
+    "rateAppSubtitle": "Unterstützen Sie uns mit 5 Sternen im Google Play Store",
     "resetData": "Alle Daten zurücksetzen",
     "resetConfirmTitle": "Daten zurücksetzen",
     "resetConfirmMessage": "Alle Ihre Produkte, Medikamente und Einstellungen werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher?",
     "shareApp": "App teilen",
-    "shareMessage": "Ich verfolge Ablaufdaten und vermeide Verschwendung mit FreshTrack! Das solltest du auch probieren: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+    "shareMessage": "Ich verfolge Ablaufdaten und vermeide Verschwendung mit FreshTrack! Das solltest du auch probieren: https://play.google.com/store/apps/details?id=com.freshtrack.pro.global"
   },
   "home": {
+    "exitToast": "Erneut drücken zum Beenden",
     "greeting": {
       "morning": "Guten Morgen 🌤",
       "afternoon": "Guten Tag 👋",
@@ -223,18 +226,20 @@
       "body": "{{expired}} Produkte abgelaufen, {{warning}} Produkte laufen bald ab. Vergessen Sie nicht, Ihre Regale zu prüfen!"
     },
     "medication": {
-      "body": "{{dosage}} — Zeit, Ihre Medikamente einzunehmen!",
+      "body": "{{dosage}} - Zeit, Ihre Medikamente einzunehmen!",
       "bodyNoDosage": "Zeit, Ihre Medikamente einzunehmen!"
     }
   },
   "paywall": {
     "title": "FreshTrack PRO",
-    "subtitle": "Alle Einschränkungen aufheben, unbegrenzt nutzen.\nEinmalige Zahlung — lebenslanger Zugriff.",
+    "subtitle": "Alle Einschränkungen aufheben, unbegrenzt nutzen.\nEinmalige Zahlung - lebenslanger Zugriff.",
     "alreadyPro": "Sie sind bereits ein PRO-Nutzer 🎉",
     "alreadyProSubtitle": "Sie genießen alle Premium-Funktionen.",
     "features": {
       "noAds": "Alle Anzeigen entfernen",
-      "support": "Unterstützen Sie die Entwicklung"
+      "support": "Unterstützen Sie die Entwicklung",
+      "unlimited": "Unbegrenzte Produkt- & Medikamentenverfolgung",
+      "cloudBackup": "Erweiterte Datensicherung"
     },
     "priceLabel": "EINMALIG",
     "priceNote": "Kein Abonnement • Keine versteckten Kosten",
@@ -283,7 +288,8 @@
     },
     "buttons": {
       "next": "Weiter",
-      "start": "Loslegen"
+      "start": "Loslegen",
+      "skip": "Überspringen"
     }
   },
   "feedback": {

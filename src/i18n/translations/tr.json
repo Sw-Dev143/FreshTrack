@@ -41,13 +41,16 @@
       "noData": "Geri yüklenecek geçerli veri bulunamadı."
     },
     "privacyPolicy": "Gizlilik Politikası",
+    "rateApp": "Uygulamayı Değerlendir",
+    "rateAppSubtitle": "Google Play'de 5 yıldız vererek bizi destekleyin",
     "resetData": "Tüm Verileri Sıfırla",
     "resetConfirmTitle": "Verileri Sıfırla",
     "resetConfirmMessage": "Tüm ürünleriniz, ilaçlarınız ve ayarlarınız kalıcı olarak silinecektir. Bu işlem geri alınamaz. Emin misiniz?",
     "shareApp": "Uygulamayı Paylaş",
-    "shareMessage": "FreshTrack ile ürünlerimin son kullanma tarihlerini takip ediyor ve israfı önlüyorum! Sen de denemelisin: https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+    "shareMessage": "FreshTrack ile ürünlerimin son kullanma tarihlerini takip ediyor ve israfı önlüyorum! Sen de denemelisin: https://play.google.com/store/apps/details?id=com.freshtrack.pro.global"
   },
   "home": {
+    "exitToast": "Çıkmak için tekrar basın",
     "greeting": {
       "morning": "Günaydın 🌤",
       "afternoon": "Tünaydın 👋",
@@ -223,18 +226,20 @@
       "body": "{{expired}} ürünün tarihi geçti, {{warning}} ürün yakında bitecek. Rafları kontrol etmeyi unutma!"
     },
     "medication": {
-      "body": "{{dosage}} — İlaç kullanım saatiniz geldi!",
+      "body": "{{dosage}} - İlaç kullanım saatiniz geldi!",
       "bodyNoDosage": "İlaç kullanım saatiniz geldi!"
     }
   },
   "paywall": {
     "title": "FreshTrack PRO",
-    "subtitle": "Reklamları kaldırın ve kesintisiz bir deneyimin keyfini çıkarın.\nTek seferlik ödeme — Ömür boyu erişim.",
+    "subtitle": "Reklamları kaldırın ve kesintisiz bir deneyimin keyfini çıkarın.\nTek seferlik ödeme - Ömür boyu erişim.",
     "alreadyPro": "Zaten PRO Kullanıcısısınız 🎉",
     "alreadyProSubtitle": "Tüm premium özelliklerin keyfini çıkarıyorsunuz.",
     "features": {
       "noAds": "Tüm reklamları kaldırın",
-      "support": "Geliştirmeyi destekleyin"
+      "support": "Geliştirmeyi destekleyin",
+      "unlimited": "Sınırsız ürün ve ilaç takibi",
+      "cloudBackup": "Gelişmiş yedekleme ve güvenlik"
     },
     "priceLabel": "TEK SEFERLİK",
     "priceNote": "Abonelik yok • Gizli maliyet yok",
@@ -283,7 +288,8 @@
     },
     "buttons": {
       "next": "İleri",
-      "start": "Hemen Başla"
+      "start": "Hemen Başla",
+      "skip": "Geç"
     }
   },
   "feedback": {

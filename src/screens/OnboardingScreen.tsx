@@ -69,6 +69,19 @@ export default function OnboardingScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Top Bar with Skip */}
+      <View style={styles.topBar}>
+        {currentIndex < SLIDES.length - 1 ? (
+          <TouchableOpacity onPress={completeOnboarding} activeOpacity={0.7} style={styles.skipButton}>
+            <Text style={[styles.skipText, { color: colors.textLight }]}>
+              {t('onboarding.buttons.skip') || 'Skip'}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={{ height: 20 }} />
+        )}
+      </View>
+
       <FlatList
         data={SLIDES}
         renderItem={renderItem}
@@ -118,6 +131,21 @@ export default function OnboardingScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    minHeight: 40,
+  },
+  skipButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  skipText: {
+    fontSize: 15,
+    fontWeight: '600',
   },
   slide: {
     alignItems: 'center',

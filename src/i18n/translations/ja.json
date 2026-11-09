@@ -41,13 +41,16 @@
       "noData": "復元する有効なデータが見つかりませんでした。"
     },
     "privacyPolicy": "プライバシーポリシー",
+    "rateApp": "FreshTrackを評価する",
+    "rateAppSubtitle": "Google Playで5つ星をつけて応援してください",
     "resetData": "すべてのデータをリセット",
     "resetConfirmTitle": "データのリセット",
     "resetConfirmMessage": "すべての製品、薬、設定が永久に削除されます。この操作は取り消せません。よろしいですか？",
     "shareApp": "アプリを共有",
-    "shareMessage": "FreshTrack で賞味期限を追跡して無駄を防いでいます！あなたも試してみてください：https://play.google.com/store/apps/details?id=com.sworddev.rafomrum"
+    "shareMessage": "FreshTrack で賞味期限を追跡して無駄を防いでいます！あなたも試してみてください：https://play.google.com/store/apps/details?id=com.freshtrack.pro.global"
   },
   "home": {
+    "exitToast": "もう一度押して終了",
     "greeting": {
       "morning": "おはようございます 🌤",
       "afternoon": "こんにちは 👋",
@@ -223,7 +226,7 @@
       "body": "{{expired}} 件の期限切れ、{{warning}} 件の期限間近な製品があります。棚を確認しましょう！"
     },
     "medication": {
-      "body": "{{dosage}} — お薬の時間です！",
+      "body": "{{dosage}} - お薬の時間です！",
       "bodyNoDosage": "お薬の時間です！"
     }
   },
@@ -234,7 +237,9 @@
     "alreadyProSubtitle": "すべてのプレミアム機能をご利用いただけます。",
     "features": {
       "noAds": "すべての広告を削除",
-      "support": "開発を支援する"
+      "support": "開発を支援する",
+      "unlimited": "無制限の製品および薬の追跡",
+      "cloudBackup": "高度なデータバックアップ"
     },
     "priceLabel": "1回限り",
     "priceNote": "サブスクリプションなし • 隠れた費用なし",
@@ -283,7 +288,8 @@
     },
     "buttons": {
       "next": "次へ",
-      "start": "始める"
+      "start": "始める",
+      "skip": "スキップ"
     }
   },
   "feedback": {
